@@ -1,0 +1,14 @@
+.consent {font-size:12px;background-color:lightgray;padding:10px;}
+
+body {}
+
+#instructions {
+	background-color:LightGoldenRodYellow;
+}
+
+
+#preview_panel {
+	background-color:Red;
+	font-weight:bold;
+}
+
