@@ -1,6 +1,6 @@
 from bottle import route, run, view, debug, static_file, request, response, abort
 
-import settings
+from settings import settings
 from languages import langs
 
 import json
@@ -19,11 +19,11 @@ def get_client_ip(request):
 # handling of all static files (flat files in /static folder)
 @route('/static/:filename')
 def server_static(filename):
-    return static_file(filename, root='./static/')
+    return static_file(filename, root=settings["code_root"]+'/static/')
 
 @route('/static/images/:filename')
 def server_static(filename):
-    return static_file(filename, root='./static/images')
+    return static_file(filename, root=settings["code_root"]+'/static/images')
    
 @route('/')
 def index():
@@ -82,7 +82,7 @@ def vocabulary_hit(language):
 	hitid=request.query.hitId
 	
 	params={
-		"ipinfodb_key":settings.settings["ipinfodb_key"],
+		"ipinfodb_key":settings["ipinfodb_key"],
 		"hit_type":"vocabulary-ru",
 		"assignmentid":assignmentid,
 		"hitid":hitid,
@@ -102,7 +102,7 @@ def synonyms_hit():
 	hitid=request.query.hitid
 
 	params={
-		"ipinfodb_key":settings.settings["ipinfodb_key"],
+		"ipinfodb_key":settings["ipinfodb_key"],
 		"hit_type":"vocabulary-ru",
 		"assignmentid":assignmentid,
 		"hitid":hitid,
@@ -111,6 +111,6 @@ def synonyms_hit():
 		}
 	return dict(params=params)
 
-debug(True)
-run(reloader=True, port=8888)
+#debug(True)
+#run(reloader=True, port=8888)
 #run(host='localhost', port=8800)
