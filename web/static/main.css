@@ -2,13 +2,39 @@
 
 body {}
 
-#instructions {
+#instructions, #instructions2 {
 	background-color:LightGoldenRodYellow;
+	padding:10px;
+}
+
+#survey {
+	padding:10px;
+}
+
+#survey2 {
+	background-color:DarkSeaGreen;
+	padding:10px;
 }
 
 
+
 #preview_panel {
-	background-color:Red;
+	background-color:Tomato;
 	font-weight:bold;
+	padding:10px;
+}
+
+tr td {
+	vertical-align:top;
+}
+
+tr.even td{
+  /* background-color: #eee;*/
+  border-top: 1px gray solid;
+}
+
+tr.odd td{
+  background-color: #fff;
+  border-top: 1px gray solid;
 }
 
