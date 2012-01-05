@@ -9,6 +9,8 @@ os.chdir(os.path.dirname(settings["root"]))
 from bottle import route, run
 from main import *
 
+bottle.TEMPLATE_PATH.insert(0,settings["code_root"])
+
 @route('/hello')
 def hello():
 	return "Hello World!"

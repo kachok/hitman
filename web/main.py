@@ -6,7 +6,6 @@ from languages import langs
 import json
 import psycopg2
 
-
 # get IP address, including handling of proxies
 # based on http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
 def get_client_ip(request):
