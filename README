@@ -1,1 +1,20 @@
-Template for creating and running Mechanical Turk HITs as External Questions 
+Web - template and web app for creating and running Mechanical Turk HITs as External Questions 
+
+
+Backend - command line tools for interacting with MTurk API and creating HITs in MTurk
+
+	voc-load-db-pipeline.py
+		populates list of languages based on settings file
+		loads vocabularies from /data/input folder (prepared by wikilanguages-pipeline)
+		loads dictionaries for QA from /data/input folder (prepared by wikilanguages-pipeline)
+
+    generate-images-pipeline.py
+		generates images for all vocabulary and dictionary items
+	
+	java Str2ImgDemo sentences.txt segments.txt images
+		renders PNG files
+		10MB of images per 1000 words+sentences
+
+	voc-hit-pipeline.py
+		generates batches of vocabulary HITs in database
+		generates HITs in MTurk and reference them to batches of words in database
