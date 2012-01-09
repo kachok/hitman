@@ -76,6 +76,62 @@ def get_val(output, element):
 	return nodes[0].childNodes[0].data
 
 
+def show():
+	# search for HITs that are ready for review
+	operation="SearchHITs"	
+	params2={}
+	result_xmlstr=call_turk(operation, params2)
+
+	results=get_val(result_xmlstr,"NumResults")
+	total=get_val(result_xmlstr,"TotalNumResults")
+	logging.debug("results: %s, total:%s" % (results, total))
+
+	result_xml = xml.dom.minidom.parseString(result_xmlstr)
+	# Check for and print results and errors
+	errors_nodes = result_xml.getElementsByTagName('Errors')
+	if errors_nodes:
+	    print 'There was an error processing your request:'
+	    for errors_node in errors_nodes:
+		for error_node in errors_node.getElementsByTagName('Error'):
+		    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+		    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+
+	print result_xmlstr
+
+	nodes = result_xml.getElementsByTagName('HITId')
+	for node in nodes:
+		hit_id=node.childNodes[0].data
+
+		print hit_id
+
+def review():
+	# search for HITs that are ready for review
+	operation="GetReviewableHITs"	
+	params2={}
+	result_xmlstr=call_turk(operation, params2)
+
+	results=get_val(result_xmlstr,"NumResults")
+	total=get_val(result_xmlstr,"TotalNumResults")
+	logging.debug("results: %s, total:%s" % (results, total))
+
+	result_xml = xml.dom.minidom.parseString(result_xmlstr)
+	# Check for and print results and errors
+	errors_nodes = result_xml.getElementsByTagName('Errors')
+	if errors_nodes:
+	    print 'There was an error processing your request:'
+	    for errors_node in errors_nodes:
+		for error_node in errors_node.getElementsByTagName('Error'):
+		    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+		    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+
+	print result_xmlstr
+
+	nodes = result_xml.getElementsByTagName('HITId')
+	for node in nodes:
+		hit_id=node.childNodes[0].data
+
+		print hit_id
+
 def cleanup():
 	# search and disable/remove all HITs (except ones with Assignments or smth, see MTurk API docs)
 	# TODO: probably better cleanup routine needed (some HITs may survive this cleanup)

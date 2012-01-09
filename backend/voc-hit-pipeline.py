@@ -25,7 +25,7 @@ logging.basicConfig(
 	datefmt='%m/%d/%Y %I:%M:%S %p',
 	level=logging.INFO)
 
-logging.info("vocabulary hit creation pipeline - START")
+logging.info("vocabulary hit creation pipeline in MTurk- START")
 
 target_language = settings["target_language"]
 logging.info("target language: %s" % (target_language))
@@ -66,10 +66,21 @@ for i, lang in enumerate(langs):
 		logging.info("successfully connected to database")
 	except:
 		logging.error("unable to connect to the database")
-	
+
 	cur = conn.cursor()
-	sql="INSERT INTO hittypes (mturk_hittype_id, name) VALUES (%s, %s);"
-	cur.execute(sql,(hittype_id, "Vocabulary HIT for "+langs_properties[lang]["name"]))
+
+	#getting language_id from database
+	sql="SELECT id from languages where prefix=%s;"
+	cur.execute(sql, (lang,))
+	rows = cur.fetchall()
+
+	lang_id=0
+	for row in rows:
+		lang_id=str(row[0])
+
+	
+	sql="INSERT INTO hittypes (mturk_hittype_id, name, language_id, language) VALUES (%s, %s, %s, %s);"
+	cur.execute(sql,(hittype_id, "Vocabulary HIT for "+langs_properties[lang]["name"], lang_id, lang))
 	conn.commit()
 	langs_properties[lang]["mturk_hittype_id"]=hittype_id
 
@@ -92,15 +103,25 @@ for i, lang in enumerate(langs):
 	cur = conn.cursor()
 	cur2 = conn.cursor()
 
-	cur.execute("SELECT * from vocabulary order by random()")
+
+	sql="SELECT id from languages where prefix=%s;"
+	cur.execute(sql, (lang,))
+	rows = cur.fetchall()
+
+	lang_id=0
+	for row in rows:
+		lang_id=row[0]
+
+	sql="SELECT * from vocabularyhits WHERE language_id=%s and mturk_hit_id is null;"
+	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_dictionary_hit_path"]+"/"+lang
 
-	for batchiter in batch(rows, settings["num_unknowns"]):
+	for row in rows:
 
-		guid=str(uuid.uuid4())
-
+		#fetching unique UUID for hit to be created in MTurk
+		guid=row[2]
 		operation="CreateHIT"
 		parameters2={
 			"HITTypeId":hittype_id,
@@ -111,21 +132,14 @@ for i, lang in enumerate(langs):
 			"UniqueRequestToken":guid,
 		}
 		output= mturk.call_turk(operation, parameters2)
-		hit_id=mturk.get_val(output, "HITId")
-		logging.info("new HIT created with id: %s" % (hit_id))
+		mturk_hit_id=mturk.get_val(output, "HITId")
+		logging.info("new HIT created with id: %s" % (mturk_hit_id))
 		
-		sql="INSERT INTO vocabularyhits (mturk_hit_id, mturk_hittype_id, uuid) VALUES (%s, %s, %s);"
-		cur2.execute(sql,(hit_id, hittype_id, guid))
+		
+		sql="UPDATE vocabularyhits SET mturk_hit_id=%s WHERE uuid=%s;"
+		cur2.execute(sql,(mturk_hit_id, guid))
 		conn.commit()
-
-		print "Batch: ",
-		for item in batchiter:
-			word_id=item[0]
-			
-			
-			sql="INSERT INTO vocabularyhitsdata (mturk_hit_id, word_id) VALUES (%s, %s);"
-			cur2.execute(sql,(hit_id, word_id))
-			conn.commit()
+		
 
 	conn.close()
 	

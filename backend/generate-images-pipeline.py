@@ -60,8 +60,8 @@ for i, lang in enumerate(langs):
 	cur = conn.cursor()
 
 
-	sentence_file = codecs.open("sentences.txt", 'a', 'utf-8')	
-	segments_file = open("segments.txt", 'a')
+	sentence_file = codecs.open(settings["run_name"]+"sentences.txt", 'a', 'utf-8')	
+	segments_file = open(settings["run_name"]+"segments.txt", 'a')
 
 	cur.execute("SELECT * from vocabulary")
 	rows = cur.fetchall()

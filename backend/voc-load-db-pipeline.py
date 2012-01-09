@@ -135,9 +135,9 @@ for i, lang in enumerate(langs):
 		#print type(word)
 		if len(word)>0:
 			sql="INSERT INTO dictionary (word, translation, sentences, language_id) VALUES (%s, %s, %s, %s);"
-			print word, links[word]["translation"], links[word]["context"], lang_id
+			print word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id
 			try:
-				cur2.execute(sql,(word, links[word]["translation"], links[word]["context"], lang_id))
+				cur2.execute(sql,(word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id))
 			except:
 				print "error"
 				

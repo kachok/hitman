@@ -2,7 +2,6 @@ Web - template and web app for creating and running Mechanical Turk HITs as Exte
 
 
 Backend - command line tools for interacting with MTurk API and creating HITs in MTurk
-
 	voc-load-db-pipeline.py
 		populates list of languages based on settings file
 		loads vocabularies from /data/input folder (prepared by wikilanguages-pipeline)
@@ -15,6 +14,8 @@ Backend - command line tools for interacting with MTurk API and creating HITs in
 		renders PNG files
 		10MB of images per 1000 words+sentences
 
-	voc-hit-pipeline.py
+	voc-hit-generate.py
 		generates batches of vocabulary HITs in database
+
+	voc-hit-pipeline.py
 		generates HITs in MTurk and reference them to batches of words in database
