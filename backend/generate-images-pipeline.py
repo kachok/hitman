@@ -69,9 +69,9 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		#print row[0], row[1], row[2]
 		id=str(row[0]).zfill(9)+'0'
-		segments_file.write( id +"-"+ langs_properties[lang]["direction"])
+		segments_file.write( id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( id +"_sentences"+"-"+ langs_properties[lang]["direction"])
+		segments_file.write( id +"_sentences"+"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
 		segments_file.write("\n")
 		
 		sentence_file.write(row[1].decode('UTF-8'))
@@ -87,9 +87,9 @@ for i, lang in enumerate(langs):
 		#print row[0], row[1], row[2]
 		id=str(row[0]).zfill(9)+'1'
 		
-		segments_file.write( id +"-"+ langs_properties[lang]["direction"])
+		segments_file.write( id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( id +"_sentences"+"-"+ langs_properties[lang]["direction"])
+		segments_file.write( id +"_sentences"+"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
 		segments_file.write("\n")
 
 		sentence_file.write(row[1].decode('UTF-8'))
