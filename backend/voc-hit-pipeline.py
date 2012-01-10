@@ -93,6 +93,8 @@ for i, lang in enumerate(langs):
 	logging.info("processing language: %s (#%s out of %s) " %(lang,i+1,len(langs)))
 	
 	hittype_id= langs_properties[lang]["mturk_hittype_id"]
+	print hittype_id, lang
+	break
 
 
 	#get all words from vocabulary
@@ -122,7 +124,7 @@ for i, lang in enumerate(langs):
 
 	for row in rows:
 
-		timeout=1
+		timeout=5
 		passed=False
 		
 		while not passed:
@@ -144,8 +146,8 @@ for i, lang in enumerate(langs):
 			except:
 				passed=False
 				timeout=timeout*2
-				sleep(timeout)
 				print "Sleep for %s seconds " % (timeout)
+				sleep(timeout)
 
 			logging.info("new HIT created with id: %s" % (mturk_hit_id))
 		

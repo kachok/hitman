@@ -53,7 +53,12 @@ for i, lang in enumerate(langs):
 	# step #1 register HIT type for current language
 
 	operation="RegisterHITType"
+	settings["vocabularyHITtype"]["Description"]="Translate 10 words from "+langs_properties[lang]["name"]+" language to english"
+	settings["vocabularyHITtype"]["Title"]="Word translation from "+langs_properties[lang]["name"]+" language to english"
+
 	parameters2=settings["vocabularyHITtype"]
+
+	
 	output=mturk.call_turk(operation, parameters2)
 	logging.debug("RegisterHITType response: %s" % (output))
 	hittype_id= mturk.get_val(output, "HITTypeId")
