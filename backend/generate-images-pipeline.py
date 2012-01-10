@@ -89,7 +89,8 @@ for i, lang in enumerate(langs):
 		sentence_file.write("\n")
 
 
-	cur.execute("SELECT * from dictionary WHERE language_id=%s;")
+	sql="SELECT * from dictionary WHERE language_id=%s;"
+	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 
 	for row in rows:
