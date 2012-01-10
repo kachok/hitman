@@ -112,7 +112,8 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-	cur.execute("SELECT * from vocabulary order by random()")
+	sql="SELECT * from vocabulary WHERE language_id=%s order by random();"
+	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_dictionary_hit_path"]+"/"+lang
@@ -124,7 +125,6 @@ for i, lang in enumerate(langs):
 		sql="INSERT INTO vocabularyhits (mturk_hittype_id, uuid, language_id) VALUES (%s, %s, %s) RETURNING id;"
 		cur2.execute(sql,(hittype_id, guid, lang_id))
 		hit_id = cur2.fetchone()[0]
-		conn.commit()
 
 		print "Batch: ",
 		for item in batchiter:
@@ -133,9 +133,11 @@ for i, lang in enumerate(langs):
 			
 			sql="INSERT INTO vocabularyhitsdata (hit_id, word_id) VALUES (%s, %s);"
 			cur2.execute(sql,(hit_id, word_id))
-			conn.commit()
 
-		"""
+
+	conn.commit()
+
+	"""
 		operation="CreateHIT"
 		parameters2={
 			"HITTypeId":hittype_id,
