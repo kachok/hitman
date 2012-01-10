@@ -125,7 +125,7 @@ for i, lang in enumerate(langs):
 		timeout=1
 		passed=False
 		
-		while passed:
+		while not passed:
 			#fetching unique UUID for hit to be created in MTurk
 			guid=row[2]
 			operation="CreateHIT"
