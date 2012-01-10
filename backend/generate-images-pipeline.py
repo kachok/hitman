@@ -80,7 +80,7 @@ for i, lang in enumerate(langs):
 		id=str(row[0]).zfill(9)+'0'
 		segments_file.write( id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( id +"_sentences"+"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
+		segments_file.write( id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
 		segments_file.write("\n")
 		
 		sentence_file.write(row[1].decode('UTF-8'))
@@ -89,7 +89,7 @@ for i, lang in enumerate(langs):
 		sentence_file.write("\n")
 
 
-	cur.execute("SELECT * from dictionary")
+	cur.execute("SELECT * from dictionary WHERE language_id=%s;")
 	rows = cur.fetchall()
 
 	for row in rows:
@@ -98,7 +98,7 @@ for i, lang in enumerate(langs):
 		
 		segments_file.write( id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( id +"_sentences"+"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
+		segments_file.write( id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
 		segments_file.write("\n")
 
 		sentence_file.write(row[1].decode('UTF-8'))
