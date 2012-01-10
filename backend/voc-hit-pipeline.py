@@ -12,6 +12,8 @@ from itertools import islice, chain
 
 import uuid
 
+from time import sleep
+
 def batch(iterable, size):
     sourceiter = iter(iterable)
     while True:
@@ -120,25 +122,37 @@ for i, lang in enumerate(langs):
 
 	for row in rows:
 
-		#fetching unique UUID for hit to be created in MTurk
-		guid=row[2]
-		operation="CreateHIT"
-		parameters2={
-			"HITTypeId":hittype_id,
-			'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>800</FrameHeight></ExternalQuestion>',
-			"Title":"Translate "+str(settings["num_unknowns"]+settings["num_knowns"])+" words from Foreign language to English",
-			'LifetimeInSeconds':settings["lifetimeinseconds"],
-			"MaxAssignments":settings["max_assignments"],
-			"UniqueRequestToken":guid,
-		}
-		output= mturk.call_turk(operation, parameters2)
-		mturk_hit_id=mturk.get_val(output, "HITId")
-		logging.info("new HIT created with id: %s" % (mturk_hit_id))
+		timeout=1
+		passed=False
+		
+		while passed:
+			#fetching unique UUID for hit to be created in MTurk
+			guid=row[2]
+			operation="CreateHIT"
+			parameters2={
+				"HITTypeId":hittype_id,
+				'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>800</FrameHeight></ExternalQuestion>',
+				"Title":"Translate "+str(settings["num_unknowns"]+settings["num_knowns"])+" words from Foreign language to English",
+				'LifetimeInSeconds':settings["lifetimeinseconds"],
+				"MaxAssignments":settings["max_assignments"],
+				"UniqueRequestToken":guid,
+			}
+			output= mturk.call_turk(operation, parameters2)
+			try:
+				mturk_hit_id=mturk.get_val(output, "HITId")
+				passed=True
+			except:
+				passed=False
+				timeout=timeout*2
+				sleep(timeout)
+				print "Sleep for %s seconds " % (timeout)
+
+			logging.info("new HIT created with id: %s" % (mturk_hit_id))
 		
 		
-		sql="UPDATE vocabularyhits SET mturk_hit_id=%s WHERE uuid=%s;"
-		cur2.execute(sql,(mturk_hit_id, guid))
-		conn.commit()
+			sql="UPDATE vocabularyhits SET mturk_hit_id=%s WHERE uuid=%s;"
+			cur2.execute(sql,(mturk_hit_id, guid))
+			conn.commit()
 		
 
 	conn.close()
