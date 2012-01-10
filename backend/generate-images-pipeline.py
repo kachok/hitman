@@ -63,7 +63,16 @@ for i, lang in enumerate(langs):
 	sentence_file = codecs.open(settings["run_name"]+"_sentences.txt", 'a', 'utf-8')	
 	segments_file = open(settings["run_name"]+"_segments.txt", 'a')
 
-	cur.execute("SELECT * from vocabulary")
+	sql="SELECT id from languages where prefix=%s;"
+	cur.execute(sql, (lang,))
+	rows = cur.fetchall()
+
+	lang_id=0
+	for row in rows:
+		lang_id=row[0]
+
+	sql="SELECT * from vocabulary WHERE language_id=%s;"
+	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 
 	for row in rows:
@@ -104,21 +113,3 @@ for i, lang in enumerate(langs):
 
 logging.info("image creation pipeline - FINISH")
 
-#import uuid
-#str(uuid.uuid1())
-
-'''
-parameters2 = {
-#	'HITId':'2H9YNJ92NJKMBTZA8VLH1W2GWO67CE',
-#	'HITId':'2YQMZ9O9Z6KWFNAYOJ8RULFQ3NKB2V',
-	'AssignmentDurationInSeconds':'600',
-	'Description':'Simple External HIT 4',
-	'LifetimeInSeconds':'6000',
-	
-	'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>http://mturk-one.appspot.com/tasks</ExternalURL><FrameHeight>400</FrameHeight></ExternalQuestion>',
-	'Reward.1.Amount':'0.01',
-	'Reward.1.CurrencyCode':'USD',
-	'Title':'Simple HIT 4',
-	'MaxAssignments':'15',
-    }
-'''
