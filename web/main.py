@@ -1,10 +1,22 @@
 from bottle import route, run, view, debug, static_file, request, response, abort
 
 from settings import settings
-from languages import langs
+
+from langlib import get_languages_list, get_languages_properties
 
 import json
 import psycopg2
+
+
+target_language = settings["target_language"]
+
+langs=[] #list of languages represented as wikipedia prefixes e.g. xx - xx.wikipedia.org
+langs=get_languages_list(settings["languages_file"], target_language)
+
+langs_properties={} #list of languages' properties (e.g. LTR vs RTL script, non latin characters, etc) 
+langs_properties=get_languages_properties(settings["languages_properties_file"], target_language)
+
+
 
 # get IP address, including handling of proxies
 # based on http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
@@ -23,7 +35,7 @@ def server_static(filename):
 
 @route('/static/images/:filename')
 def server_static(filename):
-    return static_file(filename, root=settings["code_root"]+'/static/images')
+    return static_file(filename, root=settings["code_root"]+'/static/images/')
    
 @route('/')
 def index():
@@ -48,8 +60,8 @@ def index():
 		
 	cur = conn.cursor()
 	
-	sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
-	sql="select * from vocabularyhitsdata d, vocabulary v, vocabularyhits h where h.id=d.hit_id and v.id=d.word_id and hitid=%s"
+	#sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
+	sql="select * from vocabularyhitsdata d, vocabulary v, vocabularyhits h where h.id=d.hit_id and v.id=d.word_id and h.mturk_hit_id=%s"
 	
 	print hitid
 	cur.execute(sql, (hitid,))
@@ -58,8 +70,23 @@ def index():
 	
 	words=[]
 	for row in rows:
-		words.append({"word_id":row[2],"word":row[5]})
-	
+		word_id=str(row[1]).zfill(9)+"0"
+		word=str(row[6])
+		words.append({"word_id":word_id,"word":word})
+
+
+	sql="select * from dictionary d, vocabularyhits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
+
+	print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	for row in rows:
+		word_id=str(row[0]).zfill(9)+"1"
+		word=str(row[1]).lower()
+		words.append({"word_id":word_id,"word":word})
+
 	conn.close()
 
 
@@ -87,7 +114,7 @@ def vocabulary_hit(language):
 		"assignmentid":assignmentid,
 		"hitid":hitid,
 		"lang":language,
-		"lang_name":langs[language],
+		"lang_name":langs_properties[language]["name"],
 		"ip":get_client_ip(request),
 		#"words":json.dumps(words),
 		}
@@ -112,5 +139,5 @@ def synonyms_hit():
 	return dict(params=params)
 
 #debug(True)
-#run(reloader=True, port=8888)
+#run(reloader=True, port=8889)
 #run(host='localhost', port=8800)
