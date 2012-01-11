@@ -56,9 +56,9 @@ for i, lang in enumerate(langs):
 	# step #1 register HIT type for current language
 
 	operation="RegisterHITType"
-	settings["vocabularyHITtype"]["Description"]=(u"Translate 10 words from "+langs_properties[lang]["name"]+u" language to English language").encode('utf-8')
-	settings["vocabularyHITtype"]["Title"]=(u"Translate words from "+langs_properties[lang]["name"]+u" language to English language").encode('utf-8')
-	settings["vocabularyHITtype"]["Keywords"]=(u"translation, vocabulary, dictionary, "+langs_properties[lang]["name"]+u", english, language, research, jhu").encode('utf-8')
+	settings["vocabularyHITtype"]["Description"]=(u"Translate 10 words from "+langs_properties[lang]["name"]+u" to English").encode('utf-8')
+	settings["vocabularyHITtype"]["Title"]=(u"Translate words from "+langs_properties[lang]["name"]+u" to English").encode('utf-8')
+	settings["vocabularyHITtype"]["Keywords"]=(u"translation, vocabulary, dictionary, "+langs_properties[lang]["name"]+u", english, language, research, JHU").encode('utf-8')
 	
 	
 	parameters2=settings["vocabularyHITtype"]

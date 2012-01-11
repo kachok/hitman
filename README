@@ -10,7 +10,7 @@ Backend - command line tools for interacting with MTurk API and creating HITs in
     generate-images-pipeline.py
 		generates images for all vocabulary and dictionary items
 	
-	java Str2ImgDemo sentences.txt segments.txt images
+	java  -Djava.awt.headless=true generateimages sentences.txt segments.txt images
 		renders PNG files
 		10MB of images per 1000 words+sentences
 

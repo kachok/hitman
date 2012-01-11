@@ -108,7 +108,7 @@ for i, lang in enumerate(langs):
 		#print type(word)
 		if len(word)>0:
 			sql="INSERT INTO vocabulary (word, sentences, language_id) VALUES (%s, %s,%s);"
-			print word, voc[word]["context"], lang_id
+			#print word, voc[word]["context"], lang_id
 			try:
 				cur.execute(sql,(word, voc[word]["context"], lang_id))
 			except:
@@ -135,7 +135,7 @@ for i, lang in enumerate(langs):
 		#print type(word)
 		if len(word)>0:
 			sql="INSERT INTO dictionary (word, translation, sentences, language_id) VALUES (%s, %s, %s, %s);"
-			print word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id
+			#print word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id
 			try:
 				cur2.execute(sql,(word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id))
 			except:
@@ -145,21 +145,8 @@ for i, lang in enumerate(langs):
 	conn.commit()
 	
 	logging.info("dictionary table is loaded")
-	
-
-	
-	
+		
 	conn.close()
-
-	"""
-	cur.execute("SELECT * from test")
-	
-	rows = cur.fetchall()
-	
-	print "\nShow me the databases:\n"
-	for row in rows:
-	    print "   ", row[0]
-	"""	
 		
 logging.info("vocabulary load to db  pipeline - FINISH")
 
