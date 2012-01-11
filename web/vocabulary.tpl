@@ -61,7 +61,7 @@
 	function validate_form(){
 		form_valid(true);
 
-		for (i=1;i<=10;i++){
+		for (i=0;i<=10;i++){
 			if ($("#word"+i+"in").val()=="") {
 			
 			if ($("#check"+i)[0].checked && $("#reason"+i).val()=="") {
@@ -97,6 +97,21 @@
 		$("#word"+i+"in").keypress(function(){
 			validate_form();
 		});
+
+		$("#check"+i).change(function(){
+			validate_form();
+		});
+		$("#check"+i).click(function(){
+			validate_form();
+		});
+		
+
+		$("#reason"+i).change(function(){
+			validate_form();
+		});
+		$("#reason"+i).blur(function(){
+			validate_form();
+		});		
 	};
 
 	function add_canttranslatehandler(i){
