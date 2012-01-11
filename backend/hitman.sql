@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.1.1
 -- Dumped by pg_dump version 9.1.0
--- Started on 2012-01-09 20:17:07 EST
+-- Started on 2012-01-10 11:29:27 EST
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -134,7 +134,8 @@ CREATE TABLE hittypes (
     name character varying,
     mturk_hittype_id character varying,
     language_id integer,
-    language character varying
+    language character varying,
+    typename character varying
 );
 
 
@@ -508,7 +509,7 @@ ALTER TABLE ONLY vocabulary
     ADD CONSTRAINT vocabulary_language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id);
 
 
--- Completed on 2012-01-09 20:17:07 EST
+-- Completed on 2012-01-10 11:29:28 EST
 
 --
 -- PostgreSQL database dump complete
