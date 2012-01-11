@@ -33,9 +33,9 @@ def get_client_ip(request):
 def server_static(filename):
     return static_file(filename, root=settings["code_root"]+'/static/')
 
-@route('/static/images/:filename')
-def server_static(filename):
-    return static_file(filename, root=settings["code_root"]+'/static/images/')
+@route('/static/images/:path#.+#')
+def server_static(path):
+    return static_file(path, root=settings["code_root"]+'/static/images/')
    
 @route('/')
 def index():
