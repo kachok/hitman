@@ -35,7 +35,7 @@ def server_static(filename):
 
 @route('/static/images/:path#.+#')
 def server_static(path):
-    return static_file(path, root=settings["code_root"]+'/static/images/')
+    return static_file(path, root=settings["images_root"])
    
 @route('/')
 def index():
@@ -63,7 +63,7 @@ def index():
 	#sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
 	sql="select * from vocabularyhitsdata d, vocabulary v, vocabularyhits h where h.id=d.hit_id and v.id=d.word_id and h.mturk_hit_id=%s"
 	
-	print hitid
+	#print hitid
 	cur.execute(sql, (hitid,))
 	
 	rows=cur.fetchall()
@@ -77,7 +77,7 @@ def index():
 
 	sql="select * from dictionary d, vocabularyhits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
 
-	print hitid
+	#print hitid
 	cur.execute(sql, (hitid,))
 
 	rows=cur.fetchall()

@@ -214,6 +214,7 @@
 	                <li>Is grammatical, natural-sounding English</li>
 	                <li>Uses normal capitalization conventions (DON'T&nbsp;WRITE IN UPPERCASE)</li>
 	            </ul>
+				<p>If some of the words can't be translated, use checkbox on the right to mark those words and pick a reason why translation can't be provided from the drop down list.</p>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
   <div id="instructions2"  style="display:none;">
@@ -264,7 +265,7 @@
   			
   			
   			
-<div id="debug">
+<div id="debug" style="display:none;">
 	<h3>Debug:</h3>
 </div>
   		</td>
