@@ -51,7 +51,7 @@ except:
 cur = conn.cursor()
 
 for lang in langs:
-	sql="INSERT INTO languages (name, prefix) VALUES (%s, %s);"
+	sql="SELECT add_language (%s, %s);"
 	print langs_properties[lang]["name"], lang
 	try:
 		cur.execute(sql,(langs_properties[lang]["name"], lang))

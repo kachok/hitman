@@ -2,28 +2,28 @@
 <h3>Language Survey</h3>
 <p>First, please answer these questions about your language abilities:</p>
 			<input type="hidden" id="surveyname" name="surveyname" value="englishspeakersurvey"/>
-            
             <table id="surveytable" border="0" cellspacing="0" cellpadding="0">
                 <tbody>
                     <tr class="odd">
                         <td>Is English your native language?</td>
-                        <td><input type="radio" name="survey_is_native_english_speaker" value="yes" /><span class="answertext">Yes</span> 
-							<input type="radio" name="survey_is_native_english_speaker" value="no" /><span class="answertext">No</span></td>
+                        <td><input type="radio" name="survey_is_native_english_speaker" value="yes" id="survey_is_native_english_speaker_yes"/><label for="survey_is_native_english_speaker_yes">Yes</label> 
+							<input type="radio" name="survey_is_native_english_speaker" value="no" id="survey_is_native_english_speaker_no"/><label for="survey_is_native_english_speaker_no">No</label> </td>
                     </tr>
                     <tr class="even">
                         <td>How many years have you spoken English?</td>
-                        <td><input size="4" name="survey_years_speaking_english" type="text" /> <span class="answertext">years</span></td>
+                        <td><input size="4" name="survey_years_speaking_english"  id="survey_years_speaking_english" type="text" /> <span class="answertext">years</span></td>
                     </tr>
                     <tr class="odd">
                         <td>What country do you live in?</td>
-                        <td><input size="15" name="survey_what_country" type="text" /></td>
+                        <td><input size="15" name="survey_what_country"  id="survey_what_country" type="text" /></td>
                     </tr>
                     <tr class="even">
                         <td>What country were you born in?</td>
-                        <td><input size="15" name="survey_what_country_born" type="text" /></td>
+                        <td><input size="15" name="survey_what_country_born" id="survey_what_country_born" type="text" /></td>
                     </tr>
                 </tbody>
             </table>
+
 			<br/>
 			  <a href="" id="hide_survey">save survey</a>
 			</div>
@@ -69,8 +69,6 @@ function save_survey_data()
 	//mark survey in a cookie
 	$.cookie(survey_name,"true");
 
-	$.cookie("survey_is_native_foreign_speaker",$('input[name=survey_is_native_foreign_speaker]:checked').val());
-	$.cookie("survey_years_speaking_foreign",$("#survey_years_speaking_foreign").val());
 	$.cookie("survey_is_native_english_speaker",$('input[name=survey_is_native_english_speaker]:checked').val());
 	$.cookie("survey_years_speaking_english",$("#survey_years_speaking_english").val());
 	$.cookie("survey_what_country",$("#survey_what_country").val());

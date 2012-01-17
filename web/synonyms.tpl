@@ -13,7 +13,9 @@
 <body>
   <script>
 	var HITtype="{{params['hit_type']}}";
-	var IP="74.125.45.100";
+	var ip="{{params['ip']}}";
+	var total=0;
+	var pairs={};
 	
  $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip=74.125.45.100&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
@@ -42,42 +44,105 @@
 	*/
     }); 
 
-	//add show/hide events to words/help (3 sentences with word usage)
-	function add_wordhandler(i){
-		$("#word"+i+"in").focus(function(){
-			$("#word"+i+"help").show();
+
+	//disable/enable form submit (when input is valid)
+	function form_valid(param)
+	{
+		if (param){
+			$("#submitbutton").removeAttr('disabled');
+			$("#form_validation").hide();
+		}
+		else{
+			$("#submitbutton").attr("disabled", "disabled");
+			$("#form_validation").show();
+		}
+		
+	};
+	
+	//function with form validation for translation of 10 words
+	function validate_form(){
+		
+		form_valid(true);
+
+		/*		v=$('input[name=pair_0000009431]:checked').val();
+		alert(v);
+		alert(v==undefined);
+
+		for (pair in pairs){
+			alert(pairs[pair]);
+		}
+		
+
+		alert(pairs);
+		*/
+
+		for (pair in pairs){
+			v=$('input[name=pair_'+pairs[pair]["pair_id"]+']:checked').val();
+			//alert(pairs[pair]["pair_id"]+" "+v+" "+(v==undefined));
 			
-		});
-		$("#word"+i+"in").blur(function(){
-			$("#word"+i+"help").hide();
+			if (v==undefined)
+			{
+				form_valid(false);
+				break;
+			}
+
+		};
+		
+	};
+	
+	//add show/hide events to words/help (3 sentences with word usage)
+	function add_pairhandler(i){
+		$("input[name=pair_"+i+"]").change(function(){
 			validate_form();
 		});
-		$("#word"+i+"in").keypress(function(){
+
+		$("input[name=pair_"+i+"]").click(function(){
 			validate_form();
 		});
 	};
+	
 
 
- $.getJSON("/words?hitid={{params['hitid']}}", function(data) {
+ $.getJSON("/synonyms?hitId={{params['hitid']}}", function(data) {
+	total=data["total"];
+	pairs=data["words"]
 	for (word in data["words"]){
 		//alert(data["words"][word]["word"]);
 		$("#word"+word).html(data["words"][word]["word"]);
 
+		c="";
+		if ((word%2)?false:true){
+			//even
+			c=' class="even" ';
+		}
+		else{
+			c=' class="odd" ';
+		}
 
-		html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
-		//alert(html);
+
+		options="<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp;"+
+		  "<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;"+
+		  "<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='related'>Related but not synonymous &nbsp;";
 		
+		
+		checks="<br/>"+
+		"<input type='checkbox' name='misspelled_"+data["words"][word]["pair_id"]+"' value='misspelled' /> Word is misspelled <br/>";
+
+
+		//html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
+		html='<tr><td> <b>'+data["words"][word]["translation"]+"</b> and <b>"+data["words"][word]["synonym"]+"</b><br/>"+options+checks+'</div><br/></td></tr>';
+		//alert(html);
+
 		$("#word_table").html($("#word_table").html()+html);
 
 
 	}
-	for (i=0;i<10;i++){
-		add_wordhandler(i);
-
+	for (i=0;i<total;i++){
+		add_pairhandler(data["words"][i]["pair_id"]);
 	}
 
 
-    }); 
+    });
 
     
  $.getJSON("/ip", function(json) {
@@ -126,35 +191,7 @@
 			});
 			
 			
-			//disable/enable form submit (when input is valid)
-			function form_valid(param)
-			{
-				if (param){
-					$("#submitbutton").removeAttr('disabled');
-					$("#form_validation").hide();
-				}
-				else{
-					$("#submitbutton").attr("disabled", "disabled");
-					$("#form_validation").show();
-				}
-				
-			};
-			
-			//function with form validation for translation of 10 words
-			function validate_form(){
-				form_valid(true);
 
-				for (i=1;i<=10;i++){
-					if ($("#word"+i).val()=="") {
-						form_valid(false);
-						break;
-					};
-				};
-				
-			};
-			
-			
-			
 
 		});   
    
@@ -166,9 +203,9 @@
      	<td width="*">
   <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
-	            <p>Please&nbsp;<b>do not use</b>&nbsp;translation software or online machine translation systems like Google translate.&nbsp;Please make sure that your English translation:</p>
+	            <p>Please&nbsp;<b>do not use</b>&nbsp; web dictionaries to do this task.&nbsp;</p>
 	            <ul>
-	                <li>Does not add or delete any information from the original text</li>
+	                <li>For each of the words, mark words underneath as synonyms or not. If it is not a synonym, specify reason why from the list of options.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
@@ -207,35 +244,13 @@
 				<div id="words_panel">
 					<h3>Task</h3>
 					<table id="word_table">
-						<tr>
-							<td>
-								<h4>Main word</h4>
-								</td>
-							</tr>
-							<tr>
-								<td> Synonym #1 <br/>
-									  <input type="radio" name="synonym" value='notaword'>Synonym</input>
-									  <input type="radio" name="synonym"  value='notaword'>Antonym (opposite meaning)</input>
-									  <input type="radio" name="synonym"  value='englishword'>Other (not related word)</input>
-									  <input type="radio" name="synonym"  value='notaword'>Not a word (gibberish/HTML formatting/special characters)</input>
-									
-									</td>
-								</tr>
-								<tr>
-									<td> Synonym #2 <br/>
-										  <input type="radio" name="synonym" value='notaword'>Synonym</input>
-										  <input type="radio" name="synonym"  value='notaword'>Antonym (opposite meaning)</input>
-										  <input type="radio" name="synonym"  value='englishword'>Other (not related word)</input>
-										  <input type="radio" name="synonym"  value='notaword'>Not a word (gibberish/HTML formatting/special characters)</input>
-
-										</td>
-									</tr>
+						
 					</table>
 				</div>
 
 				<input id="submitbutton" type="submit" value="Done!" disabled="disabled"/>
 				<div id="validation_text">
-					All ten translation should be completed before this HIT can be submitted.
+					All pairs should be completed before this HIT can be submitted.
 				</div>
 				
   			</form>

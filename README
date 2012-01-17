@@ -19,3 +19,21 @@ Backend - command line tools for interacting with MTurk API and creating HITs in
 
 	voc-hit-pipeline.py
 		generates HITs in MTurk and reference them to batches of words in database
+		
+	
+	get-assignments.py
+		tasks retreives all completed assignments from voc HIT and loads results into vocabularyhitsresults table
+
+
+// need manually create entry in language table for "en":"English"
+		
+	syn-hits-generate.py
+		takes processed results from Voc HIT (from vochitsresults table) and populates syn hits and syn hits data table 
+		task can be run multiple times without creating duplicates
+		
+	syn-hits-pipeline.py
+		generates HITs in MTurk and reference them to batches in database
+	
+	
+	get-assignments2.py
+		tasks retreives all completed assignments from synonyms HIT and loads results into synonymshitsresults table

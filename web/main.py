@@ -39,7 +39,7 @@ def server_static(path):
    
 @route('/')
 def index():
-    return '<b>Hello World!'
+    return '<b>Hello World (local)!'
 
 # simple JSON webservice to return client IP address
 @route('/ip')
@@ -69,11 +69,12 @@ def index():
 	rows=cur.fetchall()
 	
 	words=[]
+	total=0
 	for row in rows:
 		word_id=str(row[1]).zfill(9)+"0"
 		word=str(row[6])
 		words.append({"word_id":word_id,"word":word})
-
+		total=total+1
 
 	sql="select * from dictionary d, vocabularyhits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
 
@@ -86,13 +87,48 @@ def index():
 		word_id=str(row[0]).zfill(9)+"1"
 		word=str(row[1]).lower()
 		words.append({"word_id":word_id,"word":word})
+		total=total+1
 
 	conn.close()
 
 
 	response.content_type = 'application/json'
-	return {"words":words}
+	return {"words":words, "total":total}
 
+
+# simple JSON webservice to return synonyms for specific HITId
+@route('/synonyms')
+def index():
+
+	hitid=request.query.hitId
+
+	try:
+		conn = psycopg2.connect("dbname='hitman' user='dkachaev' host='localhost'")
+	except:
+		pass
+
+	cur = conn.cursor()
+
+	sql="select * from synonymshitsdata d, synonymshits h where h.id=d.hit_id and h.mturk_hit_id=%s"
+
+	#print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	words=[]
+	total=0
+	for row in rows:
+		pair_id=str(row[0]).zfill(9)+"1"
+		translation=str(row[5])
+		synonym=str(row[6])
+		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
+		total=total+1
+
+	conn.close()
+
+	response.content_type = 'application/json'
+	return {"words":words, "total":total}
 @route('/notifications')
 def notifications():
 
@@ -126,7 +162,7 @@ def synonyms_hit():
     #when page is rendered, get assignmentID/hitID and attach it to displayed results
 
 	assignmentid=request.query.assignmentId
-	hitid=request.query.hitid
+	hitid=request.query.hitId
 
 	params={
 		"ipinfodb_key":settings["ipinfodb_key"],
@@ -138,6 +174,6 @@ def synonyms_hit():
 		}
 	return dict(params=params)
 
-#debug(True)
-#run(reloader=True, port=8889)
-#run(host='localhost', port=8800)
+debug(True)
+run(reloader=True, port=80)
+#run(host='localhost', port=80)

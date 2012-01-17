@@ -12,11 +12,13 @@ from itertools import islice, chain
 
 import uuid
 
+
 def batch(iterable, size):
     sourceiter = iter(iterable)
     while True:
         batchiter = islice(sourceiter, size)
         yield chain([batchiter.next()], batchiter)
+
 
 # basic logging setup for console output
 import logging
@@ -53,8 +55,8 @@ for i, lang in enumerate(langs):
 	# step #1 register HIT type for current language
 
 	operation="RegisterHITType"
-	settings["vocabularyHITtype"]["Description"]="Translate 10 words from "+langs_properties[lang]["name"]+" language to english"
-	settings["vocabularyHITtype"]["Title"]="Word translation from "+langs_properties[lang]["name"]+" language to english"
+	settings["vocabularyHITtype"]["Description"]=("Translate 10 words from "+langs_properties[lang]["name"]+" language to english").encode("utf-8")
+	settings["vocabularyHITtype"]["Title"]=("Word translation from "+langs_properties[lang]["name"]+" language to english").encode("utf-8")
 
 	parameters2=settings["vocabularyHITtype"]
 
@@ -84,8 +86,8 @@ for i, lang in enumerate(langs):
 		lang_id=str(row[0])
 
 	
-	sql="INSERT INTO hittypes (mturk_hittype_id, name, language_id, language) VALUES (%s, %s, %s, %s);"
-	cur.execute(sql,(hittype_id, "Vocabulary HIT for "+langs_properties[lang]["name"], lang_id, lang))
+	sql="SELECT add_hittype (%s, %s, %s, %s, %s);"
+	cur.execute(sql,(hittype_id, "Vocabulary HIT for "+langs_properties[lang]["name"], lang_id, lang, "vocabulary"))
 	conn.commit()
 	langs_properties[lang]["mturk_hittype_id"]=hittype_id
 

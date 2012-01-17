@@ -11,6 +11,18 @@ import xml.dom.minidom
 import settings
 import logging
 
+from boto.mturk.connection import MTurkConnection
+
+from time import sleep
+
+## simple commands that use boto library
+
+def conn():
+	return MTurkConnection(aws_access_key_id=settings.settings["aws_access_key_id"],
+	                      aws_secret_access_key=settings.settings["aws_secret_access_key"],
+	                      host=settings.settings["service_url"].replace("https://",""))
+
+
 # Define authentication routines
 def generate_timestamp(gmtime):
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", gmtime)
@@ -141,28 +153,32 @@ def cleanup():
 		operation="SearchHITs"	
 		params2={}
 		result_xmlstr=call_turk(operation, params2)
+		try:
+			results=get_val(result_xmlstr,"NumResults")
+			total=get_val(result_xmlstr,"TotalNumResults")
+			logging.debug("results: %s, total:%s" % (results, total))
+			print "results: %s, total:%s" % (results, total)
 
-		results=get_val(result_xmlstr,"NumResults")
-		total=get_val(result_xmlstr,"TotalNumResults")
-		logging.debug("results: %s, total:%s" % (results, total))
-
-		result_xml = xml.dom.minidom.parseString(result_xmlstr)
-		# Check for and print results and errors
-		errors_nodes = result_xml.getElementsByTagName('Errors')
-		if errors_nodes:
-		    print 'There was an error processing your request:'
-		    for errors_node in errors_nodes:
-			for error_node in errors_node.getElementsByTagName('Error'):
-			    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
-			    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+			result_xml = xml.dom.minidom.parseString(result_xmlstr)
+			# Check for and print results and errors
+			errors_nodes = result_xml.getElementsByTagName('Errors')
+			if errors_nodes:
+			    print 'There was an error processing your request:'
+			    for errors_node in errors_nodes:
+				for error_node in errors_node.getElementsByTagName('Error'):
+				    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+				    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
 	
-		nodes = result_xml.getElementsByTagName('HITId')
-		for node in nodes:
-			hit_id=node.childNodes[0].data
+
+			nodes = result_xml.getElementsByTagName('HITId')
+			for node in nodes:
+				hit_id=node.childNodes[0].data
 		
-			operation="DisableHIT"
-			params2={"HITId":hit_id}
-			print call_turk(operation, params2)
+				operation="DisableHIT"
+				params2={"HITId":hit_id}
+				call_turk(operation, params2)
+		except Exception:
+			sleep(10)
 		
 """
 <?xml version="1.0"?>
