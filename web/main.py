@@ -119,7 +119,11 @@ def index():
 	words=[]
 	total=0
 	for row in rows:
-		pair_id=str(row[0]).zfill(9)+"1"
+		bit="0" #regular pair
+		word_id=str(row[1])
+		if word_id=="0":
+			bit="1" #control pair
+		pair_id=str(row[0]).zfill(9)+bit
 		translation=str(row[5])
 		synonym=str(row[6])
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})

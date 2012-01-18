@@ -2,6 +2,8 @@ Web - template and web app for creating and running Mechanical Turk HITs as Exte
 
 
 Backend - command line tools for interacting with MTurk API and creating HITs in MTurk
+
+RUN ONCE:
 	voc-load-db-pipeline.py
 		populates list of languages based on settings file
 		loads vocabularies from /data/input folder (prepared by wikilanguages-pipeline)
@@ -20,6 +22,9 @@ Backend - command line tools for interacting with MTurk API and creating HITs in
 	voc-hit-pipeline.py
 		generates HITs in MTurk and reference them to batches of words in database
 		
+		
+RUN CONTINUOUSLY:
+		
 	
 	get-assignments.py
 		tasks retreives all completed assignments from voc HIT and loads results into vocabularyhitsresults table
@@ -37,3 +42,59 @@ Backend - command line tools for interacting with MTurk API and creating HITs in
 	
 	get-assignments2.py
 		tasks retreives all completed assignments from synonyms HIT and loads results into synonymshitsresults table
+		
+	
+	review-step2.py
+		review results of step2
+
+		HOW IT WORKS:
+			for all assignments:
+				+review if passed/failed based on control
+				+mark assignments as passed/failed
+				+go to MTurk and accept/reject assignments as needed
+				+add extra assignment for each rejected assignment to corresponding HITs
+
+			for all HITs:
+				-if # of accepted assignments=3 do something with all the QA data and pass it to step 1
+
+	review-step1.py 
+	
+	
+	
+---
+tasks estimates
+
+100 langs
+10,000 words
+
+1250 HITS per language
+
+125,000 1 step HITs
+
+375,000 1 step Assignments
+
+
+375,000*2 synonym pair
+
+750,000 pairs
+
+100,000 step 2 HITS? (4 times less then step 1)
+
+300,000 assignments for step 2
+
+
+----
+
+
+	
+	
+	
+	
+	
+
+
+
+
+
+
+

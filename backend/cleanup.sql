@@ -1,5 +1,13 @@
-delete from synonymshitsdata;
+delete from englishspeakersurvey;
+delete from foreignenglishspeakersurvey;
+delete from location;
+delete from workers;
+
+delete from synonyms_raw;
+	
 delete from synonymshitresults;
+delete from synonymshitassignments;
+delete from synonymshitsdata;
 delete from synonymshits;
 
 delete from vocabularyhitsdata;

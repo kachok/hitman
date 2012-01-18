@@ -17,7 +17,7 @@
 	var total=0;
 	var pairs={};
 	
- $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip=74.125.45.100&format=json&callback=?",function(data) {
+ $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
 	$("#debug").html($("#debug").html()+"city: "+data['cityName']+"<br/>");
 	$("#debug").html($("#debug").html()+"region: "+data['regionName']+"<br/>");
@@ -25,7 +25,10 @@
 	$("#ip").val(data['ipAddress']);
 	$("#city").val(data['cityName']);
 	$("#region").val(data['regionName']);
-	
+	$("#country").val(data['countryName']);
+	$("#zipcode").val(data['zipCode']);
+	$("#lat").val(data['latitude']);
+	$("#lng").val(data['longitude']);	
 	//countryCode, countryName, zipCode, 
 	/* Format of JSON response from IP Info DB
 	{
@@ -235,6 +238,10 @@
 	              <input type="hidden" id="ip" name="ip" value=""/>
 	              <input type="hidden" id="city" name="city" value=""/>
 	              <input type="hidden" id="region" name="region" value=""/>
+	              <input type="hidden" id="country" name="country" value=""/>
+	              <input type="hidden" id="zipcode" name="zipcode" value=""/>
+	              <input type="hidden" id="lat" name="lat" value=""/>
+	              <input type="hidden" id="lng" name="lng" value=""/>
               
 
 				<div id="user_survey">

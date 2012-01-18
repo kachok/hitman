@@ -93,56 +93,56 @@ for i, lang in enumerate(langs):
 			worker_id=assgnmnt.WorkerId
 			assignment_id=assgnmnt.AssignmentId
 			submit_time=assgnmnt.SubmitTime
-			
+			status=assgnmnt.AssignmentStatus
 			results={}
 			for i in assgnmnt.answers[0]:
 				results[i.fields[0][0]]=i.fields[0][1]
 				
 			result=json.dumps(results)
+
+			control=""
+			quality=""
+
+			sql="SELECT add_synonymshitassignment(%s, %s, %s, %s, %s, %s, %s, %s);"
+			cur.execute(sql,(mturk_hit_id, assignment_id, worker_id, status, result, submit_time, control, quality))
+			
+			assignment_id = cur.fetchone()[0]			
+			
 			
 			#for i in range(settings["num_knowns"]+settings["num_unknowns"]):
-			"""
 			for key in results.keys():
-				if key.find("word")==0:
-					wordnum=key
-					num=wordnum[4:5]
-					word_id=wordnum[6:15]
-					is_control=wordnum[15:16]=="0"
-					translation=results[key]
-					reason=results["reason"+num]
+				if key.find("pair")==0:
+					pairnum=key
+					pair_id=pairnum[5:14]
+					is_control=pairnum[14:15]
+					are_synonyms=results[key]
+					misspelled=""
+					try:
+						misspelled=results["misspelled_"+pair_id]
+					except KeyError:
+						pass
+						
+					quality=""
+					control=""
 
-					sql="SELECT add_vocabularyhitresult(%s, %s, %s, %s, %s, %s, %s, %s, %s);"
-					cur.execute(sql,(mturk_hit_id, assignment_id, worker_id, result, submit_time, int(word_id), translation, reason, int(is_control)))
+					sql="SELECT add_synonymshitresult(%s, %s, %s, %s, %s, %s, %s);"
+					cur.execute(sql,(assignment_id, int(pair_id), are_synonyms, misspelled, is_control, quality, control ))
 					result_id = cur.fetchone()[0]
 					conn.commit()					
-			"""		
 			
 				
 			"""	
-			{
-			"word1-0000011190": "is", "ip": "127.0.0.1", "surveyname": "foreignenglishspeakersurvey_Russian", 
-			"word4-0000011180": "quantity", 
-			"word5-0000011100": "not", 
-			"word7-0000011290": "few", 
-			"word2-0000011550": "to", "city": "-", 
-			"word3-0000011390": "this", 
-			"reason9": "", 
-			"reason8": "", 
-			"word0-0000011540": "many", 
-			"reason3": "", 
-			"reason2": "", 
-			"reason1": "", 
-			"reason0": "", 
-			"reason7": "", 
-			"reason6": "", 
-			"reason5": "", 
-			"reason4": "", "survey_years_speaking_foreign": "0", "survey_what_country": "US", "survey_years_speaking_english": "10", 
-			"word6-0000011020": "USSR", 
-			"word9-0000002891": "paiute", "survey_is_native_english_speaker": "yes", "region": "-", "survey_is_native_foreign_speaker": "no", "survey_what_country_born": "Asia", 
-			"word8-0000002811": "frakia"}	
-
-			
-			
+			A3STHRZDWNG7UO 247J51Y7QEOZQMEGQEJTPOFXRSKFCA 2012-01-17T18:59:27Z
+			answers  1
+			{"pair-0000009441": "no", "city": "ATLANTA", "survey_is_native_english_speaker": "no", 
+			"pair-0000009471": "yes", 
+			"pair-0000009461": "no", "ip": "74.125.45.100", "region": "GEORGIA", 
+			"pair-0000009491": "no", 
+			"pair-0000009481": "yes", "surveyname": "englishspeakersurvey", 
+			"pair-0000009501": "no", "survey_what_country": "", 
+			"pair-0000009431": "yes", "survey_years_speaking_english": "", "survey_what_country_born": "", 
+			"pair-0000009451": "yes"}
+			"""
 
 			sql="SELECT add_worker(%s, %s);"
 			cur.execute(sql,(worker_id, "unknown"))
@@ -164,7 +164,6 @@ for i, lang in enumerate(langs):
 			#cur.execute(sql,(db_worker_id, timestamp, native_speaker, years_speaking_foreign, native_english_speaker, years_speaking_english, country, born_country, language, language_id))
 
 			conn.commit()
-			"""
 
 			print worker_id, assignment_id, submit_time
 			print "answers ", len(assgnmnt.answers)
