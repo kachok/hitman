@@ -21,31 +21,31 @@ langs_properties=get_languages_properties(settings["languages_properties_file"],
 # get IP address, including handling of proxies
 # based on http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
 def get_client_ip(request):
-  x_forwarded_for = request.environ.get('HTTP_X_FORWARDED_FOR')
-  if x_forwarded_for:
-    ip = x_forwarded_for.split(',')[0] #TODO: check if client IP is at the beginning of the list or at the end ???
-  else:
-    ip = request.environ.get('REMOTE_ADDR')
-  return ip
+	x_forwarded_for = request.environ.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0] #TODO: check if client IP is at the beginning of the list or at the end ???
+	else:
+		ip = request.environ.get('REMOTE_ADDR')
+	return ip
 
 # handling of all static files (flat files in /static folder)
 @route('/static/:filename')
 def server_static(filename):
-    return static_file(filename, root=settings["code_root"]+'/static/')
+	return static_file(filename, root=settings["code_root"]+'/static/')
 
 @route('/static/images/:path#.+#')
 def server_static(path):
-    return static_file(path, root=settings["images_root"])
-   
+	return static_file(path, root=settings["images_root"])
+
 @route('/')
 def index():
-    return '<b>Hello World (local)!'
+	return '<b>Hello World (local)!'
 
 # simple JSON webservice to return client IP address
 @route('/ip')
 def index():
-    response.content_type = 'application/json'
-    return {"ip":get_client_ip(request)}
+	response.content_type = 'application/json'
+	return {"ip":get_client_ip(request)}
 
 # simple JSON webservice to return words for specific HITId
 @route('/words')
@@ -54,14 +54,14 @@ def index():
 	hitid=request.query.hitId
 	
 	try:
-		conn = psycopg2.connect("dbname='hitman' user='dkachaev' host='localhost'")
+		conn = psycopg2.connect("dbname='"+settings["dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 	except:
 		pass
 		
 	cur = conn.cursor()
 	
 	#sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
-	sql="select * from vocabularyhitsdata d, vocabulary v, vocabularyhits h where h.id=d.hit_id and v.id=d.word_id and h.mturk_hit_id=%s"
+	sql="select * from voc_hits_data d, vocabulary v, voc_hits h where h.id=d.hit_id and v.id=d.word_id and h.mturk_hit_id=%s"
 	
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -71,12 +71,12 @@ def index():
 	words=[]
 	total=0
 	for row in rows:
-		word_id=str(row[1]).zfill(9)+"0"
-		word=str(row[6])
+		word_id=str(row[2]).zfill(9)+"0"
+		word=str(row[4])
 		words.append({"word_id":word_id,"word":word})
 		total=total+1
 
-	sql="select * from dictionary d, vocabularyhits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
+	sql="select * from dictionary d, voc_hits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -103,13 +103,13 @@ def index():
 	hitid=request.query.hitId
 
 	try:
-		conn = psycopg2.connect("dbname='hitman' user='dkachaev' host='localhost'")
+		conn = psycopg2.connect("dbname='"+settings["dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 	except:
 		pass
 
 	cur = conn.cursor()
 
-	sql="select * from synonymshitsdata d, synonymshits h where h.id=d.hit_id and h.mturk_hit_id=%s"
+	sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -120,14 +120,27 @@ def index():
 	total=0
 	for row in rows:
 		bit="0" #regular pair
-		word_id=str(row[1])
-		if word_id=="0":
-			bit="1" #control pair
 		pair_id=str(row[0]).zfill(9)+bit
-		translation=str(row[5])
-		synonym=str(row[6])
+		translation=str(row[4])
+		synonym=str(row[5])
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
 		total=total+1
+
+	sql="select * from synonyms s order by random() limit 2"
+
+	#print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	for row in rows:
+		bit="1" #control pair
+		pair_id=str(row[0]).zfill(9)+bit
+		translation=str(row[1])
+		synonym=str(row[2])
+		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
+		total=total+1
+
 
 	conn.close()
 
@@ -143,7 +156,7 @@ def notifications():
 @route('/hits/vocabulary/<language>')
 @view('vocabulary')
 def vocabulary_hit(language):
-    #when page is rendered, get assignmentID/hitID and attach it to displayed results
+	#when page is rendered, get assignmentID/hitID and attach it to displayed results
 
 	assignmentid=request.query.assignmentId
 	hitid=request.query.hitId
@@ -163,7 +176,7 @@ def vocabulary_hit(language):
 @route('/hits/synonyms')
 @view('synonyms')
 def synonyms_hit():
-    #when page is rendered, get assignmentID/hitID and attach it to displayed results
+	#when page is rendered, get assignmentID/hitID and attach it to displayed results
 
 	assignmentid=request.query.assignmentId
 	hitid=request.query.hitId

@@ -1,0 +1,73 @@
+How QC works:
+
+Performing QC on specific HIT Type
+
+Grade assignments:
+
+#1 Select all submitted assignments of this HIT Type
+	
+	For each assignment 
+		Mark assignment as Under Review
+		Run grade function (will be custom for each HIT Type)
+- 		(or generate control HITs to grade this assignments)
+
+- #1a Run Mturk upload process for all new control HITs		
+
+#2 Select all under review assignments of this HIT Type
+	For each assignment
+		If assignment is graded mark it as Reviewed
+		
+#3 Select all reviewed assignments
+	For each assignment
+		If assignment quality is OK
+			pay worker, close mturk assignment, update HIT's stats
+		Else
+			don't pay worker, close mturk assignment, add new assignment, update HIT's stats
+		
+
+Grade HITs
+
+#1 Select all hits of this Type that are open
+	check if they have 3(or required number) of completed assignments
+	mark HIT as completed
+
+#2 Select all completed HITs
+	for each HIT
+		select all completed assignments with good quality of data
+		
+			for each input of this HIT
+				get weighted average of outputs
+				attach outputs to inputs
+				
+		mark HIT as closed
+
+
+------
+
+
+Grading Vocabulary results:
+
+
+Voc HITs -> Voc Assignments -> Voc results -> Syn data
+
+Hit - 3x Assignments
+Assignment - 2+8=10 results
+results/control - 2x
+
+result/control ~ syn data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

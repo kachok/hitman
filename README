@@ -4,47 +4,186 @@ Web - template and web app for creating and running Mechanical Turk HITs as Exte
 Backend - command line tools for interacting with MTurk API and creating HITs in MTurk
 
 RUN ONCE:
-	voc-load-db-pipeline.py
-		populates list of languages based on settings file
-		loads vocabularies from /data/input folder (prepared by wikilanguages-pipeline)
-		loads dictionaries for QA from /data/input folder (prepared by wikilanguages-pipeline)
+	load_data_to_db.py
+		populates langugages table in database
+		loads data from wikilanguages-pipeline into database to vocabulary and dictionary tables respectively
 
-    generate-images-pipeline.py
-		generates images for all vocabulary and dictionary items
+    prepare_images_files.py
+		generates images descriptor files for all vocabulary and dictionary items
 	
 	java  -Djava.awt.headless=true generateimages sentences.txt segments.txt images
+	#java  -Djava.awt.headless=true generateimages test_sentences.txt test_segments.txt ../test_images
 		renders PNG files
 		10MB of images per 1000 words+sentences
 
-	voc-hit-generate.py
-		generates batches of vocabulary HITs in database
+	generate_voc_hits.py
+		creates hittypes in MTurk and populates hittypes table in database
+		generates batches of vocabulary HITs in database based on vocabulary data
+		populates hits table and voc_hits_data tables in database
 
-	voc-hit-pipeline.py
+	add_voc_hits_to_mturk.py
 		generates HITs in MTurk and reference them to batches of words in database
+		creates HITs in MTurk for every HIT in datbase with empty mturk_hit_id column
+		updates hits table with non-empty mturk_hit_id value
 		
+	generate_synonyms_table.py
+		generates list of synonyms to be used in Synonyms HIT as controls
 		
 RUN CONTINUOUSLY:
 		
 	
-	get-assignments.py
-		tasks retreives all completed assignments from voc HIT and loads results into vocabularyhitsresults table
+	get_assignments.py
+		tasks retreives all completed assignments from all HITs and loads results into proper hits_results tables
+		(works both for vocabulary and synonyms HITs)	
 
-
-// need manually create entry in language table for "en":"English"
-		
-	syn-hits-generate.py
+	generate_syn_hits.py
 		takes processed results from Voc HIT (from vochitsresults table) and populates syn hits and syn hits data table 
 		task can be run multiple times without creating duplicates
 		
-	syn-hits-pipeline.py
+	add_syn_hits_to_mturk.py
 		generates HITs in MTurk and reference them to batches in database
+		creates HITs in MTurk for every HIT in datbase with empty mturk_hit_id column
+		updates hits table with non-empty mturk_hit_id value	
 	
+	get_assignments.py
 	
-	get-assignments2.py
-		tasks retreives all completed assignments from synonyms HIT and loads results into synonymshitsresults table
+	-- run again to get results of new syn hits
 		
+	revew_step2.py
+		reviews results of step2 (synonyms HITs)
+		grade syn hits results (based on controls)
+		select all assignments pending update in MTurk
+		for each pending assignments
+			grade assignments one-by-one
+			update status in Mturk and create extra assignment for related hit if assignments data was bad (data_quality<=50%)
+			close assignment in database
+			
 	
-	review-step2.py
+	review_step1.py
+		select all syn hits that have 3 assignments completed with data_status>50% each
+
+		CREATE OR REPLACE VIEW syn_hits_completed AS 
+ 		-- select all syn HITs that have 3 assignments with good quality of data. Those HITs considered completed
+		 -- and data can be pushed to Step 1 to Vocabulary HITs/Assignments		
+		
+		
+		for each hit
+			get 3 assignment above (syn_hits_completed x assignments (by hit_id))
+			weight results for each word translation and multiply it by performance of worker
+			
+			-- weight+result per hit per assignment
+			SYN_HITS_RESULTS_WIGHTED_PAIRS
+			
+select voc_assignment_id, pair_id, are_synonyms, max(weight)
+from
+(
+select voc_assignment_id, pair_id, are_synonyms, avg(worker_performance) as weight from (
+
+	select shd.voc_assignment_id, a.hit_id, a.id as assignment_id,shr.quality,shr.pair_id, shwp.quality as worker_performance, shr.are_synonyms from assignments a, syn_hits_completed shc, syn_hits_results shr, syn_hits_data shd, syn_hits_workers_performance shwp
+	where  
+	shd.hit_id=a.hit_id
+	and
+	shd.id=shr.pair_id
+	and
+	a.hit_id=shc.id
+	and
+	shr.assignment_id=a.id
+	and 
+	shr.is_control=0 -- remove controls (don't need them)
+	and
+	a.worker_id=shwp.id
+	and 
+	a.data_status>0.5 -- cut off nonperforming assignments
+	
+) as r
+
+group by voc_assignment_id, pair_id, are_synonyms
+) as rr
+
+group by voc_assignment_id, pair_id, are_synonyms
+
+			
+			
+			sort result by weight?
+				
+-- backtracking database from step2 to step1
+
+select * from hits
+
+select * from assignments
+
+select * from vocabulary
+
+select * from dictionary
+
+select * from voc_hits_data
+where hit_id in (2,3)
+
+select * from voc_hits_results
+where assignment_id=3
+
+select * from voc_hits_results
+where assignment_id=3
+and is_control=0
+
+
+select * from assignments
+where id in (11,12)
+
+select * from syn_hits
+-- hit_id 41/42
+
+select * from syn_hits_data
+where id in (11,12)
+-- hit_id=42
+
+select * from syn_hits_data
+where is_control=0
+
+select * from syn_hits_results
+
+
+-- voc assignments that are completed
+select * from assignments
+where id in (8,4)
+-- hit_id 36/29 for assg_id 8/4
+
+
+select * from voc_hits_data
+where id in (36,29)
+
+
+select * from syn_hits sh, assignments a, workers w, syn_hits_data shd
+where sh.id=a.hit_id 
+and a.worker_id=w.id
+and
+shd.is_control=0
+and
+shd.hit_id=sh.id
+
+
+-- trace from voc_assignment_id to 
+select * from assignments a, hits h
+where
+a.hit_id=h.id 
+and
+a.id=6
+
+select * from voc_hits_results
+
+select * from voc_hits_data
+
+select * from assignments
+
+select * from syn_hits_data
+
+
+
+
+		
+		
+		
+	*review-step2.py
 		review results of step2
 
 		HOW IT WORKS:
@@ -90,7 +229,7 @@ RUN CONTINUOUSLY:
 				
 				 do something with all the QA data and pass it to step 1
 
-	review-step1.py 
+	*review-step1.py 
 		review results of step1
 		
 		HOW IT WORKS:

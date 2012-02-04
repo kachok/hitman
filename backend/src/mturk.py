@@ -25,18 +25,18 @@ def conn():
 
 # Define authentication routines
 def generate_timestamp(gmtime):
-    return time.strftime("%Y-%m-%dT%H:%M:%SZ", gmtime)
+	return time.strftime("%Y-%m-%dT%H:%M:%SZ", gmtime)
 
 def generate_signature(service, operation, timestamp, secret_access_key):
-    my_sha_hmac = hmac.new(secret_access_key, service + operation + timestamp, sha)
-    my_b64_hmac_digest = base64.encodestring(my_sha_hmac.digest()).strip()
-    return my_b64_hmac_digest
+	my_sha_hmac = hmac.new(secret_access_key, service + operation + timestamp, sha)
+	my_b64_hmac_digest = base64.encodestring(my_sha_hmac.digest()).strip()
+	return my_b64_hmac_digest
 
-def escape(str):
-	str=str.replace("<","&lt;")
-	str=str.replace(">","&gt;")
+def escape(s):
+	s=s.replace("<","&lt;")
+	s=s.replace(">","&gt;")
 	#str=str.replace("&","&amp;")
-	return str
+	return s
 
 def generate_params(operation):
 	# assemble common parameters for MTurk call
@@ -78,11 +78,11 @@ def get_val(output, element):
 	# Check for and print results and errors
 	errors_nodes = result_xml.getElementsByTagName('Errors')
 	if errors_nodes:
-	    print 'There was an error processing your request:'
-	    for errors_node in errors_nodes:
-		for error_node in errors_node.getElementsByTagName('Error'):
-		    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
-		    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+		print 'There was an error processing your request:'
+		for errors_node in errors_nodes:
+			for error_node in errors_node.getElementsByTagName('Error'):
+				print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+				print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
 	
 	nodes = result_xml.getElementsByTagName(element)
 	return nodes[0].childNodes[0].data
@@ -102,11 +102,11 @@ def show():
 	# Check for and print results and errors
 	errors_nodes = result_xml.getElementsByTagName('Errors')
 	if errors_nodes:
-	    print 'There was an error processing your request:'
-	    for errors_node in errors_nodes:
-		for error_node in errors_node.getElementsByTagName('Error'):
-		    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
-		    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+		print 'There was an error processing your request:'
+		for errors_node in errors_nodes:
+			for error_node in errors_node.getElementsByTagName('Error'):
+				print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+				print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
 
 	print result_xmlstr
 
@@ -130,11 +130,11 @@ def review():
 	# Check for and print results and errors
 	errors_nodes = result_xml.getElementsByTagName('Errors')
 	if errors_nodes:
-	    print 'There was an error processing your request:'
-	    for errors_node in errors_nodes:
-		for error_node in errors_node.getElementsByTagName('Error'):
-		    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
-		    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+		print 'There was an error processing your request:'
+		for errors_node in errors_nodes:
+			for error_node in errors_node.getElementsByTagName('Error'):
+				print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+				print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
 
 	print result_xmlstr
 
@@ -163,11 +163,11 @@ def cleanup():
 			# Check for and print results and errors
 			errors_nodes = result_xml.getElementsByTagName('Errors')
 			if errors_nodes:
-			    print 'There was an error processing your request:'
-			    for errors_node in errors_nodes:
-				for error_node in errors_node.getElementsByTagName('Error'):
-				    print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
-				    print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
+				print 'There was an error processing your request:'
+				for errors_node in errors_nodes:
+					for error_node in errors_node.getElementsByTagName('Error'):
+						print '  Error code:    ' + error_node.getElementsByTagName('Code')[0].childNodes[0].data
+						print '  Error message: ' + error_node.getElementsByTagName('Message')[0].childNodes[0].data
 	
 
 			nodes = result_xml.getElementsByTagName('HITId')
@@ -197,5 +197,3 @@ def cleanup():
 <?xml version="1.0"?>
 <DisableHITResponse><OperationRequest><RequestId>d540041c-f51d-4832-bb76-e8b37a0045bf</RequestId></OperationRequest><DisableHITResult><Request><IsValid>True</IsValid></Request></DisableHITResult></DisableHITResponse>
 """
-
-
