@@ -143,7 +143,7 @@ for i, lang in enumerate(langs):
 	rows = cur.fetchall()
 	"""
 	
-	sql="select vhr.translation, d.translation, mturk_assignment_id, word_id from vocabularyhitresults vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id and language_id=%s"
+	sql="select vhr.translation, d.translation, assignment_id, word_id from vocabularyhitresults vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id and language_id=%s"
 	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 
@@ -162,16 +162,16 @@ for i, lang in enumerate(langs):
 			word_id=item[3]
 			translation=item[0]
 			synonym=item[1]
-			mturk_assignment_id=item[2]
+			assignment_id=item[2] #this assignment id traced to vocabulary HITs assignments table primary key (so we can traverse back from QA)
 			
 			
-			sql="INSERT INTO synonymshitsdata (hit_id, word_id, synonym, translation) VALUES (%s, %s, %s, %s);"
-			cur2.execute(sql,(hit_id, word_id, synonym, translation))
+			sql="INSERT INTO synonymshitsdata (hit_id, word_id, synonym, translation, assignment_id, is_control) VALUES (%s, %s, %s, %s, %s, %s);"
+			cur2.execute(sql,(hit_id, word_id, synonym, translation, assignment_id, 0))
 
 		for i in range(settings["synonyms_num_knowns"]):
-			sql="INSERT INTO synonymshitsdata (hit_id, word_id, synonym, translation) VALUES (%s, %s, %s, %s);"
+			sql="INSERT INTO synonymshitsdata (hit_id, word_id, synonym, translation, assignment_id, is_control) VALUES (%s, %s, %s, %s, %s, %s);"
 			synonym, translation=syn()
-			cur2.execute(sql,(hit_id, 0, synonym, translation))
+			cur2.execute(sql,(hit_id, 0, synonym, translation,assignment_id,1))
 
 	conn.commit()
 

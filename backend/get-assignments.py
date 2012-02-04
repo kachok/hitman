@@ -93,13 +93,23 @@ for i, lang in enumerate(langs):
 			worker_id=assgnmnt.WorkerId
 			assignment_id=assgnmnt.AssignmentId
 			submit_time=assgnmnt.SubmitTime
+			status=assgnmnt.AssignmentStatus
 			
 			results={}
 			for i in assgnmnt.answers[0]:
 				results[i.fields[0][0]]=i.fields[0][1]
 				
 			result=json.dumps(results)
+
+
+			control=""
+			quality=""
+
+			sql="SELECT add_vocabularyhitassignment(%s, %s, %s, %s, %s, %s, %s, %s);"
+			cur.execute(sql,(mturk_hit_id, assignment_id, worker_id, status, result, submit_time, control, quality))
 			
+			assignment_id = cur.fetchone()[0]
+						
 			#for i in range(settings["num_knowns"]+settings["num_unknowns"]):
 			for key in results.keys():
 				if key.find("word")==0:
@@ -110,8 +120,8 @@ for i, lang in enumerate(langs):
 					translation=results[key]
 					reason=results["reason"+num]
 
-					sql="SELECT add_vocabularyhitresult(%s, %s, %s, %s, %s, %s, %s, %s, %s);"
-					cur.execute(sql,(mturk_hit_id, assignment_id, worker_id, result, submit_time, int(word_id), translation, reason, int(is_control)))
+					sql="SELECT add_vocabularyhitresult(%s, %s, %s, %s, %s);"
+					cur.execute(sql,(assignment_id, int(word_id), translation, reason, int(is_control)))
 					result_id = cur.fetchone()[0]
 					conn.commit()					
 					

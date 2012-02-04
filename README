@@ -55,9 +55,59 @@ RUN CONTINUOUSLY:
 				+add extra assignment for each rejected assignment to corresponding HITs
 
 			for all HITs:
-				-if # of accepted assignments=3 do something with all the QA data and pass it to step 1
+				+select all HITS if # of accepted assignments=3
+				
+				-calculate passed/failed translations for each HIT for each word_id
+				
+						select * from synonymshits h, synonymshitassignments a, synonymshitresults r, synonymshitsdata d
+						where a.mturk_hit_id=h.mturk_hit_id
+						and
+						r.assignment_id=a.id
+						and 
+						r.pair_id=d.id
+						
+						
+						
+						
+						-- select words and 1/0 for correct/incorrect (need to be grouped)
+
+						select word_id, d.assignment_id,
+							case WHEN are_synonyms='no' THEN 0
+							else 1 
+							end as correct
+
+						from synonymshits h, synonymshitassignments a, synonymshitresults r, synonymshitsdata d
+						where a.mturk_hit_id=h.mturk_hit_id
+						and
+						r.assignment_id=a.id
+						and 
+						r.pair_id=d.id
+						and 
+						d.is_control=0
+						
+				-push fail/pass status to step 1
+				
+				
+				 do something with all the QA data and pass it to step 1
 
 	review-step1.py 
+		review results of step1
+		
+		HOW IT WORKS:
+			for all assignments:
+				-review if passed/failed based on results pushed from step2
+				-mark assignments as passed/failed
+				-go to MTurk and accept/reject assignments as needed
+				-add extra assignment for each rejected assignment to corresponding HITs
+
+			for all HITs:
+				-select all HITS if # of accepted assignments=3
+				
+				-calculate passed/failed translations for each HIT for each word_id
+				
+				-build dictionary
+
+				-tada!
 	
 	
 	
@@ -87,7 +137,19 @@ tasks estimates
 
 
 	
-	
+Rules for grading tasks:
+
+
+First 10 assignments performed by worker are auto-approved
+
+After that assignments are rated based on scale:
+100%-70% approved, results good
+70%-50% approved, results are questionable
+50%-0% rejected, results are thrown away
+
+
+give ? for questionable controls, see for majority vote
+
 	
 	
 	
