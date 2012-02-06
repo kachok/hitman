@@ -110,7 +110,7 @@ for row in rows:
 		parameters2={
 			"HITTypeId":hittype_id,
 			'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>800</FrameHeight></ExternalQuestion>',
-			"Title":"Mark pairs of words as synonyms or not in English",
+			"Title":"Do these words have the same meaning?",
 			'LifetimeInSeconds':settings["lifetimeinseconds"],
 			"MaxAssignments":settings["max_assignments"],
 			"UniqueRequestToken":guid,
