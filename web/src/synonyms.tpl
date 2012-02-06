@@ -133,7 +133,9 @@
 
 
 		//html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
-		html='<tr><td> <b>'+data["words"][word]["translation"]+"</b> and <b>"+data["words"][word]["synonym"]+"</b><br/>"+options+checks+'</div><br/></td></tr>';
+		html='<tr><td> <b><a target="_blank" href="http://dictionary.reference.com/browse/'+data["words"][word]["synonym"]+'">'+data["words"][word]["synonym"]+'</a></b> and <b><a target="_blank" href="http://dictionary.reference.com/browse/'+data["words"][word]["translation"]+'">'+data["words"][word]["translation"]+"</a></b><br/>"+options+checks+'</div><br/></td></tr>';
+
+
 		//alert(html);
 
 		$("#word_table").html($("#word_table").html()+html);
@@ -200,15 +202,19 @@
    
   </script>
   
-  <h1>Synonyms in English</h1>
+  <h1>Do these words have the same meaning?</h1>
   <table width="100%">
   	<tr>
      	<td width="*">
   <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
-	            <p>Please&nbsp;<b>do not use</b>&nbsp; web dictionaries to do this task.&nbsp;</p>
+	            <p>If you don't understand one of the words, click the word to go to dictionary page.</p>
 	            <ul>
-	                <li>For each of the words, mark words underneath as synonyms or not. If it is not a synonym, specify reason why from the list of options.</li>
+	                <li>For each pair of words say if they have the same meaning mark them as "synonyms".</li> 
+	                <li>If they are related but not synonyms (like car and bus)
+mark them as "related but not synonymous".</li> 
+					<li>If either of the words is misspelled, first categorize if they mean the same, then mark them as "misspelled".
+</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
@@ -264,7 +270,7 @@
   			
   			
   			
-<div id="debug">
+<div id="debug" style="display:none">
 	<h3>Debug:</h3>
 </div>
   		</td>

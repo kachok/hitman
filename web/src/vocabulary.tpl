@@ -150,7 +150,8 @@
 		"</select>";
 
 		//html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
-		html='<tr '+c+' ><td id="word'+word+'"><!--'+data["words"][word]["word"]+'--><img src="/static/images/{{params['lang']}}/word/'+data["words"][word]["word_id"]+'.png"/></td><td><input id="word'+word+'in" type="text" name="word'+word+'-'+data["words"][word]["word_id"]+'" size="50"></input><br/><div id="word'+word+'help" style="display:none"><img src="/static/images/{{params['lang']}}/sentences/'+data["words"][word]["word_id"]+'.png"/></div></td><td width="400px"><label for="check'+word+'">Can\'t translate</label> <input type="checkbox" name="check'+word+'" id="check'+word+'"></input> <div id="reason'+word+'div" style="display:none;"> '+options+'</div></td></tr>';
+		html='<tr '+c+' ><td id="word'+word+'"><!--'+data["words"][word]["word"]+'--><img src="/static/images/{{params['lang']}}/word/'+data["words"][word]["word_id"]+'.png"/></td><td><input id="word'+word+'in" type="text" name="word'+word+'-'+data["words"][word]["word_id"]+'" size="50"></input></td><td width="400px"><label for="check'+word+'">Can\'t translate</label> <input type="checkbox" name="check'+word+'" id="check'+word+'"></input> <div id="reason'+word+'div" style="display:none;"> '+options+'</div></td></tr>';
+		html=html+'<tr><td></td><td colspan="2"><div id="word'+word+'help" style="display:none"><img src="/static/images/{{params['lang']}}/sentences/'+data["words"][word]["word_id"]+'.png"/></div></td></tr>';
 		//alert(html);
 		
 		$("#word_table").html($("#word_table").html()+html);
