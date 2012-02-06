@@ -79,10 +79,10 @@ public class generateimages
 		}
 		  
 		if (count.equals("2")){
-			  sentence = sentence+"/n/n"+sentenceReader.readLine();
+			  sentence = sentence+" "+sentenceReader.readLine();
 		}
 		if (count.equals("3")){
-			  sentence = sentence+"/n/n"+sentenceReader.readLine()+"/n/n"+sentenceReader.readLine();
+			  sentence = sentence+" "+sentenceReader.readLine()+" "+sentenceReader.readLine();
 		}
 
 		//System.out.println(count);
