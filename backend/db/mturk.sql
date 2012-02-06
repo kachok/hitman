@@ -655,7 +655,9 @@ ALTER SEQUENCE cookies_id_seq OWNED BY cookies.id;
 CREATE TABLE dictionary (
     id integer NOT NULL,
     word character varying,
-    sentences character varying,
+    sentence1 character varying,
+    sentence2 character varying,
+    sentence3 character varying,
     language_id integer,
     translation character varying
 );
@@ -1175,7 +1177,9 @@ CREATE VIEW voc_workers_performance AS
 CREATE TABLE vocabulary (
     id integer NOT NULL,
     word character varying,
-    sentences text,
+    sentence1 text,
+    sentence2 text,
+    sentence3 text,
     language_id integer
 );
 

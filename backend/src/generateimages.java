@@ -48,18 +48,46 @@ public class generateimages
 	  String segID = segIdReader.readLine();
 	  Boolean ltr = true;
 
+
+
 	  while (sentence != null) {
+
+		//System.out.println(segID);
+
+
+		String[] parts=segID.split("-");
+
 		 
-		 if (segID.split("-")[1].equals("ltr")){
+		 if (parts[1].equals("ltr")){
 			ltr=true;
  		}
          else{ltr=false;}
 
-		 String lang=segID.split("-")[2];
-		String sub=segID.split("-")[3];
-		  segID=segID.split("-")[0];
-		
 
+
+		String lang=parts[2];
+		String sub=parts[3];
+		segID=parts[0];
+		
+		String count="1";
+		int size=300;
+		
+		if (sub.equals("sentences")){
+			count=parts[4];
+			size=600;
+		//System.out.println("processing sentences");
+		}
+		  
+		if (count.equals("2")){
+			  sentence = sentence+"/n/n"+sentenceReader.readLine();
+		}
+		if (count.equals("3")){
+			  sentence = sentence+"/n/n"+sentenceReader.readLine()+"/n/n"+sentenceReader.readLine();
+		}
+
+		//System.out.println(count);
+	
+		  
 		  //create directory per language if needed
 		  String langDir=outputDir+"/"+lang;
 		  dir = new File(langDir);
@@ -74,10 +102,11 @@ public class generateimages
 			System.out.println("created folder: "+subDir);
 		  }
 		  
+		//System.out.println(size);
 		  
 		  String imageFilename = generateimages.getPath(subDir, segID + ".png");
 		  try {
-			  str2img(formatForImage(sentence), 445, 1.5f, imageFilename, ltr);
+			  str2img(formatForImage(sentence), size, 1.5f, imageFilename, ltr);
 			  sentence = sentenceReader.readLine();
 			  segID = segIdReader.readLine();
 		  } catch (Exception e) {

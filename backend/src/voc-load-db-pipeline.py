@@ -56,7 +56,7 @@ for lang in langs:
 	try:
 		cur.execute(sql,(langs_properties[lang]["name"], lang))
 	except:
-		print "error"
+		print "lang error"
 
 conn.commit()
 
@@ -107,12 +107,22 @@ for i, lang in enumerate(langs):
 		#print word, voc[word]
 		#print type(word)
 		if len(word)>0:
-			sql="INSERT INTO vocabulary (word, sentences, language_id) VALUES (%s, %s,%s);"
+			sql="INSERT INTO vocabulary (word, sentence1, sentence2, sentence3, language_id) VALUES (%s, %s,%s);"
 			#print word, voc[word]["context"], lang_id
 			try:
-				cur.execute(sql,(word, voc[word]["context"], lang_id))
+				sentence1=""
+				sentence2=""
+				sentence3=""
+				
+				try:
+					senetence1=voc[word]["context"][0]
+					senetence1=voc[word]["context"][1]
+					senetence1=voc[word]["context"][2]
+				except:
+					pass
+				cur.execute(sql,(word, sentence1, sentence2, sentence3, lang_id))
 			except:
-				print "error"
+				print "voc error"
 	
 	conn.commit()
 	
@@ -134,12 +144,26 @@ for i, lang in enumerate(langs):
 		#print word, voc[word]
 		#print type(word)
 		if len(word)>0:
-			sql="INSERT INTO dictionary (word, translation, sentences, language_id) VALUES (%s, %s, %s, %s);"
+			sql="INSERT INTO dictionary (word, translation, sentence1, sentence2, sentence3, language_id) VALUES (%s, %s, %s, %s);"
 			#print word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id
 			try:
-				cur2.execute(sql,(word.lower(), links[word]["translation"].lower(), links[word]["context"], lang_id))
+				sentence1=""
+				sentence2=""
+				sentence3=""
+				
+				try:
+					senetence1=voc[word]["context"][0]
+					senetence1=voc[word]["context"][1]
+					senetence1=voc[word]["context"][2]
+				except:
+					pass
+				
+				cur2.execute(sql,(word.lower(), links[word]["translation"].lower(), sentence1, sentence2, sentence3, lang_id))
+				#print links[word]["context"]
+				#print len(links[word]["context"])
+				#print json.dumps(links[word]["context"])
 			except:
-				print "error"
+				print "dict error"
 				
 	
 	conn.commit()

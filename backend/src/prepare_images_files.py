@@ -74,17 +74,33 @@ for i, lang in enumerate(langs):
 	rows = cur.fetchall()
 
 	for row in rows:
+		sentences=0
+		sentence1=row[2].decode('UTF-8')
+		sentence2=row[3].decode('UTF-8')
+		sentence3=row[4].decode('UTF-8')
+
+		sentences=sentences+1
+		if len(sentence2)>0: sentences=sentences+1
+		if len(sentence3)>0: sentences=sentences+1
+		
+		
 		#print row[0], row[1], row[2]
 		word_id=str(row[0]).zfill(9)+'0'
 		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
+		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences-"+str(sentences))
 		segments_file.write("\n")
 		
 		sentence_file.write(row[1].decode('UTF-8'))
 		sentence_file.write("\n")
-		sentence_file.write(row[2].decode('UTF-8'))
+		sentence_file.write(sentence1)
 		sentence_file.write("\n")
+		if len(sentence2)>0: 
+			sentence_file.write(sentence2)
+			sentence_file.write("\n")
+		if len(sentence3)>0: 
+			sentence_file.write(sentence3)
+			sentence_file.write("\n")
 
 
 	sql="SELECT * from dictionary WHERE language_id=%s;"
@@ -92,18 +108,37 @@ for i, lang in enumerate(langs):
 	rows = cur.fetchall()
 
 	for row in rows:
+		sentences=0
+		sentence1=row[2].decode('UTF-8')
+		sentence2=row[3].decode('UTF-8')
+		sentence3=row[4].decode('UTF-8')
+
+		sentences=sentences+1
+		if len(sentence2)>0: sentences=sentences+1
+		if len(sentence3)>0: sentences=sentences+1
+		
 		#print row[0], row[1], row[2]
 		word_id=str(row[0]).zfill(9)+'1'
 		
 		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences")
+		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences-"+str(sentences))
 		segments_file.write("\n")
+
+		sentence1=row[2].decode('UTF-8')
+		sentence2=row[3].decode('UTF-8')
+		sentence3=row[4].decode('UTF-8')
 
 		sentence_file.write(row[1].decode('UTF-8'))
 		sentence_file.write("\n")
-		sentence_file.write(row[2].decode('UTF-8'))
+		sentence_file.write(sentence1)
 		sentence_file.write("\n")
+		if len(sentence2)>0: 
+			sentence_file.write(sentence2)
+			sentence_file.write("\n")
+		if len(sentence3)>0: 
+			sentence_file.write(sentence3)
+			sentence_file.write("\n")
 
 	sentence_file.close()
 	segments_file.close()
