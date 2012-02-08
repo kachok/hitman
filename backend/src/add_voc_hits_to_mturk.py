@@ -113,7 +113,7 @@ for i, lang in enumerate(langs):
 			parameters2={
 				"HITTypeId":mturk_hittype_id,
 				'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>800</FrameHeight></ExternalQuestion>',
-				"Title":"Translate "+str(settings["num_unknowns"]+settings["num_knowns"])+" words from "+langs_properties[lang]["name"] +" to English",
+				"Title":"Translate "+(u"Translate words from "+langs_properties[lang]["name"]+u" to English").encode('utf-8'),
 				'LifetimeInSeconds':settings["lifetimeinseconds"],
 				"MaxAssignments":settings["max_assignments"],
 				"UniqueRequestToken":guid,
