@@ -1,20 +1,10 @@
 # -*- coding: utf-8 -*-
 
 
-import mturk
 from settings import settings
-
-from langlib import get_languages_list, get_languages_properties
-
 import psycopg2
 
-from itertools import islice, chain
-
-import uuid
-
-
 from nltk.corpus import wordnet
-
 from nltk.corpus import brown # some random corpus...
 
 import random
@@ -33,7 +23,7 @@ def syn():
 					word2=l.name
 					#print "word2: ", word2
 					#not(word.search("_")>0 or len(word)<4) and not( word2.search("_")>0 or len(word2)<4) and 
-					if not (word==word2):
+					if not (word==word2) and not(word.find("_")>0 or len(word)<4) and not( word2.find("_")>0 or len(word2)<4):
 						return (word,word2)
 		except Exception:
 			continue
