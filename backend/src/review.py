@@ -22,7 +22,9 @@ def grade_syn(conn, assignment_id, worker_id):
 	cur = conn.cursor()
 
 	#grade controls first
-	sql="SELECT * FROM syn_hits_results WHERE assignment_id=%s and is_control=1;"
+	# NOTE: is_control = 1 or 2 for control (according to get_assignment.py)
+	sql="SELECT * FROM syn_hits_results WHERE assignment_id=%s and is_control>0;"
+	
 	
 	cur.execute(sql, (assignment_id,))
 	rows=cur.fetchall()
@@ -32,11 +34,19 @@ def grade_syn(conn, assignment_id, worker_id):
 	for row in rows:
 		result_id=str(row[0])
 		are_synonyms=str(row[3])
+		is_control=str(row[5])
 		#misspelled=str(row[4])
 
 		data_quality=0
-		if are_synonyms=='yes':
-			data_quality=1
+		#positive control /synonyms
+		if is_control=="1":
+			if are_synonyms!='no':
+				data_quality=1
+
+		#negative control /non-synonyms
+		if is_control=="2":
+			if are_synonyms=='no':
+				data_quality=1
 		
 		#TODO: adjust quality if misspelled
 		#if misspelled='':

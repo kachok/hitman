@@ -126,7 +126,7 @@ def index():
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
 		total=total+1
 
-	sql="select * from synonyms s order by random() limit 2"
+	sql="select * from synonyms s order by random() limit 1"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -135,6 +135,21 @@ def index():
 
 	for row in rows:
 		bit="1" #control pair
+		pair_id=str(row[0]).zfill(9)+bit
+		translation=str(row[1])
+		synonym=str(row[2])
+		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
+		total=total+1
+
+	sql="select * from non_synonyms s order by random() limit 1"
+
+	#print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	for row in rows:
+		bit="2" #negative control pair 
 		pair_id=str(row[0]).zfill(9)+bit
 		translation=str(row[1])
 		synonym=str(row[2])
@@ -191,6 +206,6 @@ def synonyms_hit():
 		}
 	return dict(params=params)
 
-debug(True)
-run(reloader=True, port=80)
+#debug(True)
+#run(reloader=True, port=80)
 #run(host='localhost', port=80)
