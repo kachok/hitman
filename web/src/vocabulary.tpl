@@ -226,16 +226,11 @@
      	<td width="*">
   <div id="instructions">
 	<p>This HIT is only for people who speak both {{params['lang_name']}} and English.</p>
-	            <p>Please&nbsp;<b>do not use</b>&nbsp;translation software or online machine translation systems like Google translate.&nbsp;Please make sure that your English translation:</p>
-	            <ul>
-		
-					<li>Please translate each of the 10 words shown below.   When you click in the text area, you will be shown some examples of the words used in sentences.  You only need to translate the word itself, no the whole sentences.  If you are unable to translate one of the words, you should use checkbox on the right to mark those words and pick a reason why you can't translate it using the drop down list.</li>
+	            <p>Please translate each of the 10 words shown below.   When you click in the text area, you will be shown some examples of the words used in sentences.  You only need to translate the word itself, no the whole sentences.  If you are unable to translate one of the words, you should use checkbox on the right to mark those words and pick a reason why you can't translate it using the drop down list.</p>
 
-					<li>If any of the words has more than one possible translation, just enter the one that you think is the most common.</li>
-
-					<li>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know {{params['lang_name']}} then do not do this HIT.</li>
-		
-	            </ul>
+					    <p>If any of the words has more than one possible translation, just enter the one that you think is the most common.</p>
+						<p>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know either of the languages then do not do this HIT.</p>
+						
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
   <div id="instructions2"  style="display:none;">
