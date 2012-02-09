@@ -231,9 +231,9 @@
 		
 					<li>Please translate each of the 10 words shown below.   When you click in the text area, you will be shown some examples of the words used in sentences.  You only need to translate the word itself, no the whole sentences.  If you are unable to translate one of the words, you should use checkbox on the right to mark those words and pick a reason why you can't translate it using the drop down list.</li>
 
-					<li>If any of the words has more than one possible translation, just enter the one that you think is the most common.<li>
+					<li>If any of the words has more than one possible translation, just enter the one that you think is the most common.</li>
 
-					<li>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know {{params['lang_name']}} then do not do this HIT.<li>
+					<li>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know {{params['lang_name']}} then do not do this HIT.</li>
 		
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
