@@ -276,7 +276,7 @@
 				</div>
 
 				<div id="words_panel">
-					<h3>Task</h3>
+					<h3>Translate the individual words on the left</h3>
 					<table id="word_table">
 					</table>
 				</div>
