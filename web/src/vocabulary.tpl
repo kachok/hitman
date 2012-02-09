@@ -228,13 +228,14 @@
 	<p>This HIT is only for people who speak both {{params['lang_name']}} and English.</p>
 	            <p>Please&nbsp;<b>do not use</b>&nbsp;translation software or online machine translation systems like Google translate.&nbsp;Please make sure that your English translation:</p>
 	            <ul>
-	                <li>Does not add or delete any information from the original text</li>
-	                <li>Has the same meaning and style as the original</li>
-	                <li>Does not contain any spelling errors</li>
-	                <li>Is grammatical, natural-sounding English</li>
-	                <li>Uses normal capitalization conventions (DON'T&nbsp;WRITE IN UPPERCASE)</li>
+		
+					<li>Please translate each of the 10 words shown below.   When you click in the text area, you will be shown some examples of the words used in sentences.  You only need to translate the word itself, no the whole sentences.  If you are unable to translate one of the words, you should use checkbox on the right to mark those words and pick a reason why you can't translate it using the drop down list.</li>
+
+					<li>If any of the words has more than one possible translation, just enter the one that you think is the most common.<li>
+
+					<li>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know {{params['lang_name']}} then do not do this HIT.<li>
+		
 	            </ul>
-				<p>If some of the words can't be translated, use checkbox on the right to mark those words and pick a reason why translation can't be provided from the drop down list.</p>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
   <div id="instructions2"  style="display:none;">

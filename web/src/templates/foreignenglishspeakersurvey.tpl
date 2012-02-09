@@ -33,7 +33,7 @@
                 </tbody>
             </table>
 <br/>
-  <a href="" id="hide_survey">save survey</a>
+  <a href="" id="hide_survey">save survey (cookies must be enabled)</a>
 </div>
 <div id="survey2"  style="display:none;">
 	<div id="survey_summary"></div>
