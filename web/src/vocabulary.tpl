@@ -226,7 +226,7 @@
      	<td width="*">
   <div id="instructions">
 	<p>This HIT is only for people who speak both {{params['lang_name']}} and English.</p>
-	            <p>Please translate each of the 10 words shown below.   When you click in the text area, you will be shown some examples of the words used in sentences.  You only need to translate the word itself, no the whole sentences.  If you are unable to translate one of the words, you should use checkbox on the right to mark those words and pick a reason why you can't translate it using the drop down list.</p>
+	            <p>Please translate each of the 10 words shown below.   When you click in the text area, you will be shown some examples of the words used in sentences.  You only need to translate the word itself, not the whole sentences.  If you are unable to translate one of the words, you should use checkbox on the right to mark those words and pick a reason why you can't translate it using the drop down list.</p>
 
 					    <p>If any of the words has more than one possible translation, just enter the one that you think is the most common.</p>
 						<p>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know either of the languages then do not do this HIT.</p>
