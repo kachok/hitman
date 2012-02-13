@@ -101,98 +101,88 @@ hittype_id = cur.fetchone()[0]
 	
 conn.commit()
 
-# iterate over each language individually
-for i, lang in enumerate(langs):
-	
-	logging.info("processing language: %s (#%s out of %s) " %(lang,i+1,len(langs)))
 
-	cur = conn.cursor()
+	
+logging.info("processing all languages altogether: %s " %(len(langs)))
+
+cur = conn.cursor()
+cur2 = conn.cursor()
+
+
+#select all Submitted assignments
+logging.info("select all submitted assignements of syn type")
+sql="SELECT vas.* from voc_assignments_submitted vas, hits h where vas.hit_id=h.id"
+
+cur.execute(sql)
+rows=cur.fetchall()
+for row in rows:
+	assignment_id=str(row[0])
+	worker_id=str(row[3])
+	
+	print "processing - ", assignment_id, worker_id
+	
+	#mark assignment as under review
 	cur2 = conn.cursor()
-
-
-	sql="SELECT id from languages where prefix=%s;"
-	cur.execute(sql, (lang,))
-	rows = cur.fetchall()
-
-	lang_id=0
-	for row in rows:
-		lang_id=row[0]
-
-
-	#select all Submitted assignments
-	logging.info("select all submitted assignements of syn type")
-	sql="SELECT vas.* from voc_assignments_submitted vas, hits h where vas.hit_id=h.id and h.language_id=%s;"
-	
-	cur.execute(sql, (lang_id,))
-	rows=cur.fetchall()
-	for row in rows:
-		assignment_id=str(row[0])
-		worker_id=str(row[3])
-		
-		print "processing - ", assignment_id, worker_id
-		
-		#mark assignment as under review
-		cur2 = conn.cursor()
-		sql2="UPDATE assignments SET status='Under Review' WHERE id=%s;"
-		cur2.execute(sql2, (assignment_id,))
-		conn.commit()
-		print "marked assignment as Under Review"
-		
-		
-		sql="select vhr.translation, d.translation from voc_hits_results vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id   and vhr.translation <> d.translation  and vhr.assignment_id=%s"	
-		cur2.execute(sql, (assignment_id, ))
-		rows2 = cur2.fetchall()
-		print lang_id
-		for row2 in rows2:
-			translation=str(row2[0])
-			synonym=str(row2[1])
-			
-			print translation, synonym
-			
-			cur3=conn.cursor()
-			sql="select add_syn_hit_data(%s, %s, %s, %s);"
-			cur3.execute(sql, (synonym, translation, 0, lang_id))
-		
-		conn.commit()
-			
-
-
-	#sql="select vhr.translation, d.translation, assignment_id, word_id from voc_hits_results vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id and language_id=%s"
-	sql="select translation, synonym, id from syn_hits_data where hit_id is null and language_id=%s"
-	cur.execute(sql, (lang_id,))
-	rows = cur.fetchall()
-
-	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_synonyms_hit_path"]+"/"+lang
-
-	for batchiter in batch(rows, settings["synonyms_num_unknowns"]):
-
-		guid=str(uuid.uuid4())
-
-		sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
-		cur2.execute(sql,("", guid, hittype_id, target_lang_id, 0, 0, 0))
-		hit_id = cur2.fetchone()[0]
-
-		logging.info("Batch ")
-		for item in batchiter:
-			#word_id=item[3]
-			translation=item[0]
-			synonym=item[1]
-			data_id=item[2]
-			#assignment_id=item[2] #this assignment id traced to vocabulary HITs assignments table primary key (so we can traverse back from QA)
-			
-			
-			#sql="INSERT INTO syn_hits_data (hit_id, word_id, synonym, translation, voc_assignment_id, is_control) VALUES (%s, %s, %s, %s, %s, %s);"
-			sql="UPDATE syn_hits_data SET hit_id=%s where id=%s;"
-			cur2.execute(sql,(hit_id, data_id))
-			#tied data to specific HIT
-
-		# this will be handled on web side
-		#for i in range(settings["synonyms_num_knowns"]):
-		#	sql="INSERT INTO syn_hits_data (hit_id, synonym, translation, is_control, language_id) VALUES (%s, %s, %s, %s,%s);"
-		#	synonym, translation=syn()
-		#	cur2.execute(sql,(hit_id, synonym, translation,1, lang_id))
-
+	sql2="UPDATE assignments SET status='Under Review' WHERE id=%s;"
+	cur2.execute(sql2, (assignment_id,))
 	conn.commit()
+	print "marked assignment as Under Review"
+	
+	
+	sql="select vhr.translation, d.translation from voc_hits_results vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id   and vhr.translation <> d.translation  and vhr.assignment_id=%s"	
+	cur2.execute(sql, (assignment_id, ))
+	rows2 = cur2.fetchall()
+	print lang_id
+	for row2 in rows2:
+		translation=str(row2[0])
+		synonym=str(row2[1])
+		
+		print translation, synonym
+		
+		cur3=conn.cursor()
+		sql="select add_syn_hit_data(%s, %s, %s, %s);"
+		cur3.execute(sql, (synonym, translation, 0, lang_id))
+	
+	conn.commit()
+		
+
+
+#sql="select vhr.translation, d.translation, assignment_id, word_id from voc_hits_results vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id and language_id=%s"
+sql="select translation, synonym, id from syn_hits_data where hit_id is null"
+cur.execute(sql)
+rows = cur.fetchall()
+
+web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_synonyms_hit_path"]+"/"+lang
+
+for batchiter in batch(rows, settings["synonyms_num_unknowns"]):
+
+	guid=str(uuid.uuid4())
+
+	sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
+	cur2.execute(sql,("", guid, hittype_id, target_lang_id, 0, 0, 0))
+	hit_id = cur2.fetchone()[0]
+
+	logging.info("Batch ")
+	for item in batchiter:
+		#word_id=item[3]
+		translation=item[0]
+		synonym=item[1]
+		data_id=item[2]
+		#assignment_id=item[2] #this assignment id traced to vocabulary HITs assignments table primary key (so we can traverse back from QA)
+		
+		
+		#sql="INSERT INTO syn_hits_data (hit_id, word_id, synonym, translation, voc_assignment_id, is_control) VALUES (%s, %s, %s, %s, %s, %s);"
+		sql="UPDATE syn_hits_data SET hit_id=%s where id=%s;"
+		cur2.execute(sql,(hit_id, data_id))
+		#tied data to specific HIT
+
+	# this will be handled on web side
+	#for i in range(settings["synonyms_num_knowns"]):
+	#	sql="INSERT INTO syn_hits_data (hit_id, synonym, translation, is_control, language_id) VALUES (%s, %s, %s, %s,%s);"
+	#	synonym, translation=syn()
+	#	cur2.execute(sql,(hit_id, synonym, translation,1, lang_id))
+
+conn.commit()
 
 	
 
