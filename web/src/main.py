@@ -126,7 +126,7 @@ def index():
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
 		total=total+1
 
-	sql="select * from synonyms s order by random() limit 1"
+	sql="select * from synonyms s where active=true order by random() limit 1"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -141,7 +141,7 @@ def index():
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
 		total=total+1
 
-	sql="select * from non_synonyms s order by random() limit 1"
+	sql="select * from non_synonyms s where active=true order by random() limit 1"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
