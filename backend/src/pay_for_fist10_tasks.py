@@ -58,7 +58,7 @@ rows = cur.fetchall()
 mturk_conn=mturk.conn()
 
 for row in rows:
-	worker_id=str(row[16])
+	worker_id=str(row[0])
 	
 	sql2="select * from assignments where worker_id=%s order by submit_time asc limit 10;"
 	cur2.execute(sql2, (worker_id,))
