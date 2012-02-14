@@ -73,11 +73,15 @@ for row in rows:
 		if mturk_status=='':
 			print "approve", mturk_assignment_id
 
-			#mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+			try:
+				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+			except:
+				print "failed to update status in MTurk"
+			
 			
 			sql3="UPDATE assignments SET mturk_status='approved (first 10)' WHERE id=%s;"
 			cur3.execute(sql3, (assignment_id,))
-			rows = cur.fetchall()
+			conn.commit()
 
 			
 		else:
