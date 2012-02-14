@@ -49,6 +49,7 @@ except:
 
 cur = conn.cursor()
 cur2 = conn.cursor()
+cur3 = conn.cursor()
 	
 sql="SELECT * FROM workers;"
 cur.execute(sql)
@@ -67,10 +68,18 @@ for row in rows:
 	for row2 in rows2:
 		mturk_assignment_id=str(row2[1])
 		mturk_status=str(row2[8])
+		assignment_id=str(row2[0])
 	
 		if mturk_status=='':
 			print "approve", mturk_assignment_id
+
 			#mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+			
+			sql3="UPDATE assignments SET mturk_status='approved (first 10)' WHERE id=%s;"
+			cur3.execute(sql3, (assignment_id,))
+			rows = cur.fetchall()
+
+			
 		else:
 			print "assignment is already ", mturk_status
 
