@@ -210,11 +210,11 @@
 	<p>This HIT is only for people who speak English.</p>
 	            <p>If you don't understand one of the words, click the word to go to dictionary page.</p>
 	            <ul>
-	                <li>For each pair of words say if they have the same meaning mark them as "synonyms".</li> 
-	                <li>If they are related but not synonyms (like car and bus)
-mark them as "related but not synonymous".</li> 
-					<li>If either of the words is misspelled, first categorize if they mean the same, then mark them as "misspelled".
-</li>
+					<li>For each pair of words say if they have the same meaning click "yes".</li>
+					<li>If the words are identical, click "yes".</li>
+					<li>If they are related but not synonyms (like car and bus) mark them as "related but not synonymous".</li>
+					<li>If the words do not mean the same thing and they are unrelated, click "no".</li>
+					<li>If either of the words is misspelled, first categorize if they mean the same, then mark them as "misspelled".</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
@@ -255,7 +255,7 @@ mark them as "related but not synonymous".</li>
 				</div>
 
 				<div id="words_panel">
-					<h3>Task</h3>
+					<h3>Do these words have the same meaning?</h3>
 					<table id="word_table">
 						
 					</table>
