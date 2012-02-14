@@ -109,8 +109,35 @@ def index():
 
 	cur = conn.cursor()
 
-	sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
+	sql=""
+	sql=sql+" select * from "
+	sql=sql+" ((select d.id, translation, synonym, 0 as bit from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s)"
+	sql=sql+" union"
+	sql=sql+" (select id, word, synonym, 1 as bit from synonyms s where active=true order by random() limit 1)"
+	sql=sql+" union"
+	sql=sql+" (select id, word, non_synonym, 2 as bit from non_synonyms s where active=true order by random() limit 1)"
+	sql=sql+" ) t order by random()" 
 
+	#sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
+
+	#print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	words=[]
+	total=0
+	for row in rows:
+		#bit="0" #regular pair
+		bit=str(row[3])
+		pair_id=str(row[0]).zfill(9)+bit
+		translation=str(row[1])
+		synonym=str(row[2])
+		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
+		total=total+1
+		print {"pair_id":pair_id, "translation":translation, "synonym":synonym}
+
+	"""
 	#print hitid
 	cur.execute(sql, (hitid,))
 
@@ -156,7 +183,7 @@ def index():
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
 		total=total+1
 
-
+	"""
 	conn.close()
 
 	response.content_type = 'application/json'
