@@ -65,8 +65,8 @@ for row in rows:
 	rows2 = cur2.fetchall()
 	
 	for row2 in rows2:
-		mturk_assignment_id=str(row[1])
-		mturk_status=str(row[8])
+		mturk_assignment_id=str(row2[1])
+		mturk_status=str(row2[8])
 	
 		if mturk_status=='':
 			print "approve", mturk_assignment_id
