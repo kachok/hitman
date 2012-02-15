@@ -51,7 +51,8 @@ except ImportError:
 
 
 class GetAssignmentsJob(workerpool.Job):
-	def __init__(self, mturk_hit_id, typename, fulltypename):
+	def __init__(self, hit_id, mturk_hit_id, typename, fulltypename):
+		self.hit_id = hit_id 
 		self.mturk_hit_id = mturk_hit_id 
 		self.typename = typename
 		self.fulltypename = fulltypename
@@ -65,7 +66,7 @@ class GetAssignmentsJob(workerpool.Job):
 		
 		logging.info("mturk hit id: "+self.mturk_hit_id+", fulltypename: "+self.fulltypename)
 
-		assignments=mturk_conn.get_assignments(hit_id=mturk_hit_id)
+		assignments=mturk_conn.get_assignments(hit_id=self.mturk_hit_id)
 		
 		for assgnmnt in assignments:
 			mturk_worker_id=assgnmnt.WorkerId
@@ -80,6 +81,7 @@ class GetAssignmentsJob(workerpool.Job):
 
 			mturk_status=""
 
+			print "assignment ", mturk_assignment_id, " status ", status
 			
 			lock.acquire()
 			cur=conn.cursor()
@@ -90,7 +92,7 @@ class GetAssignmentsJob(workerpool.Job):
 			#lock.release()
 
 			sql="SELECT add_assignment(%s, %s, %s, %s, %s, %s, %s);"
-			cur.execute(sql,(mturk_assignment_id, hit_id, mturk_worker_id, status, submit_time, result, mturk_status))
+			cur.execute(sql,(mturk_assignment_id, self.hit_id, mturk_worker_id, status, submit_time, result, mturk_status))
 			
 			conn.commit()
 			lock.release()
@@ -222,10 +224,10 @@ for row in rows:
 	logging.debug("mturk hit id: "+mturk_hit_id+", fulltypename: "+fulltypename+" *")
 
 	if typename=="synonyms" and args.hittype!='VOCABULARY':
-		job = GetAssignmentsJob(mturk_hit_id, typename, fulltypename)
+		job = GetAssignmentsJob(hit_id, mturk_hit_id, typename, fulltypename)
 		pool.put(job)
 	if typename=="vocabulary" and args.hittype!='SYNONYMS':
-		job = GetAssignmentsJob(mturk_hit_id, typename, fulltypename)
+		job = GetAssignmentsJob(hit_id, mturk_hit_id, typename, fulltypename)
 		pool.put(job)
 
 conn.close()
