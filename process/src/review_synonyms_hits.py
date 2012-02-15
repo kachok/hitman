@@ -97,7 +97,7 @@ conn.commit();
 mturk_conn=mturk.conn()
 
 #select all Graded assignment (with non Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="SELECT a.*, sh FROM assignments a, syn_hits sh WHERE a.hit_id = sh.id and a.status='Graded' and (a.mturk_status!='Approved' and a.mturk_status!='Rejected');"
+sql="SELECT a.*, sh.mturk_hit_id FROM assignments a, syn_hits sh WHERE a.hit_id = sh.id and a.status='Graded' and (a.mturk_status!='Approved' and a.mturk_status!='Rejected');"
 cur.execute(sql)
 rows=cur.fetchall()
 
