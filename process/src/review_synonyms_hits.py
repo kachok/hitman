@@ -112,7 +112,7 @@ for row in rows:
 	
 	#fetch current worker performance stats
 	cur2=conn.cursor()
-	sql2="SELECT * from syn_hits_workers_performance where worker_id=%s;"
+	sql2="SELECT * from syn_hits_workers_performance where id=%s;"
 	cur2.execute(sql2, (worker_id,))
 	rows2=cur2.fetchall()
 	worker_quality=0
