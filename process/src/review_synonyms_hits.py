@@ -153,7 +153,7 @@ for row in rows:
 		status='Closed (good quality)'
 		
 		sql2="UPDATE hits SET approved=approved+1 WHERE id=%s;"
-		cur2.execute(sql2, (hit_id))
+		cur2.execute(sql2, (hit_id,))
 		conn.commit()
 
 	else:
@@ -166,7 +166,7 @@ for row in rows:
 			print "mturk api error while incrementing assignments on HIT"
 
 		sql2="UPDATE hits SET rejected=rejected+1, assignments=assignments+1 WHERE id=%s;"
-		cur2.execute(sql2, (hit_id))
+		cur2.execute(sql2, (hit_id,))
 		conn.commit()
 
 	#pushing approve/reject status to Mechanical Turk
