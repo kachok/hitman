@@ -72,16 +72,18 @@ class GetAssignmentsJob(workerpool.Job):
 			mturk_worker_id=assgnmnt.WorkerId
 			mturk_assignment_id=assgnmnt.AssignmentId
 			submit_time=assgnmnt.SubmitTime
-			status=assgnmnt.AssignmentStatus
+			
+			status='Open'
+			
+			mturk_status=assgnmnt.AssignmentStatus
 			results={}
 			for i in assgnmnt.answers[0]:
 				results[i.fields[0][0]]=i.fields[0][1]
 				
 			result=json.dumps(results)
 
-			mturk_status=""
 
-			print "assignment ", mturk_assignment_id, " status ", status
+			print "assignment ", mturk_assignment_id, " mturk_status ", mturk_status
 			
 			lock.acquire()
 			cur=conn.cursor()
