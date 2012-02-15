@@ -19,7 +19,7 @@ import argparse
 # loading proper settings file
 # basic logging setup for console output
 
-parser = argparse.ArgumentParser(description='Build vocabularies and dictionaries for multiple languages based on Wikipedia',epilog="And that's how you'd do it")
+parser = argparse.ArgumentParser(description='Get completed assignments and results from Mechanical Turk',epilog="And that's how you'd do it")
 
 parser.add_argument('--settings', default='settings', help='filename of settings file to use: settings (.py) will be used by default')
 parser.add_argument('--level',default='INFO', choices=["DEBUG","INFO","WARNING","ERROR","CRITICAL"],help='logging level: e.g. DEBUG, INFO, etc.')
