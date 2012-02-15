@@ -152,41 +152,41 @@ for row in rows:
 	if data_status==1:
 		status='Closed (good quality)'
 		
-		#sql2="UPDATE hits SET approved=approved+1 WHERE id=%s;"
-		#cur2.execute(sql2, (hit_id))
-		#conn.commit()
+		sql2="UPDATE hits SET approved=approved+1 WHERE id=%s;"
+		cur2.execute(sql2, (hit_id))
+		conn.commit()
 
 	else:
 		status='Closed (bad quality)'
 		
 		logging.info("incrementing assignment for hit %s" % (mturk_hit_id))
-		#try:
-		#	mturk_conn.extend_hit(mturk_hit_id, assignments_increment=1)
-		#except boto.mturk.connection.MTurkRequestError, err:
-		#	print "mturk api error while incrementing assignments on HIT"
+		try:
+			mturk_conn.extend_hit(mturk_hit_id, assignments_increment=1)
+		except boto.mturk.connection.MTurkRequestError, err:
+			print "mturk api error while incrementing assignments on HIT"
 
-		#sql2="UPDATE hits SET rejected=rejected+1, assignments=assignments+1 WHERE id=%s;"
-		#cur2.execute(sql2, (hit_id))
-		#conn.commit()
+		sql2="UPDATE hits SET rejected=rejected+1, assignments=assignments+1 WHERE id=%s;"
+		cur2.execute(sql2, (hit_id))
+		conn.commit()
 
 	#pushing approve/reject status to Mechanical Turk
 	if mturk_status=='Approved':			
 		logging.info("approving assignment %s" % (mturk_assignment_id))
-		#try:
-		#	mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
-		#except boto.mturk.connection.MTurkRequestError, err:
-		#	print "mturk api error while approving assignment"
+		try:
+			mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+		except boto.mturk.connection.MTurkRequestError, err:
+			print "mturk api error while approving assignment"
 	elif mturk_status=='Rejected':
 		logging.info("rejecting assignment %s" % (mturk_assignment_id))
-		#try:
-		#	mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
-		#except boto.mturk.connection.MTurkRequestError, err:
-		#	print "mturk api error while rejecting assignment"
+		try:
+			mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
+		except boto.mturk.connection.MTurkRequestError, err:
+			print "mturk api error while rejecting assignment"
 	
 	#update assignment mturk_status and status based on local vars in database
-	#sql2="UPDATE assignments SET mturk_status=%s, status=%s WHERE id=%s;"
-	#cur2.execute(sql2, (mturk_status, status, assignment_id))
-	#conn.commit()
+	sql2="UPDATE assignments SET mturk_status=%s, status=%s WHERE id=%s;"
+	cur2.execute(sql2, (mturk_status, status, assignment_id))
+	conn.commit()
 	logging.debug("assignment %s processed in full" % (assignment_id))
 	
 
