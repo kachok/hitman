@@ -231,7 +231,10 @@
 					    <p>If any of the words has more than one possible translation, just enter the one that you think is the most common.</p>
 						<p>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know either of the languages then do not do this HIT.</p>
 						
-						<p>Translating proper nouns such as names or places should be done like this: Barack Obama and Australia should be translated as</br><img src="/static/images/support/{{params['lang']}}.png"></p>
+						<p>Translating proper nouns like names or places is a little different than other words.  For words like
+							<br/><img src="/static/images/support/{{params['lang']}}.png"/>
+							<br/>
+							You should enter Barack Obama and Australia as the translations.</p>
 						
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
