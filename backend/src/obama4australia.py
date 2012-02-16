@@ -48,14 +48,17 @@ fw=codecs.open("support_sentences.txt", 'w', 'utf-8')
 fs=open("support_sequence.txt","w")
 
 for l in langs:
+	text=""
 	for i, word in enumerate(words):
-		text=""
+		#print i, len(words)
 		if word in dict[l]:
 			text=text+dict[l][word]
-			if i!=len(words)-1: text=text+" and "
+			if i!=len(words)-1: 
+				text=text+" and "
 		else:
 			text=text+word
-			if i!=len(words)-1: text=text+" and "
+			if i!=len(words)-1: 
+				text=text+" and "
 			
 	fw.write(text+"\n")
 	fs.write(l+"\n")
