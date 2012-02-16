@@ -78,10 +78,6 @@ for row in rows:
 			cur3.execute(sql3, (assignment_id,))
 			conn.commit()
 
-			sql3="UPDATE hits SET approved=approved+1 WHERE id=%s;"
-			cur3.execute(sql3, (hit_id,))
-			conn.commit()
-
 conn.close()
 	
 print "total workers paid: ",total_workers_paid
