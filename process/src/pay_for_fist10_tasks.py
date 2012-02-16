@@ -68,19 +68,19 @@ for row in rows:
 			
 			#TODO: replace feedback with something generic
 			try:
-				pass
-				#mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+				#pass
+				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
 			except:
 				print "failed to update status in MTurk"
 			
 			
-			#sql3="UPDATE assignments SET mturk_status='Approved' WHERE id=%s;"
-			#cur3.execute(sql3, (assignment_id,))
-			#conn.commit()
+			sql3="UPDATE assignments SET mturk_status='Approved' WHERE id=%s;"
+			cur3.execute(sql3, (assignment_id,))
+			conn.commit()
 
-			#sql3="UPDATE hits SET approved=approved+1 WHERE id=%s;"
-			#cur3.execute(sql3, (hit_id,))
-			#conn.commit()
+			sql3="UPDATE hits SET approved=approved+1 WHERE id=%s;"
+			cur3.execute(sql3, (hit_id,))
+			conn.commit()
 
 conn.close()
 	
