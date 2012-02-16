@@ -33,7 +33,8 @@ rows = cur.fetchall()
 
 mturk_conn=mturk.conn()
 
-total_paid=0
+total_workers_paid=0
+total_assignments_paid=0
 
 for row in rows:
 	worker_id=str(row[0])
@@ -48,9 +49,10 @@ for row in rows:
 
 	#if worker was paid less than 10 times, get his unpaid assignments
 	paid=int(paid)
-	if paid<10:
+	done=int(done)
+	if paid<10 and paid!=done:
 		to_pay=10-paid
-		total_paid=total_paid+1
+		total_workers_paid=total_workers_paid+1
 		print "worker: ", worker_id, " tasks done: ",done, ", tasks paid: ", paid, ", paying for ", to_pay," tasks right now (if available)"
 
 		sql2="select * from assignments where worker_id=%s and mturk_status='Submitted' limit %s;"
@@ -62,7 +64,7 @@ for row in rows:
 			assignment_id=str(row2[0])
 			mturk_assignment_id=str(row2[1])
 			hit_id=str(row2[2])
-			print "hit_id: ",hit_id
+			total_assignments_paid=total_assignments_paid+1
 			
 			#TODO: replace feedback with something generic
 			try:
@@ -82,5 +84,7 @@ for row in rows:
 
 conn.close()
 	
-print "total workers paid: ",total_paid
+print "total workers paid: ",total_workers_paid
+print "total assignments paid: ",total_assignments_paid
+
 logging.info("FINISH")
