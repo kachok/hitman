@@ -38,3 +38,6 @@ function hide_survey()
 
     $("#show_survey").click(show_survey);
     $("#hide_survey").click(hide_survey);
+
+
+	$("#submitbutton").click(save_survey_data());
