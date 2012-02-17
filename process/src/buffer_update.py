@@ -118,7 +118,7 @@ for row in rows:
 
 				sql2="SELECT add_voc_hits_result(%s, %s, %s, %s, %s);"
 				cur2.execute(sql2,(assignment_id, int(word_id), translation, reason, int(is_control)))
-				result_id = cur2.fetchone()[0]
+				#result_id = cur2.fetchone()[0]
 		conn.commit()					
 	
 	if typename=="synonyms":
@@ -145,7 +145,7 @@ for row in rows:
 
 				sql2="SELECT add_syn_hits_result(%s, %s, %s, %s, %s);"
 				cur2.execute(sql2,(assignment_id, int(pair_id), are_synonyms, misspelled, is_control))
-				result_id = cur2.fetchone()[0]
+				#result_id = cur2.fetchone()[0]
 		conn.commit()
 		
 	cp5=datetime.datetime.now()
