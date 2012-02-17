@@ -75,11 +75,14 @@ sql="SELECT id from languages where prefix=%s;"
 cur.execute(sql, (target_language,))
 target_lang_id = cur.fetchone()[0]
 
+print "target language id: ", target_lang_id
 
 #get hittype_id for Synonyms HIT
 sql="SELECT * from hittypes where typename=%s;"
 cur.execute(sql,("synonyms",))
 hittype_id = cur.fetchone()[0]
+
+print "HIT Type ID: ", hittype_id
 
 
 """
@@ -127,6 +130,10 @@ for row in rows:
 	translation=str(row[0])
 	synonym=str(row[1])
 	language_id=str(row[2])
+	
+	#skip empty translations (just in case)
+	if translation=='':
+		continue
 	
 	print "processing - ", translation,synonym,language_id
 	
