@@ -7,6 +7,8 @@ import json
 import logging
 import argparse
 
+import datetime
+
 
 # command line parameters parsing
 # loading proper settings file
@@ -57,6 +59,7 @@ rows=cur.fetchall()
 total=0
 
 for row in rows:
+	cp1=datetime.datetime.now()
 	total=total+1
 	if total % 100==0:
 		print "processed %s records from buffer" % (total)
@@ -75,6 +78,8 @@ for row in rows:
 
 
 	#print "assignment ", mturk_assignment_id, " mturk_status ", mturk_status
+
+	cp2=datetime.datetime.now()
 		
 	cur2=conn.cursor()
 	sql2="SELECT add_worker(%s, %s);"
@@ -82,12 +87,16 @@ for row in rows:
 	db_worker_id = cur2.fetchone()[0]
 	conn.commit()
 
+	cp3=datetime.datetime.now()
+
 	#print "hit_id: ",hit_id
 
 	sql2="SELECT add_assignment(%s, %s, %s, %s, %s, %s, %s);"
 	cur2.execute(sql2,(mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, results_json, mturk_status))
 	assignment_id = cur2.fetchone()[0]	
 	conn.commit()
+
+	cp4=datetime.datetime.now()
 
 	#print "assignment_id: ",assignment_id
 	sql2="SELECT typename from assignments a, hits h, hittypes ht where a.hit_id=h.id and h.hittype_id=ht.id and a.id=%s;"
@@ -139,6 +148,7 @@ for row in rows:
 				result_id = cur2.fetchone()[0]
 				conn.commit()
 		
+	cp5=datetime.datetime.now()
 
 	ip=results.get("ip","")
 	city=results.get("city","")
@@ -156,6 +166,14 @@ for row in rows:
 	#cur.execute(sql,(db_worker_id, timestamp, native_speaker, years_speaking_foreign, native_english_speaker, years_speaking_english, country, born_country, language, language_id))
 
 	conn.commit()
+	cp6=datetime.datetime.now()
+	
+	print cp6-cp1, " start to finish"
+	print cp3-cp2, " add assignment"
+	print cp4-cp3, " add assignment"
+	print cp5-cp4, " add results"
+	print cp6-cp5, " add location"
+	print "---"
 
 conn.commit()
 
