@@ -12,7 +12,13 @@ SET search_path = public, pg_catalog;
 
 ALTER TABLE ONLY public.vocabulary DROP CONSTRAINT vocabulary_language_id_fk;
 ALTER TABLE ONLY public.synonyms DROP CONSTRAINT synonyms_language_id_fk;
+ALTER TABLE ONLY public.non_synonyms DROP CONSTRAINT non_synonyms_language_id_fk;
 ALTER TABLE ONLY public.dictionary DROP CONSTRAINT dictionary_language_id_fk;
+DROP INDEX public.vhr_match;
+DROP INDEX public.shr_match;
+DROP INDEX public.mturk_worker_match;
+DROP INDEX public.mturk_assignment_match;
+DROP INDEX public.location_assignment_match;
 ALTER TABLE ONLY public.workers DROP CONSTRAINT workers_id_pk;
 ALTER TABLE ONLY public.vocabulary DROP CONSTRAINT vocabulary_id_pk;
 ALTER TABLE ONLY public.voc_hits_data DROP CONSTRAINT voc_hits_data_id_pk;
@@ -20,12 +26,14 @@ ALTER TABLE ONLY public.voc_hits_results DROP CONSTRAINT voc_hit_results_id_pk;
 ALTER TABLE ONLY public.synonyms DROP CONSTRAINT synonyms_id_pk;
 ALTER TABLE ONLY public.syn_hits_data DROP CONSTRAINT syn_hits_data_id_pk;
 ALTER TABLE ONLY public.syn_hits_results DROP CONSTRAINT syn_hit_results_id_pk;
+ALTER TABLE ONLY public.non_synonyms DROP CONSTRAINT non_synonyms_id_pk;
 ALTER TABLE ONLY public.location DROP CONSTRAINT locations_pk_id;
 ALTER TABLE ONLY public.languages DROP CONSTRAINT languages_id_pk;
 ALTER TABLE ONLY public.hittypes DROP CONSTRAINT hittypes_id_pk;
 ALTER TABLE ONLY public.hits DROP CONSTRAINT hits_id_pk;
 ALTER TABLE ONLY public.dictionary DROP CONSTRAINT dictionary_id_pk;
 ALTER TABLE ONLY public.cookies DROP CONSTRAINT cookies_pk_id;
+ALTER TABLE ONLY public.buffer_assignments DROP CONSTRAINT buffer_assignments_id_pk;
 ALTER TABLE ONLY public.assignments DROP CONSTRAINT assignments_id_pk;
 ALTER TABLE public.workers ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.vocabulary ALTER COLUMN id DROP DEFAULT;
@@ -34,12 +42,14 @@ ALTER TABLE public.voc_hits_data ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.synonyms ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.syn_hits_results ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.syn_hits_data ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.non_synonyms ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.location ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.languages ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.hittypes ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.hits ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.dictionary ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.cookies ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.buffer_assignments ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.assignments ALTER COLUMN id DROP DEFAULT;
 DROP SEQUENCE public.workers_id_seq;
 DROP SEQUENCE public.vocabulary_id_seq;
@@ -73,9 +83,13 @@ DROP VIEW public.syn_hits_assignments_pending;
 DROP VIEW public.syn_assignments_underreview;
 DROP VIEW public.syn_assignments_submitted;
 DROP VIEW public.syn_assignments_reviewed;
-DROP VIEW public.syn_hits;
 DROP VIEW public.syn_assignments_graded;
 DROP TABLE public.syn_hits_results;
+DROP VIEW public.syn_assignments;
+DROP VIEW public.syn_hits;
+DROP SEQUENCE public.non_synonyms_id_seq;
+DROP TABLE public.non_synonyms;
+DROP TABLE public.multi_test;
 DROP SEQUENCE public.location_id_seq;
 DROP TABLE public.location;
 DROP SEQUENCE public.languages_id_seq;
@@ -88,6 +102,8 @@ DROP SEQUENCE public.dictionary_id_seq;
 DROP TABLE public.dictionary;
 DROP SEQUENCE public.cookies_id_seq;
 DROP TABLE public.cookies;
+DROP SEQUENCE public.buffer_assignments_id_seq;
+DROP TABLE public.buffer_assignments;
 DROP SEQUENCE public.assignments_id_seq;
 DROP TABLE public.assignments;
 DROP FUNCTION public.grade_syn_hits_results();
@@ -101,7 +117,7 @@ DROP FUNCTION public.add_location(assignment_id2 integer, worker_id2 integer, ip
 DROP FUNCTION public.add_language(name2 text, prefix2 text);
 DROP FUNCTION public.add_hittype(name2 text, mturk_hittype_id2 text, language_id2 integer, typename2 text);
 DROP FUNCTION public.add_hit(mturk_hit_id2 text, uuid2 text, hittype_id2 integer, language_id2 integer, assignments2 integer, rejected2 integer, approved2 integer);
-DROP FUNCTION public.add_assignment(mturk_assignment_id2 text, hit_id2 integer, mturk_worker_id2 text, status2 text, submit_time2 text, result2 text, mturk_status2 text);
+DROP FUNCTION public.add_assignment(mturk_assignment_id2 text, hit_id2 integer, mturk_worker_id2 text, accept_time2 text, submit_time2 text, result2 text, mturk_status2 text);
 DROP EXTENSION plpgsql;
 DROP SCHEMA public;
 --
@@ -138,7 +154,7 @@ SET search_path = public, pg_catalog;
 -- Name: add_assignment(text, integer, text, text, text, text, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION add_assignment(mturk_assignment_id2 text, hit_id2 integer, mturk_worker_id2 text, status2 text, submit_time2 text, result2 text, mturk_status2 text) RETURNS integer
+CREATE FUNCTION add_assignment(mturk_assignment_id2 text, hit_id2 integer, mturk_worker_id2 text, accept_time2 text, submit_time2 text, result2 text, mturk_status2 text) RETURNS integer
     LANGUAGE plpgsql
     AS $$
 DECLARE
@@ -156,6 +172,7 @@ BEGIN
 		mturk_assignment_id=mturk_assignment_id2, 
 		hit_id=hit_id2,
 		worker_id=worker_id2, 
+		accept_time=accept_time2,
 		submit_time=submit_time2,
 		result=result2,
 		mturk_status=mturk_status2
@@ -168,8 +185,8 @@ BEGIN
         -- if someone else inserts the same key concurrently,
         -- we could get a unique-key failure
         BEGIN
-	    INSERT INTO assignments (mturk_assignment_id, hit_id, worker_id, status, submit_time, result, mturk_status) 
-	    VALUES (mturk_assignment_id2, hit_id2, worker_id2, status2, submit_time2, result2, mturk_status2) RETURNING id into newid;
+	    INSERT INTO assignments (mturk_assignment_id, hit_id, worker_id, accept_time, submit_time, result, mturk_status) 
+	    VALUES (mturk_assignment_id2, hit_id2, worker_id2, accept_time2, submit_time2, result2, mturk_status2) RETURNING id into newid;
             RETURN newid;
         EXCEPTION WHEN unique_violation THEN
             -- do nothing, and loop to try the UPDATE again
@@ -364,11 +381,9 @@ $$;
 -- Name: add_syn_hits_result(integer, integer, text, text, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION add_syn_hits_result(assignment_id2 integer, pair_id2 integer, are_synonyms2 text, misspelled2 text, is_control2 integer) RETURNS integer
+CREATE FUNCTION add_syn_hits_result(assignment_id2 integer, pair_id2 integer, are_synonyms2 text, misspelled2 text, is_control2 integer) RETURNS void
     LANGUAGE plpgsql
     AS $$
-DECLARE
-	newid INTEGER;
 BEGIN
     LOOP
         -- first try to update the key
@@ -378,15 +393,15 @@ BEGIN
 		misspelled=misspelled2
         WHERE assignment_id=assignment_id2 AND pair_id=pair_id2 and is_control=is_control2;
         IF found THEN
-            RETURN (SELECT id FROM syn_hits_results WHERE assignment_id=assignment_id2 AND pair_id=pair_id2 and is_control=is_control2);
+            RETURN;
         END IF;
         -- not there, so try to insert the key
         -- if someone else inserts the same key concurrently,
         -- we could get a unique-key failure
         BEGIN
 	    INSERT INTO syn_hits_results (assignment_id, pair_id, are_synonyms, misspelled, is_control) 
-	    VALUES (assignment_id2, pair_id2, are_synonyms2, misspelled2, is_control2) RETURNING id into newid;
-            RETURN newid;
+	    VALUES (assignment_id2, pair_id2, are_synonyms2, misspelled2, is_control2);
+            RETURN;
         EXCEPTION WHEN unique_violation THEN
             -- do nothing, and loop to try the UPDATE again
         END;
@@ -399,11 +414,9 @@ $$;
 -- Name: add_voc_hits_result(integer, integer, text, text, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION add_voc_hits_result(assignment_id2 integer, word_id2 integer, translation2 text, reason2 text, is_control2 integer) RETURNS integer
+CREATE FUNCTION add_voc_hits_result(assignment_id2 integer, word_id2 integer, translation2 text, reason2 text, is_control2 integer) RETURNS void
     LANGUAGE plpgsql
     AS $$
-DECLARE
-	newid INTEGER;
 BEGIN
     LOOP
         -- first try to update the key
@@ -412,15 +425,15 @@ BEGIN
 		word_id=word_id2
         WHERE assignment_id=assignment_id2 AND word_id=word_id2;
         IF found THEN
-            RETURN (SELECT id FROM voc_hits_results WHERE assignment_id=assignment_id2 AND word_id=word_id2);
+            RETURN;
         END IF;
         -- not there, so try to insert the key
         -- if someone else inserts the same key concurrently,
         -- we could get a unique-key failure
         BEGIN
 	    INSERT INTO voc_hits_results (assignment_id, word_id, translation, reason, is_control) 
-	    VALUES (assignment_id2, word_id2, translation2, reason2, is_control2) RETURNING id into newid;
-            RETURN newid;
+	    VALUES (assignment_id2, word_id2, translation2, reason2, is_control2);
+            RETURN;
         EXCEPTION WHEN unique_violation THEN
             -- do nothing, and loop to try the UPDATE again
         END;
@@ -589,11 +602,12 @@ CREATE TABLE assignments (
     mturk_assignment_id character varying,
     hit_id integer,
     worker_id integer,
-    status character varying,
+    status character varying DEFAULT 'Open'::character varying,
     submit_time character varying,
     result character varying,
     data_status real,
-    mturk_status character varying
+    mturk_status character varying,
+    accept_time character varying
 );
 
 
@@ -614,6 +628,41 @@ CREATE SEQUENCE assignments_id_seq
 --
 
 ALTER SEQUENCE assignments_id_seq OWNED BY assignments.id;
+
+
+--
+-- Name: buffer_assignments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE buffer_assignments (
+    id integer NOT NULL,
+    assignment_id character varying,
+    hit_id character varying,
+    worker_id character varying,
+    accept_time character varying,
+    submit_time character varying,
+    result character varying,
+    status character varying
+);
+
+
+--
+-- Name: buffer_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE buffer_assignments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: buffer_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE buffer_assignments_id_seq OWNED BY buffer_assignments.id;
 
 
 --
@@ -819,6 +868,64 @@ ALTER SEQUENCE location_id_seq OWNED BY location.id;
 
 
 --
+-- Name: multi_test; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE multi_test (
+    value character varying
+);
+
+
+--
+-- Name: non_synonyms; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE non_synonyms (
+    id integer NOT NULL,
+    word character varying,
+    non_synonym character varying,
+    language_id integer,
+    active boolean DEFAULT true,
+    corpus character varying
+);
+
+
+--
+-- Name: non_synonyms_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE non_synonyms_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: non_synonyms_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE non_synonyms_id_seq OWNED BY non_synonyms.id;
+
+
+--
+-- Name: syn_hits; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW syn_hits AS
+    SELECT h.id, h.mturk_hit_id, h.uuid, h.hittype_id, h.language_id, h.assignments, h.rejected, h.approved, ht.mturk_hittype_id, h.status FROM hits h, hittypes ht WHERE ((h.hittype_id = ht.id) AND ((ht.typename)::text = 'synonyms'::text));
+
+
+--
+-- Name: syn_assignments; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW syn_assignments AS
+    SELECT a.id, a.mturk_assignment_id, a.hit_id, a.worker_id, a.status, a.submit_time, a.result, a.data_status, a.mturk_status FROM assignments a, syn_hits sh WHERE (a.hit_id = sh.id);
+
+
+--
 -- Name: syn_hits_results; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -839,14 +946,6 @@ CREATE TABLE syn_hits_results (
 
 CREATE VIEW syn_assignments_graded AS
     SELECT a.id, sum(ga.grade) AS grade FROM assignments a, (SELECT syn_hits_results.id, syn_hits_results.assignment_id, syn_hits_results.pair_id, syn_hits_results.are_synonyms, syn_hits_results.misspelled, syn_hits_results.is_control, syn_hits_results.quality, CASE WHEN ((syn_hits_results.are_synonyms)::text = 'yes'::text) THEN (1)::numeric WHEN ((syn_hits_results.are_synonyms)::text = 'no'::text) THEN (0)::numeric ELSE 0.5 END AS grade FROM syn_hits_results WHERE (syn_hits_results.is_control = 1)) ga WHERE (a.id = ga.assignment_id) GROUP BY a.id;
-
-
---
--- Name: syn_hits; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW syn_hits AS
-    SELECT h.id, h.mturk_hit_id, h.uuid, h.hittype_id, h.language_id, h.assignments, h.rejected, h.approved, ht.mturk_hittype_id, h.status FROM hits h, hittypes ht WHERE ((h.hittype_id = ht.id) AND ((ht.typename)::text = 'synonyms'::text));
 
 
 --
@@ -1008,7 +1107,9 @@ CREATE TABLE synonyms (
     id integer NOT NULL,
     word character varying,
     synonym character varying,
-    language_id integer
+    language_id integer,
+    corpus character varying,
+    active boolean DEFAULT true
 );
 
 
@@ -1233,6 +1334,13 @@ ALTER TABLE assignments ALTER COLUMN id SET DEFAULT nextval('assignments_id_seq'
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE buffer_assignments ALTER COLUMN id SET DEFAULT nextval('buffer_assignments_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE cookies ALTER COLUMN id SET DEFAULT nextval('cookies_id_seq'::regclass);
 
 
@@ -1269,6 +1377,13 @@ ALTER TABLE languages ALTER COLUMN id SET DEFAULT nextval('languages_id_seq'::re
 --
 
 ALTER TABLE location ALTER COLUMN id SET DEFAULT nextval('location_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE non_synonyms ALTER COLUMN id SET DEFAULT nextval('non_synonyms_id_seq'::regclass);
 
 
 --
@@ -1329,6 +1444,14 @@ ALTER TABLE ONLY assignments
 
 
 --
+-- Name: buffer_assignments_id_pk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY buffer_assignments
+    ADD CONSTRAINT buffer_assignments_id_pk PRIMARY KEY (id);
+
+
+--
 -- Name: cookies_pk_id; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1374,6 +1497,14 @@ ALTER TABLE ONLY languages
 
 ALTER TABLE ONLY location
     ADD CONSTRAINT locations_pk_id PRIMARY KEY (id);
+
+
+--
+-- Name: non_synonyms_id_pk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY non_synonyms
+    ADD CONSTRAINT non_synonyms_id_pk PRIMARY KEY (id);
 
 
 --
@@ -1433,11 +1564,54 @@ ALTER TABLE ONLY workers
 
 
 --
+-- Name: location_assignment_match; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX location_assignment_match ON location USING btree (assignment_id);
+
+
+--
+-- Name: mturk_assignment_match; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX mturk_assignment_match ON assignments USING btree (mturk_assignment_id);
+
+
+--
+-- Name: mturk_worker_match; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX mturk_worker_match ON workers USING btree (mturk_worker_id);
+
+
+--
+-- Name: shr_match; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX shr_match ON syn_hits_results USING btree (assignment_id, pair_id, is_control);
+
+
+--
+-- Name: vhr_match; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX vhr_match ON voc_hits_results USING btree (assignment_id, word_id);
+
+
+--
 -- Name: dictionary_language_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY dictionary
     ADD CONSTRAINT dictionary_language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id);
+
+
+--
+-- Name: non_synonyms_language_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY non_synonyms
+    ADD CONSTRAINT non_synonyms_language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id);
 
 
 --
