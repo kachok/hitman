@@ -61,7 +61,10 @@ def do_work(conn, item):
 	cur=conn.cursor()
 	mturk_conn=mturk.conn()
 	
-	assignments=mturk_conn.get_assignments(hit_id=item["mturk_hit_id"])
+	try:
+		assignments=mturk_conn.get_assignments(hit_id=item["mturk_hit_id"])
+	except:
+		print "error in fetching assignments for: ", item["mturk_hit_id"]
 	
 	for assgnmnt in assignments:
 		mturk_worker_id=assgnmnt.WorkerId
@@ -119,9 +122,9 @@ for i in range(num_worker_threads):
 
 # Loop over HITs and create a job to get assignments 
 cur=conn.cursor()
-sql="SELECT mturk_hit_id, h.id, typename, ht.name from hits h, hittypes ht where h.hittype_id=ht.id;" # and assignments>(rejected+approved)
+sql="SELECT mturk_hit_id, h.id, typename, ht.name from hits h, hittypes ht where h.hittype_id=ht.id and mturk_hit_id!='';" # and assignments>(rejected+approved)
 if args.coverage=='OPENONLY':
-	sql="SELECT mturk_hit_id, h.id, typename, ht.name from hits h, hittypes ht where h.hittype_id=ht.id and status!='Closed';"
+	sql="SELECT mturk_hit_id, h.id, typename, ht.name from hits h, hittypes ht where h.hittype_id=ht.id and status!='Closed' and mturk_hit_id!='';"
 	
 cur.execute(sql)
 rows = cur.fetchall()
