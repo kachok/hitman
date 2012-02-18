@@ -188,8 +188,14 @@ for row in rows:
 		logging.info("rejecting assignment %s" % (mturk_assignment_id))
 		try:
 			reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because you failed on control questions embedded into this task. Your overall performance on tasks of this type is {:.2%} correct answers.'.format(worker_quality)
+			print "assignment_id: ", assignment_id
+			
+			sql2="select * from syn_hits_results where assignment_id=%s"
+			cur2.execute(sql2, (assignment_id,))
+			rows2=cur2.fetchall()
+			
 			#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
-			mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
+			#mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 		except boto.mturk.connection.MTurkRequestError, err:
 			print "mturk api error while rejecting assignment"
 	
