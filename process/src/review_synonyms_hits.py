@@ -157,7 +157,7 @@ for row in rows:
 
 	#saving status based on quality
 	#and updating HIT counters (and adding extra assignments if results are of bad quality)
-	if data_status==1:
+	if data_quality==1:
 		status='Closed'
 		
 		sql2="UPDATE hits SET approved=approved+1 WHERE id=%s;"
@@ -187,7 +187,9 @@ for row in rows:
 	elif mturk_status=='Rejected':
 		logging.info("rejecting assignment %s" % (mturk_assignment_id))
 		try:
-			mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
+			reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because you failed on control questions embedded into this task. Your overall performance on tasks of this type is {:.2%} correct answers.'.format(worker_quality)
+			#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
+			mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 		except boto.mturk.connection.MTurkRequestError, err:
 			print "mturk api error while rejecting assignment"
 	
