@@ -147,9 +147,13 @@ for row in rows:
 		elif worker_quality<=0.5:
 			mturk_status='Rejected'
 
-	#TODO: if worker performance is > 75%, override his tasks' quality with good quality (e.g. 1)
+	#data_status - objective quality based on passed/failed controls
+	#data_quality - subjective quality based on worker perforance (e.g. workers with 75%+ performance assumed being right all the time)
+	data_quality=data_status
+
+	#if worker performance is > 75%, override his tasks' quality with good quality (e.g. 1)
 	if worker_quality>0.75:
-		data_status=1
+		data_quality=1
 
 	#saving status based on quality
 	#and updating HIT counters (and adding extra assignments if results are of bad quality)
@@ -188,8 +192,8 @@ for row in rows:
 			print "mturk api error while rejecting assignment"
 	
 	#update assignment mturk_status and status based on local vars in database
-	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s WHERE id=%s;"
-	cur2.execute(sql2, (mturk_status, status, data_status, assignment_id))
+	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
+	cur2.execute(sql2, (mturk_status, status, data_status, data_quality, assignment_id))
 	conn.commit()
 	logging.debug("assignment %s processed in full" % (assignment_id))
 	
