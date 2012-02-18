@@ -65,7 +65,7 @@ except:
 
 #pay to all workers on assignments with correct controls
 
-#select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 group by a.id, mturk_assignment_id having sum(quality)=2;
+#select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having sum(quality)=2;
 
 
 cur=conn.cursor()
@@ -78,7 +78,7 @@ conn.commit();
 mturk_conn=mturk.conn()
 
 #select all Graded assignment (with non Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 group by a.id, mturk_assignment_id having sum(quality)=2;"
+sql="select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having sum(quality)=2;"
 cur.execute(sql)
 rows=cur.fetchall()
 
