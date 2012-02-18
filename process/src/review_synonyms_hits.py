@@ -58,17 +58,17 @@ try:
 except:
 	logging.error("unable to connect to the database")
 
+"""
+--grade all controls first
+update syn_hits_results set quality=1 where is_control=2 and are_synonyms='no';
+update syn_hits_results set quality=0 where is_control=2 and are_synonyms!='no';
+update syn_hits_results set quality=1 where is_control=1 and are_synonyms!='no';
+update syn_hits_results set quality=0 where is_control=1 and are_synonyms='no';
 
-#grade all controls first
-#update syn_hits_results set quality=1 where is_control=2 and are_synonyms='no';
-#update syn_hits_results set quality=0 where is_control=2 and are_synonyms!='no';
-#update syn_hits_results set quality=1 where is_control=1 and are_synonyms!='no';
-#update syn_hits_results set quality=0 where is_control=1 and are_synonyms='no';
-
-#update all non-controls based on average controls quality
-#update syn_hits_results set quality=avg_quality from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=assignment_id and is_control=0;
-#update assignments set data_status=avg_quality, status='Graded' from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=id;
-
+--update all non-controls based on average controls quality
+update syn_hits_results set quality=avg_quality from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=assignment_id and is_control=0;
+update assignments set data_status=avg_quality, status='Graded' from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=id;
+"""
 cur=conn.cursor()
 
 sql="update syn_hits_results set quality=1 where is_control=2 and are_synonyms='no';"
@@ -193,6 +193,10 @@ for row in rows:
 	conn.commit()
 	logging.debug("assignment %s processed in full" % (assignment_id))
 	
+
+sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
+cur.execute(sql)
+cur.commit()
 
 conn.close()
 

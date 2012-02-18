@@ -69,6 +69,7 @@ except:
 
 cur=conn.cursor()
 
+
 sql="update voc_hits_results t set quality=1 where exists (select vhr.*, d.translation from voc_hits_results vhr, dictionary d where vhr.word_id=d.id and is_control=0 and upper(trim(both ' ' from vhr.translation))=upper(trim(both ' ' from d.translation)) and t.id=vhr.id);"
 cur.execute(sql)
 conn.commit();
