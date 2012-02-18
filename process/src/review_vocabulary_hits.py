@@ -60,11 +60,12 @@ except:
 
 
 #grade all controls that have result matching wiki-links translation first
-#update voc_hits_results t set quality=1 where exists (select vhr.*, d.translation from voc_hits_results vhr, dictionary d where vhr.word_id=d.id and is_control=0 and upper(vhr.translation)=upper(d.translation) and t.id=vhr.id)
+#-- old version without -s : update voc_hits_results t set quality=1 where exists (select vhr.*, d.translation from voc_hits_results vhr, dictionary d where vhr.word_id=d.id and is_control=0 and upper(vhr.translation)=upper(d.translation) and t.id=vhr.id)
+#update voc_hits_results t set quality=1 where exists (select vhr.*, d.translation from voc_hits_results vhr, dictionary d where vhr.word_id=d.id and is_control=0 and upper(trim(both ' ' from vhr.translation))=upper(trim(both ' ' from d.translation)) and t.id=vhr.id);
 
 #pay to all workers on assignments with correct controls
 
-#select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id group by a.id, mturk_assignment_id having sum(quality)=2;
+#select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 group by a.id, mturk_assignment_id having sum(quality)=2;
 
 
 cur=conn.cursor()
@@ -77,7 +78,7 @@ conn.commit();
 mturk_conn=mturk.conn()
 
 #select all Graded assignment (with non Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id group by a.id, mturk_assignment_id having sum(quality)=2;"
+sql="select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 group by a.id, mturk_assignment_id having sum(quality)=2;"
 cur.execute(sql)
 rows=cur.fetchall()
 
