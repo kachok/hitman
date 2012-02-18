@@ -138,10 +138,13 @@ for row in rows:
 	print "processing - ", translation,synonym,language_id
 	
 	#insert new control pair into syn_hits_data
+	#TODO: make sure no duplicates of translation-synonym pair goes in
 	is_control=0
 	cur2 = conn.cursor()
-	sql2="INSERT INTO syn_hits_data (translation, synonym, is_control, language_id) VALUES (%s, %s, %s, %s)"
-	cur2.execute(sql2, (translation, synonym, is_control, language_id ))
+	#sql2="INSERT INTO syn_hits_data (translation, synonym, is_control, language_id) VALUES (%s, %s, %s, %s)"
+	#cur2.execute(sql2, (translation, synonym, is_control, language_id ))
+	sql2="SELECT add_syn_hit_data(%s, %s, %s, %s)"
+	cur2.execute(sql2, (synonym, translation, is_control, language_id ))
 	conn.commit()
 
 #sql="select vhr.translation, d.translation, assignment_id, word_id from voc_hits_results vhr, dictionary d where reason='' and is_control='0' and d.id=vhr.word_id and language_id=%s"
