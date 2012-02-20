@@ -208,7 +208,7 @@ for row in rows:
 
 sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
 cur.execute(sql)
-cur.commit()
+conn.commit()
 
 conn.close()
 
