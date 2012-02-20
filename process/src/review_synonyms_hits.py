@@ -90,14 +90,24 @@ cur.execute(sql)
 conn.commit();
 
 
+"""
+update assignments 
+set data_status=avg_quality, status='Graded' 
+from (select assignment_id as t_id, avg(quality) as avg_quality 
+		from syn_hits_results 
+		where is_control>0 
+		group by assignment_id) t 
+where t_id=id;
+"""
+
 sql="update assignments set data_status=avg_quality, status='Graded' from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=id;"
 cur.execute(sql)
 conn.commit();
 
 mturk_conn=mturk.conn()
 
-#select all Graded assignment (with non Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="SELECT a.*, sh.mturk_hit_id FROM assignments a, syn_hits sh WHERE a.hit_id = sh.id and a.status='Graded' and (a.mturk_status!='Approved' and a.mturk_status!='Rejected');"
+#select all Graded assignment (with any  status including Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
+sql="SELECT a.*, sh.mturk_hit_id FROM assignments a, syn_hits sh WHERE a.hit_id = sh.id and a.status='Graded';"
 cur.execute(sql)
 rows=cur.fetchall()
 
@@ -107,6 +117,7 @@ for row in rows:
 	hit_id=str(row[2])
 	data_status=float(row[7])
 	worker_id=str(row[3])
+	db_mturk_status=str(row[8])
 	
 	mturk_hit_id=str(row[9])
 	
@@ -166,12 +177,14 @@ for row in rows:
 
 	else:
 		status='Closed'
-		
-		logging.info("incrementing assignment for hit %s" % (mturk_hit_id))
-		try:
-			mturk_conn.extend_hit(mturk_hit_id, assignments_increment=1)
-		except boto.mturk.connection.MTurkRequestError, err:
-			print "mturk api error while incrementing assignments on HIT"
+
+		#increment only if this assignment is not already rejected (based on DB status (that comes from MTurk))
+		if (db_mturk_status!='Rejected'):		
+			logging.info("incrementing assignment for hit %s" % (mturk_hit_id))
+			try:
+				mturk_conn.extend_hit(mturk_hit_id, assignments_increment=1)
+			except boto.mturk.connection.MTurkRequestError, err:
+				print "mturk api error while incrementing assignments on HIT"
 
 		sql2="UPDATE hits SET rejected=rejected+1, assignments=assignments+1 WHERE id=%s;"
 		cur2.execute(sql2, (hit_id,))
@@ -180,22 +193,20 @@ for row in rows:
 	#pushing approve/reject status to Mechanical Turk
 	if mturk_status=='Approved':			
 		logging.info("approving assignment %s" % (mturk_assignment_id))
-		try:
-			mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
-		except boto.mturk.connection.MTurkRequestError, err:
-			print "mturk api error while approving assignment"
+		if (db_mturk_status!='Approved'):		
+			try:
+				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+			except boto.mturk.connection.MTurkRequestError, err:
+				print "mturk api error while approving assignment"
 	elif mturk_status=='Rejected':
 		logging.info("rejecting assignment %s" % (mturk_assignment_id))
 		try:
 			reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because you failed on control questions embedded into this task. Your overall performance on tasks of this type is {:.2%} correct answers.'.format(worker_quality)
-			print "assignment_id: ", assignment_id
-			
-			sql2="select * from syn_hits_results where assignment_id=%s"
-			cur2.execute(sql2, (assignment_id,))
-			rows2=cur2.fetchall()
-			
+
+			#this settings replaced by polite rejection message			
 			#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
-			#mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
+			if (db_mturk_status!='Rejected'):		
+				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 		except boto.mturk.connection.MTurkRequestError, err:
 			print "mturk api error while rejecting assignment"
 	
