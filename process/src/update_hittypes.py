@@ -118,7 +118,7 @@ def worker():
 		q.task_done()
 
 
-num_worker_threads=1
+num_worker_threads=10
 
 q = Queue.Queue()
 mturk_conn=mturk.conn()
