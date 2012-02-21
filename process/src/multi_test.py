@@ -61,21 +61,28 @@ def do_work(conn, item):
 	cur=conn.cursor()
 	mturk_conn=mturk.conn()
 	
+	#print item
+	
 	try:
 		assignments=mturk_conn.get_assignments(hit_id=item["mturk_hit_id"])
 	except:
 		print "error in fetching assignments for: ", item["mturk_hit_id"]
 	
+	#print assignments
+	
 	for assgnmnt in assignments:
+		#print assgnmnt
 		mturk_worker_id=assgnmnt.WorkerId
 		mturk_assignment_id=assgnmnt.AssignmentId
 		submit_time=assgnmnt.SubmitTime
 		accept_time=assgnmnt.AcceptTime
 		mturk_status=assgnmnt.AssignmentStatus
 		
+		#print assgnmnt.answers[0]
 		results={}
 		for i in assgnmnt.answers[0]:
-			results[i.fields[0][0]]=i.fields[0][1]
+			#print i
+			results[i.qid]=i.fields[0]
 			
 		result=json.dumps(results)
 
