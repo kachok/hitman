@@ -117,7 +117,7 @@ for row in rows:
 	hit_id=str(row[2])
 	data_status=float(row[7])
 	worker_id=str(row[3])
-	db_mturk_status=str(row[8])
+	db_mturk_status=str(row[8]) # MTurk status (Approved/Rejected if worker was already paid)
 	
 	mturk_hit_id=str(row[9])
 	
@@ -166,6 +166,8 @@ for row in rows:
 	if worker_quality>0.75:
 		data_quality=1
 
+
+	"""
 	#saving status based on quality
 	#and updating HIT counters (and adding extra assignments if results are of bad quality)
 	if data_quality==1:
@@ -189,26 +191,29 @@ for row in rows:
 		sql2="UPDATE hits SET rejected=rejected+1, assignments=assignments+1 WHERE id=%s;"
 		cur2.execute(sql2, (hit_id,))
 		conn.commit()
+	"""
 
 	#pushing approve/reject status to Mechanical Turk
-	if mturk_status=='Approved':			
-		logging.info("approving assignment %s" % (mturk_assignment_id))
-		if (db_mturk_status!='Approved'):		
+	#updating MTurk if it wasn't updated already
+	if db_mturk_status=='Submitted':
+		#if this assignment wasn't paid (e.g. Approved/Rejected) 
+		
+		if mturk_status=='Approved':			
+			logging.info("approving assignment %s" % (mturk_assignment_id))
 			try:
 				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while approving assignment"
-	elif mturk_status=='Rejected':
-		logging.info("rejecting assignment %s" % (mturk_assignment_id))
-		try:
-			reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because you failed on control questions embedded into this task. Your overall performance on tasks of this type is {:.2%} correct answers.'.format(worker_quality)
-
-			#this settings replaced by polite rejection message			
-			#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
-			if (db_mturk_status!='Rejected'):		
+		elif mturk_status=='Rejected':
+			logging.info("rejecting assignment %s" % (mturk_assignment_id))
+			try:
+				reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because you failed on control questions embedded into this task. Your overall performance on tasks of this type is {:.2%} correct answers.'.format(worker_quality)
+	
+				#this settings replaced by polite rejection message			
+				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
 				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
-		except boto.mturk.connection.MTurkRequestError, err:
-			print "mturk api error while rejecting assignment"
+			except boto.mturk.connection.MTurkRequestError, err:
+				print "mturk api error while rejecting assignment"
 	
 	#update assignment mturk_status and status based on local vars in database
 	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
