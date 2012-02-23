@@ -141,6 +141,7 @@ for row in rows:
 	#newbie worker approve first 10 tasks
 	if worker_total<10:
 		mturk_status='Approved'
+		print "approved newbie worker's assignment"
 	else:
 		#approve all HITs of high quality workers
 		if worker_quality>0.75:
@@ -165,6 +166,7 @@ for row in rows:
 	#if worker performance is > 75%, override his tasks' quality with good quality (e.g. 1)
 	if worker_quality>0.75:
 		data_quality=1
+		print "bumped up good worker's assignment quality"
 
 
 	"""
@@ -214,6 +216,9 @@ for row in rows:
 				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
+
+
+	status='Closed'
 	
 	#update assignment mturk_status and status based on local vars in database
 	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
