@@ -51,7 +51,7 @@ for row in rows:
 	paid=int(paid)
 	done=int(done)
 	if paid<10 and paid!=done:
-		to_pay=10-paid
+		to_pay=min(10, done)-paid
 		total_workers_paid=total_workers_paid+1
 		print "worker: ", worker_id, " tasks done: ",done, ", tasks paid: ", paid, ", paying for ", to_pay," tasks right now (if available)"
 
