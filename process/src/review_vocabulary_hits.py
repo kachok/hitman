@@ -195,9 +195,9 @@ for row in rows:
 	logging.info("assignment %s processed in full" % (assignment_id))
 	
 
-#sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
-#cur.execute(sql)
-#conn.commit()
+sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
+cur.execute(sql)
+conn.commit()
 
 conn.close()
 
