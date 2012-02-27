@@ -119,7 +119,7 @@ for row in rows:
 	worker_id=str(row[3])
 	db_mturk_status=str(row[8]) # MTurk status (Approved/Rejected if worker was already paid)
 	
-	mturk_hit_id=str(row[9])
+	mturk_hit_id=str(row[11])
 	
 	#fetch current worker performance stats
 	cur2=conn.cursor()

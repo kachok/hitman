@@ -91,7 +91,7 @@ conn.commit();
 
 
 #select all Graded assignment (with any  status including Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="SELECT a.*, vh.mturk_hit_id FROM assignments a, voc_hits vh WHERE a.hit_id = vh.id and a.status='Graded';"
+sql="SELECT a.*, vh.mturk_hit_id, vh.language_id FROM assignments a, voc_hits vh WHERE a.hit_id = vh.id and a.status='Graded';"
 cur.execute(sql)
 rows=cur.fetchall()
 
@@ -105,12 +105,13 @@ for row in rows:
 	worker_id=str(row[3])
 	db_mturk_status=str(row[8]) # MTurk status (Approved/Rejected if worker was already paid)
 	
-	mturk_hit_id=str(row[9])
+	mturk_hit_id=str(row[11])
+	language_id=str(row[12]) 
 	
 	#fetch current worker performance stats
 	cur2=conn.cursor()
-	sql2="SELECT * from voc_hits_workers_performance where id=%s;"
-	cur2.execute(sql2, (worker_id,))
+	sql2="SELECT * from voc_hits_workers_performance where id=%s and language_id=%s;"
+	cur2.execute(sql2, (worker_id,language_id,))
 	rows2=cur2.fetchall()
 	worker_quality=0
 	worker_total=0
