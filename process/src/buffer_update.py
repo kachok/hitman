@@ -67,11 +67,19 @@ for row in rows:
 	mturk_assignment_id=str(row[1])
 	hit_id=str(row[2])
 	mturk_worker_id=str(row[3])
+
+	results_json=str(row[4])
+	mturk_status=str(row[5])
 	
-	accept_time=str(row[4])
-	submit_time=str(row[5])
-	results_json=str(row[6])
-	mturk_status=str(row[7])
+	accept_time=str(row[6])
+	submit_time=str(row[7])
+	
+	autoapproval_time=str(row[10])
+	approval_time=str(row[8])
+	rejection_time=str(row[9])
+	
+	if approval_time=="None": approval_time=None
+	if rejection_time=="None": rejection_time=None
 		
 	#print results_json
 	results=json.loads(results_json)
@@ -91,8 +99,8 @@ for row in rows:
 
 	#print "hit_id: ",hit_id
 
-	sql2="SELECT add_assignment(%s, %s, %s, %s, %s, %s, %s);"
-	cur2.execute(sql2,(mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, results_json, mturk_status))
+	sql2="SELECT add_assignment(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+	cur2.execute(sql2,(mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, autoapproval_time, approval_time, rejection_time, results_json, mturk_status))
 	assignment_id = cur2.fetchone()[0]	
 	conn.commit()
 
