@@ -3,7 +3,7 @@ from settings import settings
 import psycopg2
 
 from psycopg2.pool import PersistentConnectionPool
-from psycopg2.pool import ThreadedConnectionPool
+#from psycopg2.pool import ThreadedConnectionPool
 
 
 import json
@@ -16,6 +16,8 @@ import mturk
 import threading
 
 import Queue
+
+import datetime
 
 
 
@@ -76,7 +78,33 @@ def do_work(conn, item):
 		mturk_assignment_id=assgnmnt.AssignmentId
 		submit_time=assgnmnt.SubmitTime
 		accept_time=assgnmnt.AcceptTime
+		autoapproval_time=assgnmnt.AutoApprovalTime
 		mturk_status=assgnmnt.AssignmentStatus
+		approval_time=None
+		rejection_time=None
+
+		utc = datetime.datetime.strptime(submit_time, '%Y-%m-%dT%H:%M:%SZ')
+		submit_time=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+
+		utc = datetime.datetime.strptime(accept_time, '%Y-%m-%dT%H:%M:%SZ')
+		accept_time=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+
+		utc = datetime.datetime.strptime(autoapproval_time, '%Y-%m-%dT%H:%M:%SZ')
+		autoapproval_time=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+
+		try:
+			dt=assgnmnt.ApprovalTime
+			utc = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ')
+			approval_time=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+		except:
+			pass
+		try:
+			dt=assgnmnt.RejectionTime
+			utc = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ')
+			rejection_time=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+		except:
+			pass
+		
 		
 		#print assgnmnt.answers[0]
 		results={}
@@ -88,8 +116,14 @@ def do_work(conn, item):
 
 		print "assignment ", mturk_assignment_id, " mturk_status ", mturk_status
 		
-		sql="INSERT INTO buffer_assignments (assignment_id, hit_id, worker_id, accept_time, submit_time, result, status) VALUES (%s, %s, %s, %s, %s, %s, %s);"
-		cur.execute(sql,(mturk_assignment_id, item["hit_id"], mturk_worker_id, accept_time, submit_time, result, mturk_status))
+		#import psycopg2
+		#import datetime
+		#dt=a[0].AutoApprovalTime
+		#utc = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ')
+		#ts=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
+		
+		sql="INSERT INTO buffer_assignments (assignment_id, hit_id, worker_id, accept_time, submit_time, autoapproval_time, approval_time, rejection_time, result, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+		cur.execute(sql,(mturk_assignment_id, item["hit_id"], mturk_worker_id, accept_time, submit_time, autoapproval_time, approval_time, rejection_time, result, mturk_status))
 		
 		conn.commit()
 
