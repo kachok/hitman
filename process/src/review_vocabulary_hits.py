@@ -124,7 +124,9 @@ for row in rows:
 	#creating local vars to keep state
 	mturk_status=''
 	status=''
-		
+	
+	print "---"	
+	print "worker ", worker_id, " quality ", worker_quality, " total ",worker_total
 	#newbie worker approve first 10 tasks
 	if worker_total<10:
 		mturk_status='Approved'
@@ -166,7 +168,7 @@ for row in rows:
 		if mturk_status=='Approved':			
 			logging.info("approving assignment %s" % (mturk_assignment_id))
 			try:
-				###mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["vocabulary_approve_feedback"])
+				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["vocabulary_approve_feedback"])
 				print "approved", mturk_assignment_id
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while approving assignment"
@@ -178,7 +180,7 @@ for row in rows:
 				#this settings replaced by polite rejection message			
 				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
 				
-				###mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
+				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 				print "rejected", mturk_assignment_id, reject_feedback
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
@@ -188,9 +190,9 @@ for row in rows:
 	
 	#update assignment mturk_status and status based on local vars in database
 	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
-	#cur2.execute(sql2, (mturk_status, status, data_status, data_quality, assignment_id))
-	#conn.commit()
-	logging.debug("assignment %s processed in full" % (assignment_id))
+	cur2.execute(sql2, (mturk_status, status, data_status, data_quality, assignment_id))
+	conn.commit()
+	logging.info("assignment %s processed in full" % (assignment_id))
 	
 
 #sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
