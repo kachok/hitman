@@ -117,8 +117,8 @@ for row in rows:
 	worker_total=0
 	
 	for row2 in rows2:
-		worker_quality=float(row2[1])
-		worker_total=float(row2[2])
+		worker_quality=float(row2[2])
+		worker_total=float(row2[3])
 	#worker performance fetched
 
 	#creating local vars to keep state
