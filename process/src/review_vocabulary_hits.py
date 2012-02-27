@@ -79,18 +79,15 @@ conn.commit();
 
 mturk_conn=mturk.conn()
 
-#select all Graded assignment (with non Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having sum(quality)=2;"
-
-#select all Graded asignments (new version with not only perfect control but with controls from syn hits pipeline as well)
-sql="select a.id, mturk_assignment_id, avg(quality), count(quality), a.worker_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 group by a.id, mturk_assignment_id, worker_id;"
-
-#mark all voc assignments that are fully graded but not closed yet
-sql="""update assignments a set status='Graded'
+#mark all voc assignments that are fully graded but not closed yet and update their data_quality value
+sql="""update assignments a set status='Graded', data_status=t.avg_quality
 from
-(select a.id, mturk_assignment_id from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having count(quality)=2) t
+(select a.id, mturk_assignment_id, avg(quality) as avg_quality from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having count(quality)=2) t
 where a.id=t.id;"""
 cur.execute(sql)
+conn.commit();
+
+
 
 
 #select all Graded assignment (with any  status including Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
