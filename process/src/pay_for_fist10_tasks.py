@@ -27,7 +27,8 @@ cur2 = conn.cursor()
 cur3 = conn.cursor()
 	
 # select worker_id total_assignments done worker_id assignments paid
-sql="select * from (select worker_id, count(*) from assignments a group by worker_id) as total left join (select worker_id, count(*) from assignments a where a.mturk_status in ('Approved', 'Rejected') group by worker_id) as paid on total.worker_id=paid.worker_id;"
+# where paid<10 and done>paid (new workers with less than 10 paid hits and unpaid hits)
+sql="select total.worker_id, done, paid from (select worker_id, count(*) as done from assignments a group by worker_id) as total left join (select worker_id, count(*) as paid from assignments a where a.mturk_status in ('Approved', 'Rejected') group by worker_id) as paid on total.worker_id=paid.worker_id where paid<10 and done>paid;"
 cur.execute(sql)
 rows = cur.fetchall()
 
@@ -39,7 +40,7 @@ total_assignments_paid=0
 for row in rows:
 	worker_id=str(row[0])
 	done=str(row[1])
-	paid=str(row[3])
+	paid=str(row[2])
 
 	#print "worker: ", worker_id, " tasks done: ",done, ", tasks paid: ", paid
 	
@@ -50,12 +51,12 @@ for row in rows:
 	#if worker was paid less than 10 times, get his unpaid assignments
 	paid=int(paid)
 	done=int(done)
-	if paid<10 and paid!=done:
-		to_pay=min(10-paid, done-paid)
+	if paid<10 and done>paid:
+		to_pay=min(10,done)-paid
 		total_workers_paid=total_workers_paid+1
 		print "worker: ", worker_id, " tasks done: ",done, ", tasks paid: ", paid, ", paying for ", to_pay," tasks right now (if available)"
 
-		sql2="select * from assignments where worker_id=%s and mturk_status='Submitted' limit %s;"
+		sql2="select id, mturk_assignment_id, hit_id from assignments where worker_id=%s and mturk_status='Submitted' limit %s;"
 		
 		cur2.execute(sql2, (worker_id,to_pay,))
 		rows2 = cur2.fetchall()
@@ -66,10 +67,9 @@ for row in rows:
 			hit_id=str(row2[2])
 			total_assignments_paid=total_assignments_paid+1
 			
-			#TODO: replace feedback with something generic
 			try:
-				#pass
-				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+				pass
+				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["new_worker_approve_feedback"])
 			except:
 				print "failed to update status in MTurk"
 			
