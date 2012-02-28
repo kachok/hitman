@@ -109,7 +109,7 @@ for row in rows:
 	#fetch current worker performance stats
 	cur2=conn.cursor()
 	sql2="SELECT  id, quality, total  from voc_hits_workers_performance where id=%s and language_id=%s;"
-	cur2.execute(sql2, (worker_id,))
+	cur2.execute(sql2, (worker_id, language_id))
 	row2=cur2.fetchone()
 	worker_quality=0
 	worker_total=0
