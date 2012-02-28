@@ -185,7 +185,8 @@ for row in rows:
 
 conn.commit()
 
-
+# to cleanup run:
+# delete from buffer_assignments;
 
 logging.info("FINISH")
 

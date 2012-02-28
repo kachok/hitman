@@ -13,8 +13,15 @@ RUN ONCE:
 	
 	java  -Djava.awt.headless=true generateimages sentences.txt segments.txt images
 	#java  -Djava.awt.headless=true generateimages test_sentences.txt test_segments.txt ../test_images
+	#java  -Djava.awt.headless=true generateimages pilot_sentences.txt pilot_segments.txt ../pilot_images
 		renders PNG files
 		10MB of images per 1000 words+sentences
+		
+	obama4australia.py
+		generates images for Barack Obama and Australia in all languages
+
+	#java  -Djava.awt.headless=true Str2ImgObama support_sentences.txt support_sequence.txt ../pilot_images/support
+		
 
 	generate_voc_hits.py
 		creates hittypes in MTurk and populates hittypes table in database
@@ -28,6 +35,9 @@ RUN ONCE:
 		
 	generate_synonyms_table.py
 		generates list of synonyms to be used in Synonyms HIT as controls
+
+	generate_non_synonyms_table.py
+		generates list of non-synonyms to be used in Synonyms HIT as controls
 		
 RUN CONTINUOUSLY:
 		

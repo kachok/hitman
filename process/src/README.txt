@@ -92,7 +92,7 @@ review_synonyms_hits.py
 	mark all synonyms as Closed
 	
 	modifies assignments status to Closed, modifies mturk_status to Approved/Rejected
-	#TODO 75%+ workers results mod quality to 1	
+	75%+ workers results mod quality to 1	
 	
 generate_syn_hits.py
 
