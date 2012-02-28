@@ -15,10 +15,38 @@ group by name, country order by name, count(*) desc;
 select assignment_id, data_status, is_control, are_synonyms from syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control>0 order by shr.assignment_id;
 
 --verify non-synonyms
-select assignment_id, data_status, is_control, are_synonyms, ns.word, ns.non_synonym from non_synonyms ns, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control=2 and ns.id=pair_id;
+select assignment_id, data_status, is_control, are_synonyms, ns.word, ns.non_synonym from non_synonyms ns, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control=2 and ns.id=pair_id
+and assignment_id in (173053,170712,168717,158308,174708,175062,169777,159596,169831,170428)
 
 --verify synonyms
-select assignment_id, data_status, is_control, are_synonyms, s.word, s.synonym from synonyms s, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control=1 and s.id=pair_id;
+select assignment_id, data_status, is_control, are_synonyms, s.word, s.synonym from synonyms s, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control=1 and s.id=pair_id
+and assignment_id in (173053,170712,168717,158308,174708,175062,169777,159596,169831,170428)
+
+-- verify Synonyms HITs results
+-------------------------------
+--select all failed controls
+select count(*) from (select * from syn_hits_results where is_control>0 and quality=0) t;
+--select all passed controls
+select count(*) from (select * from syn_hits_results where is_control>0 and quality=1) t;
+
+
+-- show all failed non-synonyms
+select quality, is_control, are_synonyms, ns.word, ns.non_synonym 
+from non_synonyms ns, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and shr.quality=0 and shr.is_control=2 and ns.id=pair_id
+
+--show all failed synonyms
+select quality, is_control, are_synonyms, s.word, s.synonym 
+from synonyms s, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and shr.quality=0 and is_control=1 and s.id=pair_id
+
+
+--show all non-failed synonyms
+select quality, is_control, are_synonyms, ns.word, ns.non_synonym 
+from non_synonyms ns, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and shr.quality=1 and shr.is_control=2 and ns.id=pair_id
+
+--show all non-failed synonyms
+select quality, is_control, are_synonyms, s.word, s.synonym 
+from synonyms s, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and shr.quality=1 and is_control=1 and s.id=pair_id
+
 
 
 -- counts of approved/rejected syn hits
@@ -227,10 +255,25 @@ and shd.output = 'no'
 and t.id=vhr.id);
 
 
+-- gap between unfinished Syn HITs and Syn data
+mturk=# select output, status, count(*) from syn_hits_data shd, hits h where h.id=shd.hit_id group by output, status;
+
+ output | status | count 
+--------+--------+-------
+ yes    | Closed | 10651
+        | Open   |  9214
+ no     | Closed |  5909
+(3 rows)
 
 
-
-
+-- gap between unfinished voc results
+mturk=# select quality, count(*) from voc_hits_results group by quality;                                                                                                                                                                  
+quality |  count  
+---------+---------
+         | 1147321
+	   1 |  214138
+       0 |   15665       
+(3 rows)
 
 -- Some random queries from pgAdmin
 
@@ -245,6 +288,9 @@ and ( (is_control=1 and are_synonyms='no')) and assignment_id=66096;
 
 select are_synonyms, is_control, word, non_synonym from syn_hits_results shr, non_synonyms s where s.id=shr.pair_id and shr.is_control>0 
 and ( (is_control=2 and are_synonyms!='no')) and assignment_id=66096;
+
+
+
 
 select name, country, count(*)
 from

@@ -73,25 +73,23 @@ except:
 cur=conn.cursor()
 
 
-sql="update voc_hits_results t set quality=1 where exists (select vhr.*, d.translation from voc_hits_results vhr, dictionary d where vhr.word_id=d.id and is_control=0 and upper(trim(both ' ' from vhr.translation))=upper(trim(both ' ' from d.translation)) and t.id=vhr.id);"
-cur.execute(sql)
-conn.commit();
+#sql="update voc_hits_results t set quality=1 where exists (select vhr.*, d.translation from voc_hits_results vhr, dictionary d where vhr.word_id=d.id and is_control=0 and upper(trim(both ' ' from vhr.translation))=upper(trim(both ' ' from d.translation)) and t.id=vhr.id);"
+#cur.execute(sql)
+#conn.commit();
 
 mturk_conn=mturk.conn()
 
 #mark all voc assignments that are fully graded but not closed yet and update their data_quality value
-sql="""update assignments a set status='Graded', data_status=t.avg_quality
-from
-(select a.id, mturk_assignment_id, avg(quality) as avg_quality from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having count(quality)=2) t
-where a.id=t.id;"""
-cur.execute(sql)
-conn.commit();
-
-
+#sql="""update assignments a set status='Graded', data_status=t.avg_quality
+#from
+#(select a.id, mturk_assignment_id, avg(quality) as avg_quality from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and is_control=0 and status!='Closed' group by a.id, mturk_assignment_id having count(quality)=2) t
+#where a.id=t.id;"""
+#cur.execute(sql)
+#conn.commit();
 
 
 #select all Graded assignment (with any  status including Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="SELECT a.*, vh.mturk_hit_id, vh.language_id FROM assignments a, voc_hits vh WHERE a.hit_id = vh.id and a.status='Graded';"
+sql="SELECT  a.id, a.mturk_assignment_id, a.hit_id, a.data_status, a.worker_id, a.mturk_status, vh.mturk_hit_id, vh.language_id FROM assignments a, voc_hits vh WHERE a.hit_id = vh.id and a.status='Graded';"
 cur.execute(sql)
 rows=cur.fetchall()
 
@@ -101,24 +99,23 @@ for row in rows:
 	assignment_id=str(row[0])
 	mturk_assignment_id=str(row[1])
 	hit_id=str(row[2])
-	data_status=float(row[7])
-	worker_id=str(row[3])
-	db_mturk_status=str(row[8]) # MTurk status (Approved/Rejected if worker was already paid)
+	data_status=float(row[3])
+	worker_id=str(row[4])
+	db_mturk_status=str(row[5]) # MTurk status (Approved/Rejected if worker was already paid)
 	
-	mturk_hit_id=str(row[11])
-	language_id=str(row[12]) 
+	mturk_hit_id=str(row[6])
+	language_id=str(row[7]) 
 	
 	#fetch current worker performance stats
 	cur2=conn.cursor()
-	sql2="SELECT * from voc_hits_workers_performance where id=%s and language_id=%s;"
-	cur2.execute(sql2, (worker_id,language_id,))
-	rows2=cur2.fetchall()
+	sql2="SELECT  id, quality, total  from voc_hits_workers_performance where id=%s and language_id=%s;"
+	cur2.execute(sql2, (worker_id,))
+	row2=cur2.fetchone()
 	worker_quality=0
 	worker_total=0
 	
-	for row2 in rows2:
-		worker_quality=float(row2[2])
-		worker_total=float(row2[3])
+	worker_quality=float(row2[1])
+	worker_total=float(row2[2])
 	#worker performance fetched
 
 	#creating local vars to keep state
@@ -137,15 +134,15 @@ for row in rows:
 			mturk_status='Approved'
 			
 		#approve based on current assignment quality for medium quality workers
-		elif worker_quality>0.45:
+		elif worker_quality>0.5:
 			#approve only if both controls where correct (e.g. data_status==1)
-			if data_status>0.98:
+			if data_status>1:
 				mturk_status='Approved'
 			else:
 				mturk_status='Rejected'
 			
 		#reject all HITs of low quality workers
-		elif worker_quality<=0.45:
+		elif worker_quality<=0.5:
 			mturk_status='Rejected'
 
 	#data_status - objective quality based on passed/failed controls
@@ -156,9 +153,6 @@ for row in rows:
 	if worker_quality>0.75:
 		data_quality=1
 		print "bumped up good worker's assignment quality"
-
-
-	
 
 	#pushing approve/reject status to Mechanical Turk
 	#updating MTurk if it wasn't updated already
@@ -184,7 +178,8 @@ for row in rows:
 				print "rejected", mturk_assignment_id, reject_feedback
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
-
+	else:
+		mturk_status=db_mturk_status
 
 	status='Closed'
 	
@@ -194,11 +189,6 @@ for row in rows:
 	conn.commit()
 	logging.info("assignment %s processed in full" % (assignment_id))
 	
-
-sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
-cur.execute(sql)
-conn.commit()
-
 conn.close()
 
 
