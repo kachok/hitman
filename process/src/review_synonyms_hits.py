@@ -107,7 +107,7 @@ conn.commit();
 mturk_conn=mturk.conn()
 
 #select all Graded assignment (with any  status including Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="SELECT a.*, sh.mturk_hit_id FROM assignments a, syn_hits sh WHERE a.hit_id = sh.id and a.status='Graded';"
+sql="SELECT a.id, a.mturk_assignment_id, a.hit_id, a.data_status, a.worker_id, a.mturk_status, sh.mturk_hit_id FROM assignments a, syn_hits sh WHERE a.hit_id = sh.id and a.status='Graded';"
 cur.execute(sql)
 rows=cur.fetchall()
 
@@ -115,28 +115,29 @@ for row in rows:
 	assignment_id=str(row[0])
 	mturk_assignment_id=str(row[1])
 	hit_id=str(row[2])
-	data_status=float(row[7])
-	worker_id=str(row[3])
-	db_mturk_status=str(row[8]) # MTurk status (Approved/Rejected if worker was already paid)
+	data_status=float(row[3])
+	worker_id=str(row[4])
+	db_mturk_status=str(row[5]) # MTurk status (Approved/Rejected if worker was already paid)
 	
-	mturk_hit_id=str(row[11])
+	mturk_hit_id=str(row[6])
 	
 	#fetch current worker performance stats
 	cur2=conn.cursor()
-	sql2="SELECT * from syn_hits_workers_performance where id=%s;"
+	sql2="SELECT id, quality, total from syn_hits_workers_performance where id=%s;"
 	cur2.execute(sql2, (worker_id,))
-	rows2=cur2.fetchall()
+	row2=cur2.fetchone()
 	worker_quality=0
 	worker_total=0
 	
-	for row2 in rows2:
-		worker_quality=float(row2[2])
-		worker_total=float(row2[3])
+	worker_quality=float(row2[1])
+	worker_total=float(row2[2])
 	#worker performance fetched
 
 	#creating local vars to keep state
 	mturk_status=''
 	status=''
+	
+	print "worker: ", worker_id, " quality: ", worker_quality, " total: ", worker_total
 		
 	#newbie worker approve first 10 tasks
 	if worker_total<10:
@@ -168,33 +169,6 @@ for row in rows:
 		data_quality=1
 		print "bumped up good worker's assignment quality"
 
-
-	"""
-	#saving status based on quality
-	#and updating HIT counters (and adding extra assignments if results are of bad quality)
-	if data_quality==1:
-		status='Closed'
-		
-		sql2="UPDATE hits SET approved=approved+1 WHERE id=%s;"
-		cur2.execute(sql2, (hit_id,))
-		conn.commit()
-
-	else:
-		status='Closed'
-
-		#increment only if this assignment is not already rejected (based on DB status (that comes from MTurk))
-		if (db_mturk_status!='Rejected'):		
-			logging.info("incrementing assignment for hit %s" % (mturk_hit_id))
-			try:
-				mturk_conn.extend_hit(mturk_hit_id, assignments_increment=1)
-			except boto.mturk.connection.MTurkRequestError, err:
-				print "mturk api error while incrementing assignments on HIT"
-
-		sql2="UPDATE hits SET rejected=rejected+1, assignments=assignments+1 WHERE id=%s;"
-		cur2.execute(sql2, (hit_id,))
-		conn.commit()
-	"""
-
 	#pushing approve/reject status to Mechanical Turk
 	#updating MTurk if it wasn't updated already
 	if db_mturk_status=='Submitted':
@@ -203,7 +177,8 @@ for row in rows:
 		if mturk_status=='Approved':			
 			logging.info("approving assignment %s" % (mturk_assignment_id))
 			try:
-				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+				pass
+				#mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while approving assignment"
 		elif mturk_status=='Rejected':
@@ -213,12 +188,15 @@ for row in rows:
 	
 				#this settings replaced by polite rejection message			
 				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
-				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
+				print reject_feedback
+				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
 
 
 	status='Closed'
+	status='Test Closed'
+	mturk_status='Test '+mturk_status
 	
 	#update assignment mturk_status and status based on local vars in database
 	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
@@ -227,9 +205,9 @@ for row in rows:
 	logging.debug("assignment %s processed in full" % (assignment_id))
 	
 
-sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
-cur.execute(sql)
-conn.commit()
+#sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
+#cur.execute(sql)
+#conn.commit()
 
 conn.close()
 
