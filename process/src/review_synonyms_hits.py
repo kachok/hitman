@@ -177,8 +177,8 @@ for row in rows:
 		if mturk_status=='Approved':			
 			logging.info("approving assignment %s" % (mturk_assignment_id))
 			try:
-				pass
-				#mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
+				#pass
+				mturk_conn.approve_assignment(mturk_assignment_id, feedback=settings["synonyms_approve_feedback"])
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while approving assignment"
 		elif mturk_status=='Rejected':
@@ -189,14 +189,15 @@ for row in rows:
 				#this settings replaced by polite rejection message			
 				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=settings["synonyms_reject_feedback"])
 				print reject_feedback
-				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
+				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
+	else:
+		#we can't change MTurk status if it is already Approved/Rejected
+		mturk_status=db_mturk_status
 
 
 	status='Closed'
-	status='Test Closed'
-	mturk_status='Test '+mturk_status
 	
 	#update assignment mturk_status and status based on local vars in database
 	sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
@@ -205,12 +206,8 @@ for row in rows:
 	logging.debug("assignment %s processed in full" % (assignment_id))
 	
 
-#sql="UPDATE assignments SET status='Closed' WHERE status='Graded' and (mturk_status!='Approved' or mturk_status!='Rejected');"
-#cur.execute(sql)
-#conn.commit()
-
+conn.commit()
 conn.close()
-
 
 logging.info("FINISH")
 
