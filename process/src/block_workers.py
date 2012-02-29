@@ -93,7 +93,7 @@ for row in rows:
 	cur2=conn.cursor()
 
 	#select open assignmetns that belongs to banned workers
-	sql2="SELECT  a.id, a.mturk_assignment_id, a.data_status, a.worker_id, a.mturk_status FROM assignments a WHERE a.id=%s;"
+	sql2="SELECT  a.id, a.mturk_assignment_id, a.data_status, a.worker_id, a.mturk_status FROM assignments a WHERE a.worker_id=%s;"
 	cur2.execute(sql2, (worker_id,))
 	rows2=cur2.fetchall()
 	for row2 in rows2:
