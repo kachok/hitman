@@ -93,8 +93,6 @@ sql="SELECT  a.id, a.mturk_assignment_id, a.hit_id, a.data_status, a.worker_id, 
 cur.execute(sql)
 rows=cur.fetchall()
 
-cur.execute(sql)
-rows=cur.fetchall()
 for row in rows:
 	assignment_id=str(row[0])
 	mturk_assignment_id=str(row[1])
