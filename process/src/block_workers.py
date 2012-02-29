@@ -88,7 +88,7 @@ for row in rows:
 
 	print "blocking worker: ", mturk_worker_id, " id:",worker_id
 	reason="We are sorry, but you are blocked from working on our HITs. Quality of your work is less than 50%, meaning you failed more than half of controls embedded into our tasks."
-	#mturk_conn.block_worker(mturk_worker_id, reason)
+	mturk_conn.block_worker(mturk_worker_id, reason)
 
 	cur2=conn.cursor()
 
@@ -105,9 +105,9 @@ for row in rows:
 			logging.info("rejecting assignment %s" % (mturk_assignment_id))
 			
 			try:
-				reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because you are blocked from performing our tasks. Quality of your work is less than 50%, meaning you failed more than half of controls embedded into our tasks.'
+				reject_feedback='Thank you for working on this assignment. Unfortunately, we had to reject it because quality of your work is less than 50%, meaning you failed more than half of controls embedded into our tasks.'
 	
-				#mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
+				mturk_conn.reject_assignment(mturk_assignment_id, feedback=reject_feedback)
 				print "rejected", mturk_assignment_id, reject_feedback
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
@@ -118,9 +118,9 @@ for row in rows:
 		data_status=0
 		
 		#update assignment mturk_status and status based on local vars in database
-		#sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
-		#cur2.execute(sql2, (mturk_status, status, data_status, data_quality, assignment_id))
-		#conn.commit()
+		sql2="UPDATE assignments SET mturk_status=%s, status=%s, data_status=%s, data_quality=%s WHERE id=%s;"
+		cur2.execute(sql2, (mturk_status, status, data_status, data_quality, assignment_id))
+		conn.commit()
 		logging.info("assignment %s processed in full" % (assignment_id))
 	
 conn.close()
