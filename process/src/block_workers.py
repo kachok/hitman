@@ -86,7 +86,7 @@ for row in rows:
 	mturk_worker_id=str(row[0])
 	worker_id=str(row[1])
 
-	print "blocking worker: ", mturk_worker_id
+	print "blocking worker: ", mturk_worker_id, " id:",worker_id
 	reason="We are sorry, but you are blocked from working on our HITs. Quality of your work is less than 50%, meaning you failed more than half of controls embedded into our tasks."
 	#mturk_conn.block_worker(mturk_worker_id, reason)
 
