@@ -97,9 +97,9 @@ for row in rows:
 	cur2.execute(sql2, (worker_id,))
 	rows2=cur2.fetchall()
 	for row2 in rows2:
-		assignment_id=str(row[0])
-		mturk_assignment_id=str(row[1])
-		mturk_status=str(row[2]) # MTurk status (Approved/Rejected if worker was already paid)
+		assignment_id=str(row2[0])
+		mturk_assignment_id=str(row2[1])
+		mturk_status=str(row2[2]) # MTurk status (Approved/Rejected if worker was already paid)
 		
 		if mturk_status=='Submitted':
 			logging.info("rejecting assignment %s" % (mturk_assignment_id))
