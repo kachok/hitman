@@ -99,7 +99,6 @@ for row in rows:
 	for row2 in rows2:
 		assignment_id=str(row[0])
 		mturk_assignment_id=str(row[1])
-		data_status=float(row[2])
 		worker_id=str(row[3])
 		mturk_status=str(row[4]) # MTurk status (Approved/Rejected if worker was already paid)
 		
