@@ -115,14 +115,21 @@ upper(trim(both ' ' from vhr.translation))!=upper(trim(both ' ' from d.translati
 
 """
 
-sql="""select * from
+#select all pairs from Vocabulary HITs results that are not added as Synonyms HITs input pairs yet
+
+sql="""select DISTINCT trim(trailing 'S' from lower(trim(both ' ' from translation))), trim(trailing 'S' from lower(trim(both ' ' from wikilinks_translation))), language_id from
 	(
 	select vhr.translation, d.translation as wikilinks_translation , d.language_id
 	from voc_hits_results vhr, dictionary d 
 	where d.id=vhr.word_id and is_control=0
 	and
-	upper(trim(both ' ' from vhr.translation))!=upper(trim(both ' ' from d.translation))
-	) t where not exists (select * from syn_hits_data shd where shd.translation=t.translation and shd.synonym=t.wikilinks_translation);"""
+	trim(trailing 'S' from upper(trim(both ' ' from vhr.translation)))!=trim(trailing 'S' from upper(trim(both ' ' from d.translation)))
+	and length(trim(trailing 'S' from upper(trim(both ' ' from vhr.translation))))>0
+	and length(trim(trailing 'S' from upper(trim(both ' ' from d.translation))))>0
+	) t where not exists (select * from syn_hits_data shd 
+	where trim(trailing 'S' from upper(trim(both ' ' from shd.translation)))=trim(trailing 'S' from upper(trim(both ' ' from t.translation))) 
+	and trim(trailing 'S' from upper(trim(both ' ' from shd.synonym)))=trim(trailing 'S' from upper(trim(both ' ' from t.wikilinks_translation))));
+	"""
 
 cur.execute(sql)
 rows=cur.fetchall()
