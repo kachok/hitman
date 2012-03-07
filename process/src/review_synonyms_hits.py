@@ -100,7 +100,7 @@ from (select assignment_id as t_id, avg(quality) as avg_quality
 where t_id=id;
 """
 
-sql="update assignments set data_status=avg_quality, status='Graded' from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=id;"
+sql="update assignments set data_status=avg_quality, status='Graded' from (select assignment_id as t_id, avg(quality) as avg_quality from syn_hits_results where is_control>0 group by assignment_id) t where t_id=id and status!='Closed';"
 cur.execute(sql)
 conn.commit();
 
