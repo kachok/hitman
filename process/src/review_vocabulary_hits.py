@@ -134,7 +134,7 @@ for row in rows:
 		#approve based on current assignment quality for medium quality workers
 		elif worker_quality>0.5:
 			#approve only if both controls where correct (e.g. data_status==1)
-			if data_status>1:
+			if data_status==1:
 				mturk_status='Approved'
 			else:
 				mturk_status='Rejected'

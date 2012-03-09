@@ -10,17 +10,47 @@ where t.worker_id=t2.worker_id
 group by name, country order by name, count(*) desc;
 
 
+select name, country, count(*), sum(total)
+
+-- stats by language by country with total workers and assignments done
+select name, country, count(*), sum(total)
+from 
+(
+select ll.name, l.country, w.id, count(*) as total from languages ll, location l, workers w, assignments a, hits h
+where h.id=a.hit_id and w.id=a.worker_id and l.assignment_id=a.id and ll.id=h.language_id
+group by ll.name, l.country, w.id
+) t
+group by name, country
+order by name, sum(total) desc
+
 -- verify that synonyms grading works correctly
 -- display all controls and their values
 select assignment_id, data_status, is_control, are_synonyms from syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control>0 order by shr.assignment_id;
 
 --verify non-synonyms
 select assignment_id, data_status, is_control, are_synonyms, ns.word, ns.non_synonym from non_synonyms ns, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control=2 and ns.id=pair_id
-and assignment_id in (173053,170712,168717,158308,174708,175062,169777,159596,169831,170428)
+and exists (select * 
+from syn_hits_results shr, syn_assignments sa2 
+where sa2.id=shr.assignment_id and sa2.data_status<1 and is_control>0 
+and sa2.data_status=0 and sa2.id=sa.id)
 
 --verify synonyms
 select assignment_id, data_status, is_control, are_synonyms, s.word, s.synonym from synonyms s, syn_hits_results shr, syn_assignments sa where sa.id=shr.assignment_id and sa.data_status<1 and is_control=1 and s.id=pair_id
-and assignment_id in (173053,170712,168717,158308,174708,175062,169777,159596,169831,170428)
+and exists (select * 
+from syn_hits_results shr, syn_assignments sa2 
+where sa2.id=shr.assignment_id and sa2.data_status<1 and is_control>0 
+and sa2.data_status=0 and sa2.id=sa.id)
+
+
+-- verify rejected synonyms
+select assignment_id, data_status, is_control, are_synonyms 
+from syn_hits_results shr, syn_assignments sa 
+where sa.id=shr.assignment_id and sa.data_status<1 and is_control>0 
+and sa.data_status=0
+order by shr.assignment_id, is_control;
+
+
+
 
 -- verify Synonyms HITs results
 -------------------------------
@@ -574,6 +604,246 @@ SELECT tablename FROM pg_tables where tablename not like 'pg_%';
 --create table assignments_2012_02_27 as select * from assignments;
 
 
-	
+-- CHEATERS!!!
+
+--assignmetns with 5+ untranslated words
+select * from voc_hits_workers_performance;
+ (select assignment_id, count(*) from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id  and length(reason)>1 group by assignment_id having(count(*)>5));
+ 
+ 
+select * from voc_hits_workers_performance p,
+(select worker_id, count(*) as empty from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id  and length(reason)>1 group by worker_id) nt
+where p.id=nt.worker_id;
+ 
+
+
+select sum(total) from (select worker_id, count(*) as total from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id group by worker_id) t;
+
+
+
+
+
+select * from 
+(select id, avg(quality) as quality2, sum(total) as total2 from voc_hits_workers_performance group by id) t2, 
+(select worker_id, count(*) as total from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id  and length(reason)>1 group by worker_id) t where t.worker_id=t2.id
+;
+
+select t.worker_id, quality2, total2, total_empty, total_all, cast(total_empty as float)/cast(total_all as float) as ratio from 
+(select id, avg(quality) as quality2, sum(total) as total2 from voc_hits_workers_performance group by id) t2, 
+(select worker_id, count(*) as total_empty from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id  and length(reason)>1 group by worker_id) t, 
+(select worker_id, count(*) as total_all from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id group by worker_id) t3 
+where t.worker_id=t2.id and t.worker_id=t3.worker_id
+order by total_empty desc
+;
+
+
+
+-- list workers who cheat by answering not a word (can't translate, based on controls)
+
+select t.worker_id, quality2, total2, total_empty, total_all, cast(total_empty as float)/cast(total_all as float) as ratio from 
+(select id, avg(quality) as quality2, sum(total) as total2 from voc_hits_workers_performance group by id) t2, 
+(select worker_id, count(*) as total_empty from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id  and vhr.is_control=0 and length(reason)>1 group by worker_id) t, 
+(select worker_id, count(*) as total_all from voc_hits_results vhr, assignments a where vhr.is_control=0 and vhr.assignment_id=a.id group by worker_id) t3 
+where t.worker_id=t2.id and t.worker_id=t3.worker_id
+and cast(total_empty as float)/cast(total_all as float)>0.5 and total_all>20
+order by total_empty desc
+;
+
+
+update workers set banned=true
+where id in
+(select t.worker_id from 
+(select id, avg(quality) as quality2, sum(total) as total2 from voc_hits_workers_performance group by id) t2, 
+(select worker_id, count(*) as total_empty from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id  and vhr.is_control=0 and length(reason)>1 group by worker_id) t, 
+(select worker_id, count(*) as total_all from voc_hits_results vhr, assignments a where vhr.is_control=0 and vhr.assignment_id=a.id group by worker_id) t3 
+where t.worker_id=t2.id and t.worker_id=t3.worker_id
+and cast(total_empty as float)/cast(total_all as float)>0.5 and total_all>20 and t.worker_id=id
+); 
+
+
+-- checking controls for a failed Voc HITs based on worker id
+select * from voc_hits_results vhr, assignments a where vhr.assignment_id=a.id and a.worker_id=163 and vhr.is_control=0;
+select vhr.*, w.translation from voc_hits_results vhr, assignments a, dictionary w where vhr.assignment_id=a.id and a.worker_id=163 and vhr.is_control=0 and a.mturk_status='Rejected' and quality=0 and w.id=word_id;
+
+
+select a.mturk_status, a.status, a.data_status, a.data_quality, vhr.*, d.translation from voc_hits_results vhr, assignments a, dictionary d where vhr.assignment_id=a.id and a.worker_id=163 and vhr.is_control=0 and a.mturk_status='Rejected' and d.id=word_id;
+select a.mturk_status, a.status, a.data_status, a.data_quality, vhr.*, d.translation from voc_hits_results vhr, assignments a, dictionary d where vhr.assignment_id=a.id and a.worker_id=163 and vhr.is_control=0 and a.mturk_status='Rejected' and d.id=word_id;
+
+
+
+
+--genereate new Synonyms HITs from Vocabulary HITs
+
+select count(*) from
+	(
+	select vhr.translation, d.translation as wikilinks_translation , d.language_id
+	from voc_hits_results vhr, dictionary d 
+	where d.id=vhr.word_id and is_control=0
+	and
+	trim(trailing 'S' from upper(trim(both ' ' from vhr.translation)))!=trim(trailing 'S' from upper(trim(both ' ' from d.translation)))
+	and length(trim(trailing 'S' from upper(trim(both ' ' from vhr.translation))))>0
+	and length(trim(trailing 'S' from upper(trim(both ' ' from d.translation))))>0
+	) t where not exists (select * from syn_hits_data shd 
+	where trim(trailing 'S' from upper(trim(both ' ' from shd.translation)))=trim(trailing 'S' from upper(trim(both ' ' from t.translation))) 
+	and trim(trailing 'S' from upper(trim(both ' ' from shd.synonym)))=trim(trailing 'S' from upper(trim(both ' ' from t.wikilinks_translation))));
+
+
+-- top workers for russian
+select * from voc_hits_workers_performance where language_id=2 and total>10 and quality>0.8 order by quality desc;	
 	
 
+-- translation of russian
+select v.word, vhr.translation from voc_hits_results vhr, assignments a, hits h , vocabulary v 
+where a.id=vhr.assignment_id and h.id=a.hit_id and  h.language_id=2 and is_control=1 and v.id=word_id and worker_id in (817, 3346, 1623,3973,3273,2587,1619,3342,3967,3343,127,1,2582,1618,3341,5,2345,782,1625,1614,3076);
+
+
+-- select most popular translation for russion (from high quality workers)
+select word, translation, count(*) from
+(
+select v.word, vhr.translation from voc_hits_results vhr, assignments a, hits h , vocabulary v 
+where a.id=vhr.assignment_id and h.id=a.hit_id and  h.language_id=2 and is_control=1 and v.id=word_id 
+and worker_id in (817, 3346, 1623,3973,3273,2587,1619,3342,3967,3343,127,1,2582,1618,3341,5,2345,782,1625,1614,3076)
+) t
+group by word, translation having count(*)>2 order by count(*) desc;
+
+
+
+
+select word, translation, count(*) from
+(
+select v.word, vhr.translation from voc_hits_results vhr, assignments a, hits h , vocabulary v 
+where a.id=vhr.assignment_id and h.id=a.hit_id and  h.language_id=34 and is_control=1 and v.id=word_id 
+and worker_id in (3584, 2440, 162, 163, 929, 2447)
+) t
+group by word, translation having count(*)>2 order by count(*) desc;
+
+
+
+
+-- languages with small number of controls
+select language_id, count(*) from dictionary group by language_id having count(*)<=100;
+
+--52, 85, 86, 91, 74, 6, 61, 94, 95, 62 --less then 10 controls
+-- 86, 91?, 74, 62
+
+
+select * from voc_hits_workers_performance where language_id=2 and total>10 and quality>0.8 order by quality desc;	
+	
+
+select word, translation, count(*) from
+(
+select v.word, vhr.translation from voc_hits_results vhr, assignments a, hits h , vocabulary v 
+where a.id=vhr.assignment_id and h.id=a.hit_id and  h.language_id=86 and is_control=1 and v.id=word_id 
+and exists (select * from voc_hits_workers_performance where total>10 and quality>0.75 and a.worker_id=id) and translation!=''
+) t
+group by word, translation having count(*)>2 order by count(*) desc;
+
+
+
+-- good filtered list for all languages <100
+select * from 
+
+(select language_id, count(*) from dictionary group by language_id having count(*)<=100) small
+,
+
+(select word, translation, language_id, count(*) from
+(
+select v.word, vhr.translation, h.language_id from voc_hits_results vhr, assignments a, hits h , vocabulary v 
+where a.id=vhr.assignment_id and h.id=a.hit_id  and is_control=1 and v.id=word_id 
+and exists (select * from voc_hits_workers_performance where total>10 and quality>0.75 and a.worker_id=id)  and translation!='' and upper(word)!=upper(translation)
+) t
+group by word, translation, language_id having count(*)>2 order by count(*) desc
+) dict
+where dict.language_id=small.language_id;
+
+
+select dict.language_id, count(*) from 
+
+(select language_id, count(*) from dictionary group by language_id having count(*)<=100) small
+,
+
+(select word, translation, language_id, count(*) from
+(
+select v.word, vhr.translation, h.language_id from voc_hits_results vhr, assignments a, hits h , vocabulary v 
+where a.id=vhr.assignment_id and h.id=a.hit_id  and is_control=1 and v.id=word_id 
+and exists (select * from voc_hits_workers_performance where total>10 and quality>0.75 and a.worker_id=id)  and translation!='' and upper(word)!=upper(translation)
+) t
+group by word, translation, language_id having count(*)>2 order by count(*) desc
+) dict
+where dict.language_id=small.language_id group by dict.language_id;
+
+-- 21 languages have extra controls, 44 languages have <100 controls
+
+
+
+-- workers with multiple languages
+select w.id, banned, count(*) from workers w, voc_hits_workers_performance p where w.id=p.id group by w.id, banned order by count(*) desc                                                        ;
+
+
+-- ultimate stats
+
+*Synonyms
+
+*Vocabulary
+
+	*Russian
+	*Spanish
+	...
+	
+# HITs
+# of HITs Closed
+# of Assignmetns
+# of Assignments Submitted/Rejected/Approved | Open/Closed
+# of Workers
+Avg performance
+
+
+*Workers
+
+* Lookup workers by MTurk id
+
+
+Languages
+
+--mturk=#  select * from stats limit 1;                                                                                                                                                                    
+-- id  | hittype_id | language_id | hittype_name | language_prefix | language_name | hits | hits_closed | assignments | a_closed | a_submitted | a_approved | a_rejected | workers | avg_performance 
+-	
+-- prepopulate stats table based on languages
+insert into stats (language_id, language_name, language_prefix) select id, name, prefix from languages;
+
+-- add hittypes
+update stats set hittype_id=ht.id, hittype_name=typename from (select id, typename, language_id from hittypes) as ht where ht.language_id=stats.language_id;
+
+update stats set hits=total from (select hittype_id, count(*) as total from hits group by hittype_id) h where h.hittype_id=stats.hittype_id;
+update stats set hits_closed=total from (select hittype_id, count(*) as total from hits where status='Closed' group by hittype_id) h where h.hittype_id=stats.hittype_id;
+
+update stats set assignments=total from (select hittype_id, count(*) as total from hits h, assignments a where a.hit_id=h.id group by hittype_id) h where h.hittype_id=stats.hittype_id;
+
+update stats set a_closed=total from (select hittype_id, count(*) as total from hits h, assignments a where a.hit_id=h.id and a.status='Closed' group by hittype_id) h where h.hittype_id=stats.hittype_id;
+
+update stats set a_submitted=total from (select hittype_id, count(*) as total from hits h, assignments a where a.hit_id=h.id and a.mturk_status='Submitted' group by hittype_id) h where h.hittype_id=stats.hittype_id;
+update stats set a_rejected=total from (select hittype_id, count(*) as total from hits h, assignments a where a.hit_id=h.id and a.mturk_status='Rejected' group by hittype_id) h where h.hittype_id=stats.hittype_id;
+update stats set a_approved=total from (select hittype_id, count(*) as total from hits h, assignments a where a.hit_id=h.id and a.mturk_status='Approved' group by hittype_id) h where h.hittype_id=stats.hittype_id;
+
+-- update num of unique workers per hittype
+update stats set workers=total from (select hittype_id, count(*) as total from
+(
+	select distinct hittype_id, worker_id from hits h, assignments a where a.hit_id=h.id
+) as d
+group by hittype_id) h where h.hittype_id=stats.hittype_id;
+
+(select distinct hittype_id, worker_id from hits h, assignments a where a.hit_id=h.id) h where h.hittype_id=stats.hittype_id;
+
+-- distinct worker/hittype_id
+select distinct hittype_id, worker_id from hits h, assignments a where a.hit_id=h.id
+
+--num of workers per hittype_id
+select hittype_id, count(*) as total from
+(
+	select distinct hittype_id, worker_id from hits h, assignments a where a.hit_id=h.id
+) as d
+group by hittype_id
+
+
+-- avg performance per hittype
+update stats set avg_performance=avg_perf from (select  hittype_id, avg(a.data_status) as avg_perf from hits h, assignments a where a.hit_id=h.id group by hittype_id) h where h.hittype_id=stats.hittype_id;

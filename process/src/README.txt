@@ -10,6 +10,8 @@ WORKFLOWS:
 		Push all assignments from buffer table into primary assignments table
 		
 		Pay all new workers for first 10 tasks only
+		TODO: check with blocked list
+		TODO: check how manu languages workers did (max)
 		
 		Review Vocabulary HITs and pay all workers with verifyable controls (~30%)
 		
@@ -19,6 +21,7 @@ WORKFLOWS:
 		
 		Review Synonyms HITs and pay all workers
 		
+		Review Vcabulary HITs and pay all the workers
 		
 		
 		(repeat) 
@@ -50,11 +53,30 @@ RULES:
 		
 		For each vocabulary result, lookup synonyms data for match
 		If match found assign quality to vocabulary result control
+			value is synonym, assign 1
+			value is non_synonym (control failed), assign 0
 		
-		If two vocabulary controls are 
-		
+	Vocabulary HITs review
+		select all vocabulary controls where value is empty or notaword (can't translate) (if you are 75% bump up)
+			assign quality as 0 (failed control)		
 
 
+		for all Vocabulary HITs assignments with both controls graded, calculate average quality between controls (e.g. 0, 0.5, 1)
+			If workers performance >0.75, assume quality as 1
+			
+			if 1 - Approve, pay
+			if 0.5 - Approve, pay
+			if 0 - Reject, no pay
+			if 0.5 - ??? Reject, no pay
+			
+	Synonyms HITs review
+		select all synonyms HITs controls
+			assign quality 1 for correect control and 0 for incorrect control
+			assign average of two controls as quality to non control synonym pairs
+			
+			If worker's performance > 75%, bump up quality to 1
+			If worker's performance <=50%, reject and assign quality to 0
+			Otherwize reject/approve based on quality 0/1
 
 --
 
