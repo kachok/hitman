@@ -122,7 +122,11 @@ for row in rows:
 				word_id=wordnum[6:15]
 				is_control=wordnum[15:16]=="0"
 				translation=results[key]
-				reason=results["reason"+num]
+				try:
+					reason=results["reason"+num]
+				except KeyError:
+					print "reason field is missing: assignment_id ",assignment_id
+					print results
 
 				sql2="SELECT add_voc_hits_result(%s, %s, %s, %s, %s);"
 				cur2.execute(sql2,(assignment_id, int(word_id), translation, reason, int(is_control)))
@@ -176,12 +180,13 @@ for row in rows:
 	conn.commit()
 	cp6=datetime.datetime.now()
 	
-	print cp6-cp1, " start to finish"
-	print cp3-cp2, " add assignment"
-	print cp4-cp3, " add assignment"
-	print cp5-cp4, " add results"
-	print cp6-cp5, " add location"
-	print "---"
+	#disabled performance stats
+	#print cp6-cp1, " start to finish"
+	#print cp3-cp2, " add assignment"
+	#print cp4-cp3, " add assignment"
+	#print cp5-cp4, " add results"
+	#print cp6-cp5, " add location"
+	#print "---"
 
 conn.commit()
 

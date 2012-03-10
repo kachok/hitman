@@ -57,11 +57,15 @@ trim(trailing 'S' from upper(trim(both ' ' from shd.synonym)))=trim(trailing 'S'
 and shd.output = 'no'
 and t.id=vhr.id);
 
+-- update voc_hits_results with empty or can't translate values (quality=0)
+update voc_hits_results t set quality=0 
+where ((reason !='' and reason!='englishword') and trim(' ' from translation)='') and is_control=0
+
 --update all non-controls based on average controls quality (when both controls are graded)
 update voc_hits_results set quality=avg_quality from (select assignment_id as t_id, avg(quality) as avg_quality from voc_hits_results where is_control=0 group by assignment_id having count(quality)=2) t where t_id=assignment_id and is_control=1;
 
 --update all voc assignmetns as Graded and calculate average quality, if both controls are graded
 update assignments set data_status=avg_quality, status='Graded' 
-from (select assignment_id as t_id, avg(quality) as avg_quality from voc_hits_results where is_control=0 group by assignment_id having count(quality)=2) t where t_id=id;
+from (select assignment_id as t_id, avg(quality) as avg_quality from voc_hits_results where is_control=0 group by assignment_id having count(quality)=2) t where t_id=id and status='Open';
 
 
