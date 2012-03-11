@@ -86,9 +86,9 @@ for i, lang in enumerate(langs):
 		
 		#print row[0], row[1], row[2]
 		word_id=str(row[0]).zfill(9)+'0'
-		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
+		segments_file.write( word_id +"-"+ langs_properties[lang]["script"]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences-"+str(sentences))
+		segments_file.write( word_id +"-"+ langs_properties[lang]["script"]["direction"]+"-"+lang+"-sentences-"+str(sentences))
 		segments_file.write("\n")
 		
 		sentence_file.write(row[1].decode('UTF-8'))
@@ -120,9 +120,9 @@ for i, lang in enumerate(langs):
 		#print row[0], row[1], row[2]
 		word_id=str(row[0]).zfill(9)+'1'
 		
-		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-word")
+		segments_file.write( word_id +"-"+ langs_properties[lang]["script"]["direction"]+"-"+lang+"-word")
 		segments_file.write("\n")
-		segments_file.write( word_id +"-"+ langs_properties[lang]["direction"]+"-"+lang+"-sentences-"+str(sentences))
+		segments_file.write( word_id +"-"+ langs_properties[lang]["script"]["direction"]+"-"+lang+"-sentences-"+str(sentences))
 		segments_file.write("\n")
 
 		sentence1=row[2].decode('UTF-8')
