@@ -2,7 +2,7 @@
 
 from settings import settings
 
-from langlib import get_languages_list, get_languages_properties
+import wikilanguages
 
 
 import psycopg2
@@ -33,14 +33,14 @@ logging.info("target language: %s" % (target_language))
 #TODO: for now just load this list from data/languages/languages.txt (list of wikipedia languages with 10,000+ articles)
 
 langs=[] #list of languages represented as wikipedia prefixes e.g. xx - xx.wikipedia.org
-langs=get_languages_list(settings["languages_file"], target_language)
+langs=wikilanguages.load(settings["languages_file"])
 
 logging.info("# of languages loaded: %s" %(len(langs)))
 if len(langs)<=5:
 	logging.info("languages are: %s" %(langs))
 
 langs_properties={} #list of languages' properties (e.g. LTR vs RTL script, non latin characters, etc) 
-langs_properties=get_languages_properties(settings["languages_properties_file"], target_language)
+langs_properties=wikilanguages.langs
 
 
 # iterate over each language individually

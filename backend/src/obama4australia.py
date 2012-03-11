@@ -4,11 +4,18 @@
 import wikipydia
 import codecs
 
+from settings import settings
+import wikilanguages
+
 words=["Barack Obama", "Australia"]
 
-langs="ru,ur,de,fr,eu,eo,sl,fi,ca,sv,lt,war,nl,da,sk,he,pl,cs,hr,hu,it,bg,sr,kk,uk,ro,ja,ms,pt,ko,vi,tr,es,fa,id,ar,zh,hi,io,an,mk,mg,pms,ka,bs,wa,ga,cv,diq,ht,nds,nap,sq,hy,sh,tt,qu,yo,ceb,th,ne,ku,am,te,tl,su,ml,mr,jv,ta,gu,sw,no,kn,pnb".split(",")
-langs="bn,bh,or,bpy,pa,bo,ks,pnb,gu,te,hi,ta,kn,ml,mr,ms,ks,sd,ps,uz,tk,af,am,so,rw,wo,ilo,pam,bcl,pag"
-langs=langs.split(',')
+#langs="ru,ur,de,fr,eu,eo,sl,fi,ca,sv,lt,war,nl,da,sk,he,pl,cs,hr,hu,it,bg,sr,kk,uk,ro,ja,ms,pt,ko,vi,tr,es,fa,id,ar,zh,hi,io,an,mk,mg,pms,ka,bs,wa,ga,cv,diq,ht,nds,nap,sq,hy,sh,tt,qu,yo,ceb,th,ne,ku,am,te,tl,su,ml,mr,jv,ta,gu,sw,no,kn,pnb".split(",")
+#langs="bn,bh,or,bpy,pa,bo,ks,pnb,gu,te,hi,ta,kn,ml,mr,ms,ks,sd,ps,uz,tk,af,am,so,rw,wo,ilo,pam,bcl,pag"
+#langs=langs.split(',')
+
+langs=[] #list of languages represented as wikipedia prefixes e.g. xx - xx.wikipedia.org
+langs=wikilanguages.load(settings["languages_file"])
+
 
 print langs
 lang="en"
