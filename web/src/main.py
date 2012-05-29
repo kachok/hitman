@@ -233,6 +233,67 @@ def synonyms_hit():
 		}
 	return dict(params=params)
 
+
+@route('/hits/esl')
+@view('esl')
+def esl_hit():
+	#when page is rendered, get assignmentID/hitID and attach it to displayed results
+
+	assignmentid=request.query.assignmentId
+	hitid=request.query.hitId
+
+	params={
+		"ipinfodb_key":settings["ipinfodb_key"],
+		"hit_type":"vocabulary-ru",
+		"assignmentid":assignmentid,
+		"hitid":hitid,
+		"ip":get_client_ip(request),
+		#"words":json.dumps(words),
+		}
+	return dict(params=params)
+
+
+@route('/hits/similarsentences')
+@view('similarsentences')
+def esl_hit():
+	#when page is rendered, get assignmentID/hitID and attach it to displayed results
+
+	assignmentid=request.query.assignmentId
+	hitid=request.query.hitId
+
+	params={
+		"ipinfodb_key":settings["ipinfodb_key"],
+		"hit_type":"vocabulary-ru",
+		"assignmentid":assignmentid,
+		"hitid":hitid,
+		"ip":get_client_ip(request),
+		#"words":json.dumps(words),
+		}
+	return dict(params=params)
+
+
+
+@route('/hits/tensentences/<language>')
+@view('tensentences')
+def tensentences_hit(language):
+	#when page is rendered, get assignmentID/hitID and attach it to displayed results
+
+	assignmentid=request.query.assignmentId
+	hitid=request.query.hitId
+
+	params={
+		"ipinfodb_key":settings["ipinfodb_key"],
+		"hit_type":"tensentences-ru",
+		"assignmentid":assignmentid,
+		"hitid":hitid,
+		"lang":language,
+		"lang_name":langs_properties[language]["name"],
+		"ip":get_client_ip(request),
+		#"words":json.dumps(words),
+		}
+	return dict(params=params)
+
+
 #debug(True)
 #run(reloader=True, port=80)
 #run(host='localhost', port=80)
