@@ -127,7 +127,7 @@
 	};
 
 
- $.getJSON("/words?hitId={{params['hitid']}}", function(data) {
+ $.getJSON("/tweets?hitId={{params['hitid']}}", function(data) {
 	for (word in data["words"]){
 		//alert(data["words"][word]["word"]);
 		$("#word"+word).html(data["words"][word]["word"]);
