@@ -96,6 +96,55 @@ def index():
 	return {"words":words, "total":total}
 
 
+# simple JSON webservice to return words for specific HITId ( for spanish tweets HITs)
+@route('/tweets')
+def index():
+
+	hitid=request.query.hitId
+
+	try:
+		conn = psycopg2.connect("dbname='"+settings["dbname2"]+"' user='"+settings["user2"]+"' host='"+settings["host2"]+"'")
+	except:
+		pass
+
+	cur = conn.cursor()
+
+	#sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
+	sql="select * from voc_hits_data d, vocabulary v, voc_hits h where h.id=d.hit_id and v.id=d.word_id and h.mturk_hit_id=%s"
+
+	#print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	words=[]
+	total=0
+	for row in rows:
+		word_id=str(row[2]).zfill(9)+"0"
+		word=str(row[4])
+		words.append({"word_id":word_id,"word":word})
+		total=total+1
+
+	sql="select * from dictionary d, voc_hits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
+
+	#print hitid
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	for row in rows:
+		word_id=str(row[0]).zfill(9)+"1"
+		word=str(row[1]).lower()
+		words.append({"word_id":word_id,"word":word})
+		total=total+1
+
+	conn.close()
+
+
+	response.content_type = 'application/json'
+	return {"words":words, "total":total}
+
+
 # simple JSON webservice to return synonyms for specific HITId
 @route('/synonyms')
 def index():
@@ -214,6 +263,28 @@ def vocabulary_hit(language):
 		#"words":json.dumps(words),
 		}
 	return dict(params=params)
+
+@route('/hits/vocabulary_tweets_es/<language>')
+@view('vocabulary_tweets_es')
+def vocabulary_hit(language):
+	#when page is rendered, get assignmentID/hitID and attach it to displayed results
+
+	assignmentid=request.query.assignmentId
+	hitid=request.query.hitId
+
+	params={
+		"ipinfodb_key":settings["ipinfodb_key"],
+		"hit_type":"vocabulary-ru",
+		"assignmentid":assignmentid,
+		"hitid":hitid,
+		"lang":language,
+		"lang_name":langs_properties[language]["name"],
+		"ip":get_client_ip(request),
+		#"words":json.dumps(words),
+		}
+	return dict(params=params)
+
+
 
 @route('/hits/synonyms')
 @view('synonyms')
