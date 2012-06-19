@@ -38,7 +38,7 @@ List of languages selected for the experiment:
 ##PROCESS
 
 ###Building vocabularies using Wikipedia
-![Flow diagram](docs/vocabularies_pipeline.png)
+![Flow diagram](vocabularies_pipeline.png)
 
 #### Overview
 As a result of Wikipedia pipeline we generated two data files per language:
