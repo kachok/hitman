@@ -103,14 +103,14 @@ def index():
 	hitid=request.query.hitId
 
 	try:
-		conn = psycopg2.connect("dbname='"+settings["dbname2"]+"' user='"+settings["user2"]+"' host='"+settings["host2"]+"'")
+		conn = psycopg2.connect("dbname='"+settings["dbname3"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 	except:
 		pass
 
 	cur = conn.cursor()
 
 	#sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
-	sql="select * from tensentences_hits_data d, tweets t, tensentences_hits h where h.id=d.hit_id and t.id=d.tweet_id and h.mturk_hit_id=%s"
+	sql="select t.id, t.tweet from tensentences_hits_data d, tweets t, tensentences_hits h where h.id=d.hit_id and t.id=d.tweet_id and h.mturk_hit_id=%s"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -120,12 +120,12 @@ def index():
 	tweets=[]
 	total=0
 	for row in rows:
-		tweet_id=str(row[2]).zfill(9)+"0"
-		tweet=str(row[4])
+		tweet_id=str(row[1]).zfill(9)+"0"
+		tweet=str(row[1])
 		tweets.append({"tweet_id":tweet_id,"tweet":tweet})
 		total=total+1
 
-	sql="select * from translations t, tensentences_hits h where t.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
+	sql="select  t.id, t.tweet  from translations t, tensentences_hits h where t.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
