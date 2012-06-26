@@ -142,10 +142,11 @@
 		}
 
 		options="<select name='reason"+tweet+"' id='reason"+tweet+"'>"+
-		  "<option value=''>Select a reason, you can't translate this word</option>"+
-		  "<option value='notaword'>Not a word (gibberish/HTML formatting/special characters)</option>"+
-		  "<option value='notaword'>Word is too obscure to translate</option>"+
-		  "<option value='englishword'>English word</option>"+
+		  "<option value=''>Select a reason, you can't translate this tweet</option>"+
+		  "<option value='gibberish'>gibberish/HTML formatting/special characters</option>"+
+		  "<option value='obscure'>Tweet is too obscure to translate</option>"+
+		  "<option value='english'>English tweet</option>"+
+		  "<option value='otherlanguage'>Non-spanish tweet</option>"+
 		  "<option value='other'>Other</option>"+
 		"</select>";
 
