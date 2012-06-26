@@ -110,22 +110,22 @@ def index():
 	cur = conn.cursor()
 
 	#sql="select * from vocabularyHITs vh, vocabulary v where vh.hit_id=%s and v.id=vh.word_id order by random()"
-	sql="select * from voc_hits_data d, vocabulary v, voc_hits h where h.id=d.hit_id and v.id=d.word_id and h.mturk_hit_id=%s"
+	sql="select * from tensentences_hits_data d, tweets t, tensentences_hits h where h.id=d.hit_id and t.id=d.tweet_id and h.mturk_hit_id=%s"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
 
 	rows=cur.fetchall()
 
-	words=[]
+	tweets=[]
 	total=0
 	for row in rows:
-		word_id=str(row[2]).zfill(9)+"0"
-		word=str(row[4])
-		words.append({"word_id":word_id,"word":word})
+		tweet_id=str(row[2]).zfill(9)+"0"
+		tweet=str(row[4])
+		tweets.append({"tweet_id":tweet_id,"tweet":tweet})
 		total=total+1
 
-	sql="select * from dictionary d, voc_hits h where d.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
+	sql="select * from translations t, tensentences_hits h where t.language_id=h.language_id and h.mturk_hit_id=%s order by random() limit 2"
 
 	#print hitid
 	cur.execute(sql, (hitid,))
@@ -133,16 +133,16 @@ def index():
 	rows=cur.fetchall()
 
 	for row in rows:
-		word_id=str(row[0]).zfill(9)+"1"
-		word=str(row[1]).lower()
-		words.append({"word_id":word_id,"word":word})
+		tweet_id=str(row[0]).zfill(9)+"1"
+		tweet=str(row[1]).lower()
+		tweets.append({"tweet_id":tweet_id,"tweet":tweet})
 		total=total+1
 
 	conn.close()
 
 
 	response.content_type = 'application/json'
-	return {"words":words, "total":total}
+	return {"tweets":tweets, "total":total}
 
 
 # simple JSON webservice to return synonyms for specific HITId
