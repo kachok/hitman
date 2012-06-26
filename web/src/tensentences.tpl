@@ -127,13 +127,13 @@
 	};
 
 
- $.getJSON("/tensentences?hitId={{params['hitid']}}", function(data) {
-	for (sentence in sentences["sentences"]){
+ $.getJSON("/tweets?hitId={{params['hitid']}}", function(data) {
+	for (tweet in data["tweets"]){
 		//alert(data["words"][word]["word"]);
-		$("#sentence"+sentence).html(data["sentence"][sentence]["sentence"]);
-		
+		$("#word"+tweet).html(data["tweets"][tweet]["tweet"]);
+
 		c="";
-		if ((sentence%2)?false:true){
+		if ((tweet%2)?false:true){
 			//even
 			c=' class="even" ';
 		}
@@ -141,16 +141,19 @@
 			c=' class="odd" ';
 		}
 
+		options="<select name='reason"+tweet+"' id='reason"+tweet+"'>"+
+		  "<option value=''>Select a reason, you can't translate this word</option>"+
+		  "<option value='notaword'>Not a word (gibberish/HTML formatting/special characters)</option>"+
+		  "<option value='notaword'>Word is too obscure to translate</option>"+
+		  "<option value='englishword'>English word</option>"+
+		  "<option value='other'>Other</option>"+
+		"</select>";
 
 		//html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
-		/*
-		html='<tr '+c+' ><td id="word'+word+'"><!--'+data["words"][word]["word"]+'--><img src="/static/images/{{params['lang']}}/word/'+data["words"][word]["word_id"]+'.png"/></td><td><input id="word'+word+'in" type="text" name="word'+word+'-'+data["words"][word]["word_id"]+'" size="50"></input></td><td width="400px"><label for="check'+word+'">Can\'t translate</label> <input type="checkbox" name="check'+word+'" id="check'+word+'"></input> <div id="reason'+word+'div" style="display:none;"> '+options+'</div></td></tr>';
-		html=html+'<tr><td></td><td colspan="2"><div id="word'+word+'help" style="display:none"><img src="/static/images/{{params['lang']}}/sentences/'+data["words"][word]["word_id"]+'.png"/></div></td></tr>';
+		html='<tr '+c+' ><td id="word'+tweet+'">'+data["tweets"][tweet]["tweet"]+'</td><td><textarea rows="3" cols="50" id="word'+tweet+'in" type="text" name="word'+tweet+'-'+data["tweets"][tweet]["tweet_id"]+'" size="50"></textarea></td><td width="400px"><label for="check'+tweet+'">Can\'t translate</label> <input type="checkbox" name="check'+tweet+'" id="check'+tweet+'"></input> <div id="reason'+tweet+'div" style="display:none;"> '+options+'</div></td></tr>';
+		html=html+'<tr><td></td><td colspan="2"><div id="word'+tweet+'help" style="display:none"></div></td></tr>';
 		//alert(html);
-		*/
-		
-		html='<tr><td width="50%"><img src=""/>'+Sentence+'</td><td width="50%"><textarea id="sentence'+sentence+'" name="sentence'+sentence+'" rows="3" cols="50"></textarea></td></tr>'
-		 
+
 		$("#word_table").html($("#word_table").html()+html);
 
 
@@ -161,7 +164,7 @@
 	}
 
 
-    }); 
+    });
 
     
  $.getJSON("/ip", function(json) {
@@ -270,30 +273,6 @@
 				<div id="words_panel">
 					<h3>Translate the individual sentences on the left</h3>
 					<table id="word_table" width="100%">
-						<tr>
-							<td width="50%">
-								Sentence 1
-							</td>
-							<td width="50%">
-								<textarea id="sentence1" name="sentence1" rows="3" cols="50"></textarea>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								Sentence 2
-							</td>
-							<td width="50%">
-								<textarea id="sentence1" name="sentence1" rows="3" cols="50"></textarea>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								Sentence 3
-							</td>
-							<td width="50%">
-								<textarea id="sentence1" name="sentence1" rows="3" cols="50"></textarea>
-							</td>
-						</tr>
 					</table>
 				</div>
 
