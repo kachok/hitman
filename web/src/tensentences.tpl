@@ -149,7 +149,7 @@
 		"</select>";
 
 		//html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
-		html='<tr '+c+' ><td id="word'+tweet+'">'+data["tweets"][tweet]["tweet"]+'</td><td><textarea rows="3" cols="50" id="word'+tweet+'in" type="text" name="word'+tweet+'-'+data["tweets"][tweet]["tweet_id"]+'" size="50"></textarea></td><td width="400px"><label for="check'+tweet+'">Can\'t translate</label> <input type="checkbox" name="check'+tweet+'" id="check'+tweet+'"></input> <div id="reason'+tweet+'div" style="display:none;"> '+options+'</div></td></tr>';
+		html='<tr '+c+' ><td id="word'+tweet+'"><!--'+data["tweets"][tweet]["tweet"]+'--><img src="/static/images/{{params['lang']}}/word/'+data["tweets"][tweet]["tweet_id"]+'.png"/></td><td><textarea rows="3" cols="50" id="word'+tweet+'in" type="text" name="word'+tweet+'-'+data["tweets"][tweet]["tweet_id"]+'" size="50"></textarea></td><td width="400px"><label for="check'+tweet+'">Can\'t translate</label> <input type="checkbox" name="check'+tweet+'" id="check'+tweet+'"></input> <div id="reason'+tweet+'div" style="display:none;"> '+options+'</div></td></tr>';
 		html=html+'<tr><td></td><td colspan="2"><div id="word'+tweet+'help" style="display:none"></div></td></tr>';
 		//alert(html);
 
