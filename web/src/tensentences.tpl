@@ -230,9 +230,9 @@
 						<p>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know either of the languages then do not do this HIT.</p>
 
 						<p>
-							Here are clarifications on how to translate tweets:<b/>
-							- instead of typing URLs/web links (e.g. http://jhu.edu) type [URL] instead.<b/>
-							- do not translate twitter names (e.g. @jhu )<b/>
+							Here are clarifications on how to translate tweets:<br/>
+							- instead of typing URLs/web links (e.g. http://jhu.edu) type [URL] instead.<br/>
+							- do not translate twitter names (e.g. @jhu )<br/>
 							- hash tags (e.g. #jhu or #mechanicalturk) should be translated if possible (include hash character - #)
 						</p>
 						
