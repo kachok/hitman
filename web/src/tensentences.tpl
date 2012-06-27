@@ -225,10 +225,16 @@
      	<td width="*">
   <div id="instructions">
 	<p>This HIT is only for people who speak both {{params['lang_name']}} and English.</p>
-	            <p>Please translate each of the 10 sentences shown below.  </p>
+	            <p>Please translate each of the 10 tweets shown below.  </p>
 
 						<p>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know either of the languages then do not do this HIT.</p>
 
+						<p>
+							Here are clarifications on how to translate tweets:<b/>
+							- instead of typing URLs/web links (e.g. http://jhu.edu) type [URL] instead.<b/>
+							- do not translate twitter names (e.g. @jhu )<b/>
+							- hash tags (e.g. #jhu or #mechanicalturk) should be translated if possible (include hash character - #)
+						</p>
 						
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
