@@ -112,13 +112,13 @@ logging.info("tweets table is loaded")
 
 logging.info("processing spanish tweets translations")
 
-f=open("../data/tweets_translate_1")
+f=open("../data/tweets_translate_2.txt")
 
 count=0
 
 for line in f:
 	line.replace("		","	")
-	t=line.strip().split("	",2)
+	t=line.strip().split("	",5)
 	count=count+1
 	if count==1:
 		continue
@@ -126,11 +126,13 @@ for line in f:
 	tweetid=t[0]
 	tweet=t[1].decode('unicode_escape')
 	translation=t[2].decode('unicode_escape')
+	translation=t[4]
+	translation=t[5]
 	
 
-	sql="INSERT INTO translations (tweetid, tweet, translation, language_id) VALUES (%s,%s,%s,%s);"
+	sql="INSERT INTO translations (tweetid, tweet, translation, google, bing, language_id) VALUES (%s,%s,%s,%s);"
 	try:
-		cur.execute(sql,(tweetid, tweet, translation, lang_id))
+		cur.execute(sql,(tweetid, tweet, translation, google, bing, lang_id))
 	except Exception, ex:
 		print "voc error"
 		print ex
