@@ -140,6 +140,52 @@ for line in f:
 conn.commit()
 
 logging.info("translations table is loaded")
+
+
+
+lang="en"
+
+sql="SELECT id from languages where prefix=%s;"
+cur.execute(sql, (lang,))
+rows = cur.fetchall()
+
+lang_id=0
+for row in rows:
+	lang_id=row[0]
+
+logging.info("processing english parallel corpus")
+
+f=open("../data/parallel.txt")
+
+count=0
+
+for line in f:
+	line.replace("		","	")
+	t=line.strip().split("	",4)
+	count=count+1
+	if count==1:
+		continue
+	
+	print t
+	print len(t)
+	
+	text1=t[0].decode('unicode_escape')
+	text2=t[1].decode('unicode_escape')
+	text3=t[2].decode('unicode_escape')
+	text4=t[3].decode('unicode_escape')
+	
+
+	sql="INSERT INTO parallel (text1,text2,text3,text4, language_id) VALUES (%s,%s,%s,%s,%s);"
+	try:
+		cur.execute(sql,(text1,text2,text3,text4, lang_id))
+	except Exception, ex:
+		print "voc error"
+		print ex
+
+conn.commit()
+
+logging.info("english parallel corpus loaded")
+
 		
 conn.close()
 		
