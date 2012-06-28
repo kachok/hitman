@@ -166,18 +166,19 @@ for line in f:
 	if count==1:
 		continue
 	
-	print t
-	print len(t)
+	#print t
+	#print len(t)
 	
 	text1=t[0].decode('unicode_escape')
 	text2=t[1].decode('unicode_escape')
 	text3=t[2].decode('unicode_escape')
 	text4=t[3].decode('unicode_escape')
+	active="true"
 	
 
-	sql="INSERT INTO parallel (text1,text2,text3,text4, language_id) VALUES (%s,%s,%s,%s,%s);"
+	sql="INSERT INTO parallel (text1,text2,text3,text4, active, language_id) VALUES (%s,%s,%s,%s,%s,%s);"
 	try:
-		cur.execute(sql,(text1,text2,text3,text4, lang_id))
+		cur.execute(sql,(text1,text2,text3,text4, active, lang_id))
 	except Exception, ex:
 		print "voc error"
 		print ex
