@@ -130,7 +130,7 @@ for line in f:
 	bing=t[5]
 	
 
-	sql="INSERT INTO translations (tweetid, tweet, translation, google, bing, language_id) VALUES (%s,%s,%s,%s);"
+	sql="INSERT INTO translations (tweetid, tweet, translation, google, bing, language_id) VALUES (%s,%s,%s,%s,%s,%s);"
 	try:
 		cur.execute(sql,(tweetid, tweet, translation, google, bing, lang_id))
 	except Exception, ex:
