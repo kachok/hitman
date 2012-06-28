@@ -160,11 +160,11 @@ def index():
 
 	sql=""
 	sql=sql+" select * from "
-	sql=sql+" ((select d.id, translation, similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
+	sql=sql+" ((select d.id, t.translation, similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
 	sql=sql+" union"
 	sql=sql+" (select id, text1, text2, google, bing, 1 as bit from parallel s where active=true order by random() limit 1)"
 	sql=sql+" union"
-	sql=sql+" (select id, text1, non_text,google, bing, 2 as bit from parallel s where active=true order by random() limit 1)"
+	sql=sql+" (select id, text1, nottext,google, bing, 2 as bit from parallel s where active=true order by random() limit 1)"
 	sql=sql+" ) t order by random()" 
 
 	#sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
@@ -178,12 +178,12 @@ def index():
 	total=0
 	for row in rows:
 		#bit="0" #regular pair
-		bit=str(row[3])
+		bit=str(row[5])
 		pair_id=str(row[0]).zfill(9)+bit
 		translation=str(row[1])
 		similar_sentence=str(row[2])
-		google=str(row[2])
-		bing=str(row[2])
+		google=str(row[3])
+		bing=str(row[4])
 		words.append({"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing})
 		total=total+1
 		print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
@@ -192,7 +192,7 @@ def index():
 	conn.close()
 
 	response.content_type = 'application/json'
-	return {"tweets":tweets, "total":total}
+	return {"tweets":words, "total":total}
 
 # simple JSON webservice to return synonyms for specific HITId
 @route('/synonyms')
