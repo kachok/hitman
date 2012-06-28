@@ -106,48 +106,7 @@
 	
 
 
- $.getJSON("/synonyms?hitId={{params['hitid']}}", function(data) {
-	total=data["total"];
-	pairs=data["words"]
-	for (word in data["words"]){
-		//alert(data["words"][word]["word"]);
-		$("#word"+word).html(data["words"][word]["word"]);
 
-		c="";
-		if ((word%2)?false:true){
-			//even
-			c=' class="even" ';
-		}
-		else{
-			c=' class="odd" ';
-		}
-
-
-		options="<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp;"+
-		  "<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;"+
-		  "<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='related'>Related but not synonymous &nbsp;";
-		
-		
-		checks="<br/>"+
-		"<input type='checkbox' name='misspelled_"+data["words"][word]["pair_id"]+"' value='misspelled' /> Word is misspelled <br/>";
-
-
-		//html='<tr><td id="word'+word+'">'+data["words"][word]["word"]+'</td><td><input id="word'+word+'in" type="text" name="word'+word+'" size="50"></input><br/><div id="word'+word+'help" style="display:none">help</div></td></tr>';
-		html='<tr><td> <b><a target="_blank" href="http://dictionary.reference.com/browse/'+data["words"][word]["synonym"]+'">'+data["words"][word]["synonym"]+'</a></b> and <b><a target="_blank" href="http://dictionary.reference.com/browse/'+data["words"][word]["translation"]+'">'+data["words"][word]["translation"]+"</a></b><br/>"+options+checks+'</div><br/></td></tr>';
-
-
-		//alert(html);
-
-		$("#word_table").html($("#word_table").html()+html);
-
-
-	}
-	for (i=0;i<total;i++){
-		add_pairhandler(data["words"][i]["pair_id"]);
-	}
-
-
-    });
 
     
  $.getJSON("/ip", function(json) {
