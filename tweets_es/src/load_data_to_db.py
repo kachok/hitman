@@ -112,7 +112,7 @@ logging.info("tweets table is loaded")
 
 logging.info("processing spanish tweets translations")
 
-f=open("../data/tweets_translate_2.txt")
+f=open("../data/tweets_translate_2.txt", 'U')
 
 count=0
 
