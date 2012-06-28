@@ -128,7 +128,8 @@ for batchiter in batch(rows, settings["similar_num_unknowns"]):
 
 	logging.info("Batch ")
 	for item in batchiter:
-		data_id=item[2]
+		data_id=item[0]
+		
 		
 		sql="UPDATE similar_hits_data SET hit_id=%s where id=%s;"
 		cur2.execute(sql,(hit_id, data_id))
