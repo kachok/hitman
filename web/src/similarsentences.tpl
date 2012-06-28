@@ -209,9 +209,8 @@
   <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
 	            <ul>
-					<li>For each pair of sentences say if they have the same meaning.</li>
-					<li>If the sentences are identical, click "yes".</li>
-					<li>If the sentences do not mean the same thing and they are unrelated, click "no".</li>
+					<li>There are 5 identical sections.</li>
+					<li>For each section you need to answer three questions.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
@@ -251,60 +250,56 @@
 		  			%include templates/englishspeakersurvey.tpl
 				</div>
 
+
 				<div id="words_panel">
 					<h3>Are those two sentences have similar meaning?</h3>
 					<table id="word_table" width="100%">
+						%for i in range(10):
+						<tr>
+							<td colspan="2">
+								1) Does this two sentences have the same meaning?
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<br/>
+							</td>
+						</tr>
 						<tr>
 							<td width="50%">
-								Sentence 1a
+								Translation from prof. translator #1
 							</td>
 							<td width="50%">
-								Sentence 1b
+								Translation from prof. translator #2
+							</td>
+						</tr>
+						
+						<tr>
+							<td colspan="2">
+								2) Does this sentence looks like it was machine translated?
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<br/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								Translation of tweet from Turker
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								3) Is this translation good enough? or should it be re-translated (e.g. is it grammatically correct English sentence and look like professional translation or not?)
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<br/>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2" align="center">
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='related'>Not similar but very close (same subject) &nbsp;
-							<br/>
-							<br/>
+							<hr/>
 							</td>
 						</tr>
-						<tr>
-							<td width="50%">
-								Sentence 2a
-							</td>
-							<td width="50%">
-								Sentence 2b
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" align="center">
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='related'>Not similar but very close (same subject) &nbsp;
-							<br/>
-							<br/>
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
-								Sentence 3a
-							</td>
-							<td width="50%">
-								Sentence 3b
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2" align="center">
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
-							<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='related'>Not similar but very close (same subject) &nbsp;
-							<br/>
-							<br/>
-							</td>
-						</tr>
+						%end
+
 					</table>
 				</div>
 

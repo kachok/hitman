@@ -144,6 +144,7 @@ def index():
 	response.content_type = 'application/json'
 	return {"tweets":tweets, "total":total}
 
+
 # simple JSON webservice to return synonyms for specific HITId
 @route('/similar')
 def index():
@@ -159,11 +160,11 @@ def index():
 
 	sql=""
 	sql=sql+" select * from "
-	sql=sql+" ((select d.id, translation, synonym, 0 as bit from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s)"
+	sql=sql+" ((select d.id, translation, similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
 	sql=sql+" union"
-	sql=sql+" (select id, word, synonym, 1 as bit from synonyms s where active=true order by random() limit 1)"
+	sql=sql+" (select id, text1, text2, google, bing, 1 as bit from parallel s where active=true order by random() limit 1)"
 	sql=sql+" union"
-	sql=sql+" (select id, word, non_synonym, 2 as bit from non_synonyms s where active=true order by random() limit 1)"
+	sql=sql+" (select id, text1, non_text,google, bing, 2 as bit from parallel s where active=true order by random() limit 1)"
 	sql=sql+" ) t order by random()" 
 
 	#sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
@@ -181,9 +182,11 @@ def index():
 		pair_id=str(row[0]).zfill(9)+bit
 		translation=str(row[1])
 		similar_sentence=str(row[2])
-		words.append({"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence})
+		google=str(row[2])
+		bing=str(row[2])
+		words.append({"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing})
 		total=total+1
-		print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence}
+		print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
 
 
 	conn.close()
@@ -232,57 +235,14 @@ def index():
 		total=total+1
 		print {"pair_id":pair_id, "translation":translation, "synonym":synonym}
 
-	"""
-	#print hitid
-	cur.execute(sql, (hitid,))
 
-	rows=cur.fetchall()
-
-	words=[]
-	total=0
-	for row in rows:
-		bit="0" #regular pair
-		pair_id=str(row[0]).zfill(9)+bit
-		translation=str(row[4])
-		synonym=str(row[5])
-		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
-		total=total+1
-
-	sql="select * from synonyms s where active=true order by random() limit 1"
-
-	#print hitid
-	cur.execute(sql, (hitid,))
-
-	rows=cur.fetchall()
-
-	for row in rows:
-		bit="1" #control pair
-		pair_id=str(row[0]).zfill(9)+bit
-		translation=str(row[1])
-		synonym=str(row[2])
-		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
-		total=total+1
-
-	sql="select * from non_synonyms s where active=true order by random() limit 1"
-
-	#print hitid
-	cur.execute(sql, (hitid,))
-
-	rows=cur.fetchall()
-
-	for row in rows:
-		bit="2" #negative control pair 
-		pair_id=str(row[0]).zfill(9)+bit
-		translation=str(row[1])
-		synonym=str(row[2])
-		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
-		total=total+1
-
-	"""
 	conn.close()
 
 	response.content_type = 'application/json'
 	return {"words":words, "total":total}
+	
+	
+	
 @route('/notifications')
 def notifications():
 
