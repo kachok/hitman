@@ -155,13 +155,13 @@ for row in rows:
 
 logging.info("processing english parallel corpus")
 
-f=open("../data/parallel.txt")
+f=open("../data/parallel2.txt","U")
 
 count=0
 
 for line in f:
 	line.replace("		","	")
-	t=line.strip().split("	",4)
+	t=line.strip().split("	",7)
 	count=count+1
 	if count==1:
 		continue
@@ -169,16 +169,20 @@ for line in f:
 	#print t
 	#print len(t)
 	
-	text1=t[0].decode('unicode_escape')
-	text2=t[1].decode('unicode_escape')
-	text3=t[2].decode('unicode_escape')
-	text4=t[3].decode('unicode_escape')
+	
+	original=t[0].decode('unicode_escape')
+	text1=t[1].decode('unicode_escape')
+	text2=t[2].decode('unicode_escape')
+	text3=t[3].decode('unicode_escape')
+	text4=t[4].decode('unicode_escape')
+	google=t[5].decode('unicode_escape')
+	bing=t[6].decode('unicode_escape')
 	active="true"
 	
 
-	sql="INSERT INTO parallel (text1,text2,text3,text4, active, language_id) VALUES (%s,%s,%s,%s,%s,%s);"
+	sql="INSERT INTO parallel (text1,text2,text3,text4, google, bing,active, language_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
 	try:
-		cur.execute(sql,(text1,text2,text3,text4, active, lang_id))
+		cur.execute(sql,(text1,text2,text3,text4, google, bing,active, lang_id))
 	except Exception, ex:
 		print "voc error"
 		print ex
