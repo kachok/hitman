@@ -347,7 +347,7 @@ def similar_hit():
 
 	sql=""
 	sql=sql+" select * from "
-	sql=sql+" ((select d.id, t.translation, similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
+	sql=sql+" ((select d.id, d.translation, d.similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
 	sql=sql+" union"
 	sql=sql+" (select id, text1, text2, google, bing, 1 as bit from parallel s where active=true order by random() limit 1)"
 	sql=sql+" union"
