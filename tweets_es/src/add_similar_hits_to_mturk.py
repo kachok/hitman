@@ -71,7 +71,7 @@ for row in rows:
 
 
 #getting hittype_id from database
-sql="SELECT id, mturk_hittype_id from hittypes where language_id=%s and typename='synonyms';"
+sql="SELECT id, mturk_hittype_id from hittypes where language_id=%s and typename='similar';"
 cur.execute(sql, (lang_id,))
 rows = cur.fetchall()
 
