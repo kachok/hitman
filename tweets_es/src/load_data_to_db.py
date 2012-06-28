@@ -126,8 +126,8 @@ for line in f:
 	tweetid=t[0]
 	tweet=t[1].decode('unicode_escape')
 	translation=t[2].decode('unicode_escape')
-	translation=t[4]
-	translation=t[5]
+	google=t[4]
+	bing=t[5]
 	
 
 	sql="INSERT INTO translations (tweetid, tweet, translation, google, bing, language_id) VALUES (%s,%s,%s,%s);"
