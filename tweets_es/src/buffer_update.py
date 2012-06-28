@@ -113,13 +113,13 @@ for row in rows:
 
 	#print "typename: ",typename
 	
-	if typename=="vocabulary":
+	if typename=="tensentences":
 		#for i in range(settings["num_knowns"]+settings["num_unknowns"]):
 		for key in results.keys():
 			if key.find("word")==0:
 				wordnum=key
 				num=wordnum[4:5]
-				word_id=wordnum[6:15]
+				tweet_id=wordnum[6:15]
 				is_control=wordnum[15:16]=="0"
 				translation=results[key]
 				try:
@@ -128,12 +128,12 @@ for row in rows:
 					print "reason field is missing: assignment_id ",assignment_id
 					print results
 
-				sql2="SELECT add_voc_hits_result(%s, %s, %s, %s, %s);"
-				cur2.execute(sql2,(assignment_id, int(word_id), translation, reason, int(is_control)))
+				sql2="SELECT add_tensentences_hits_result(%s, %s, %s, %s, %s);"
+				cur2.execute(sql2,(assignment_id, int(tweet_id), translation, reason, int(is_control)))
 				#result_id = cur2.fetchone()[0]
 		conn.commit()					
 	
-	if typename=="synonyms":
+	if typename=="similar":
 	
 		#for i in range(settings["num_knowns"]+settings["num_unknowns"]):
 		for key in results.keys():
@@ -143,7 +143,8 @@ for row in rows:
 				pair_id_with_control=pairnum[5:15]
 				is_control=pairnum[14:15]
 				are_synonyms=results[key]
-				misspelled=""
+				machine_translated=results[key]
+				good_translation=results[key]
 				try:
 					misspelled=results["misspelled_"+pair_id_with_control]
 				except KeyError:
@@ -155,8 +156,8 @@ for row in rows:
 
 				#print assignment_id, int(pair_id), are_synonyms, misspelled, is_control
 
-				sql2="SELECT add_syn_hits_result(%s, %s, %s, %s, %s);"
-				cur2.execute(sql2,(assignment_id, int(pair_id), are_synonyms, misspelled, is_control))
+				sql2="SELECT add_syn_hits_result(%s, %s, %s, %s, %s, %s);"
+				cur2.execute(sql2,(assignment_id, int(pair_id), same_meaning, machine_translated, good_translation, is_control))
 				#result_id = cur2.fetchone()[0]
 		conn.commit()
 		
