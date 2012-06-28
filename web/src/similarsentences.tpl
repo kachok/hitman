@@ -254,27 +254,34 @@
 				<div id="words_panel">
 					<h3>Are those two sentences have similar meaning?</h3>
 					<table id="word_table" width="100%">
-						%for i in range(10):
+						%for word in params['words']:
 						<tr>
 							<td colspan="2">
 								1) Does this two sentences have the same meaning?
+								<br/>
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
 								<br/>
+
 							</td>
 						</tr>
 						<tr>
 							<td width="50%">
-								Translation from prof. translator #1
+								<b>{{word['translation']}}</b>
+								<br/>
+								<br/>
 							</td>
 							<td width="50%">
-								Translation from prof. translator #2
+								<b>{{word['similar_sentence']}}</b>
+								<br/>
+								<br/>
 							</td>
 						</tr>
 						
 						<tr>
 							<td colspan="2">
 								2) Does this sentence looks like it was machine translated?
+								<br/>
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
 								<br/>
@@ -282,12 +289,30 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								Translation of tweet from Turker
+								<b>{{word['translation']}}</b>
+								<br/>
+								<br/>
 							</td>
 						</tr>
 						<tr>
+							<td width="50%">
+								Example of translation by Google:<br/>
+								{{word['google']}}
+								<br/>
+								<br/>
+							</td>
+							<td width="50%">
+								Example of translation by Bing:<br/>
+								{{word['bing']}}
+								<br/>
+								<br/>
+							</td>
+						</tr>
+						
+						<tr>
 							<td colspan="2">
 								3) Is this translation good enough? or should it be re-translated (e.g. is it grammatically correct English sentence and look like professional translation or not?)
+								<br/>
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
 								<br/>
