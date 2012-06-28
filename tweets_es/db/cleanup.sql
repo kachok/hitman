@@ -1,0 +1,12 @@
+delete from tweets;
+delete from translations;
+delete from parallel;
+delete from hits;
+delete from assignments;
+delete from buffer_assignments;
+delete from tensentences_hits_data;
+delete from tensentences_hits_results;
+delete from similar_hits_data;
+delete from similar_hits_results;
+delete from hittypes;
+delete from languages;
