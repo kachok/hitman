@@ -105,6 +105,10 @@ for line in f:
 	except Exception, ex:
 		print "voc error"
 		print ex
+		
+	#limit load for testing
+	if count>100:
+		break
 
 conn.commit()
 
