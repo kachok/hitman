@@ -1,0 +1,1 @@
+update parallel p1 set nottext=(select text1 from parallel p2 where p1.id!=p2.id order by random() limit 1);
