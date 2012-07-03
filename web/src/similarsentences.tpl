@@ -172,15 +172,17 @@
    
   </script>
   
-  <h1>Are those two sentences have similar meaning?</h1>
+  <h1>Judge the quality of translations</h1>
   <table width="100%">
   	<tr>
      	<td width="*">
   <div id="instructions">
-	<p>This HIT is only for people who speak English.</p>
+	<p>This HIT is only for people who speak English.  In this HIT you will be asked to judge the quality of translation.</p>
 	            <ul>
-					<li>There are 6 identical sections.</li>
-					<li>For each section you need to answer three questions.</li>
+					<li>For 6 different translations you'll be asked three questions about the HIT.</li>
+					<li>First, we want to know if one translation has the same meaning as another translation.</li>
+					<li>Second, we want to know if you think that the translation quality is good (Is it good English? Is it spelled correctly? Etc).</li>
+					<li>Finally, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
