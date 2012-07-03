@@ -70,11 +70,11 @@
 
 		%for word in params['words']:
 			v=$('input[name=same_{{word["pair_id"]}}]:checked').val();
-			if (v==undefined){form_valid(false);break;}
+			if (v==undefined){form_valid(false);return;}
 			v=$('input[name=good_{{word["pair_id"]}}]:checked').val();
-			if (v==undefined){form_valid(false);break;}
+			if (v==undefined){form_valid(false);return;}
 			v=$('input[name=machine_{{word["pair_id"]}}]:checked').val();
-			if (v==undefined){form_valid(false);break;}
+			if (v==undefined){form_valid(false);return;}
 
 		%end
 
