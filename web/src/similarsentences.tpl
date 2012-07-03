@@ -168,7 +168,7 @@
   <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
 	            <ul>
-					<li>There are 5 identical sections.</li>
+					<li>There are 6 identical sections.</li>
 					<li>For each section you need to answer three questions.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
@@ -211,66 +211,45 @@
 
 
 				<div id="words_panel">
-					<h3>Are those two sentences have similar meaning?</h3>
+					<h3>Tasks:</h3>
 					<table id="word_table" width="100%">
 						%for word in params['words']:
-						<tr>
-							<td colspan="2">
-								1) Does this two sentences have the same meaning?
-								<br/>
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
-								<br/>
 
-							</td>
-						</tr>
-						<tr>
-							<td width="50%">
+
+						<tr bgcolor="lightgrey">
+							<td width="50%" >
 								<b>{{word['translation']}}</b>
 								<br/>
 								<br/>
 							</td>
-							<td width="50%">
+							<td width="50%" bgcolor="lightgrey">
 								<b>{{word['similar_sentence']}}</b>
 								<br/>
 								<br/>
 							</td>
 						</tr>
-						
 						<tr>
 							<td colspan="2">
-								2) Does this sentence looks like it was machine translated?
+								Does these two sentences above have the same meaning?
 								<br/>
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
 								<br/>
+								<br/>
+
 							</td>
 						</tr>
+						
 						<tr>
-							<td colspan="2">
+							<td colspan="2" bgcolor="lightgrey">
 								<b>{{word['translation']}}</b>
 								<br/>
 								<br/>
 							</td>
 						</tr>
 						<tr>
-							<td width="50%">
-								Example of translation by Google:<br/>
-								{{word['google']}}
-								<br/>
-								<br/>
-							</td>
-							<td width="50%">
-								Example of translation by Bing:<br/>
-								{{word['bing']}}
-								<br/>
-								<br/>
-							</td>
-						</tr>
-						
-						<tr>
 							<td colspan="2">
-								3) Is this translation good enough? or should it be re-translated (e.g. is it grammatically correct English sentence and look like professional translation or not?)
+								Is this translation good enough? or should it be re-translated (e.g. is it grammatically correct English sentence and look like professional translation or not?)
 								<br/>
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
 								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
@@ -278,7 +257,27 @@
 							</td>
 						</tr>
 						<tr>
+							<td colspan="2">
+								Does this sentence above looks like it was machine translated? (example of machine translation is below)
+								<br/>
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
+								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<br/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2" bgcolor="whitesmoke">
+								Example of machine translation:<br/>
+								<i>
+								{{word['google']}}
+								</i>
+								<br/>
+							</td>
+						</tr>
+						
+						<tr>
 							<td colspan="2" align="center">
+								<br/>
 							<hr/>
 							</td>
 						</tr>
