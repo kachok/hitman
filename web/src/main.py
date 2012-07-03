@@ -311,13 +311,40 @@ def synonyms_hit():
 	return dict(params=params)
 
 
-@route('/hits/esl')
+@route('/hits/esl/<language>')
 @view('esl')
-def esl_hit():
+def esl_hit(language):
 	#when page is rendered, get assignmentID/hitID and attach it to displayed results
 
 	assignmentid=request.query.assignmentId
 	hitid=request.query.hitId
+
+
+
+	try:
+		conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+	except:
+		pass
+
+	cur = conn.cursor()
+
+	sql=""
+	sql=sql+" select es.* from esl_hits_data ehd, hits h, esl_sentences es where es.id=ehd.esl_sentence_id and h.id=ehd.hit_id and mturk_hit_id=%s"
+	cur.execute(sql, (hitid,))
+
+	rows=cur.fetchall()
+
+	sentences=[]
+	total=0
+	for row in rows:
+		#bit="0" #regular pair
+		sentence=str(row[1])
+		sentence_id=str(row[0])
+		sentences.append({"sentence_id":sentence_id, "sentence":sentence})
+		total=total+1
+
+
+	conn.close()
 
 	params={
 		"ipinfodb_key":settings["ipinfodb_key"],
@@ -325,7 +352,7 @@ def esl_hit():
 		"assignmentid":assignmentid,
 		"hitid":hitid,
 		"ip":get_client_ip(request),
-		#"words":json.dumps(words),
+		"sentences":sentences,
 		}
 	return dict(params=params)
 
