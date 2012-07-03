@@ -73,6 +73,10 @@
 			if (v==undefined){form_valid(false);return;}
 			v=$('input[name=good_{{word["pair_id"]}}]:checked').val();
 			if (v==undefined){form_valid(false);return;}
+			v=$('input[name=native_{{word["pair_id"]}}]:checked').val();
+			if (v==undefined){form_valid(false);return;}
+			v=$('input[name=correct_{{word["pair_id"]}}]:checked').val();
+			if (v==undefined){form_valid(false);return;}
 			v=$('input[name=machine_{{word["pair_id"]}}]:checked').val();
 			if (v==undefined){form_valid(false);return;}
 
@@ -100,6 +104,22 @@
 	});
 
 	$("input[name=machine_{{word["pair_id"]}}]").click(function(){
+		validate_form();
+	});
+
+	$("input[name=correct_{{word["pair_id"]}}]").change(function(){
+		validate_form();
+	});
+
+	$("input[name=correct_{{word["pair_id"]}}]").click(function(){
+		validate_form();
+	});
+
+	$("input[name=native_{{word["pair_id"]}}]").change(function(){
+		validate_form();
+	});
+
+	$("input[name=native_{{word["pair_id"]}}]").click(function(){
 		validate_form();
 	});
 
@@ -245,8 +265,8 @@
 							<td colspan="2">
 								Does these two sentences above have the same meaning?
 								<br/>
-								<input type='radio' name='same_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
-								<input type='radio' name='same_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<input type='radio' name='same_{{word["pair_id"]}}' value='yes' id='same_{{word["pair_id"]}}_yes'><label for="same_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
+								<input type='radio' name='same_{{word["pair_id"]}}' value='no' id='same_{{word["pair_id"]}}_no'><label for="same_{{word["pair_id"]}}_no">No</label> &nbsp;
 								<br/>
 								<br/>
 
@@ -264,8 +284,8 @@
 							<td colspan="2">
 								 Is this translation a correctly spelled, grammatical translation?
 								<br/>
-								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
-								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<input type='radio' name='correct_{{word["pair_id"]}}' value='yes' id='correct_{{word["pair_id"]}}_yes'><label for="correct_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
+								<input type='radio' name='correct_{{word["pair_id"]}}' value='no'id='correct_{{word["pair_id"]}}_no'><label for="correct_{{word["pair_id"]}}_no">No</label> &nbsp;
 								<br/>
 							</td>
 						</tr>
@@ -273,8 +293,8 @@
 							<td colspan="2">
 								Is it close enough that a native English speaker could edit it to make it perfect?
 								<br/>
-								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
-								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<input type='radio' name='native_{{word["pair_id"]}}' value='yes' id='native_{{word["pair_id"]}}_yes'><label for="native_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
+								<input type='radio' name='native_{{word["pair_id"]}}' value='no'id='native_{{word["pair_id"]}}_no'><label for="native_{{word["pair_id"]}}_no">No</label> &nbsp;
 								<br/>
 							</td>
 						</tr>
@@ -282,8 +302,8 @@
 							<td colspan="2">
 								Is good enough to publish as-is?
 								<br/>
-								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
-								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<input type='radio' name='good_{{word["pair_id"]}}' value='yes' id='good_{{word["pair_id"]}}_yes'><label for="good_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
+								<input type='radio' name='good_{{word["pair_id"]}}' value='no'id='good_{{word["pair_id"]}}_no'><label for="good_{{word["pair_id"]}}_no">No</label> &nbsp;
 								<br/>
 							</td>
 						</tr>
@@ -291,8 +311,8 @@
 							<td colspan="2">
 								Does this sentence above looks like it was machine translated? (example of machine translation is below)
 								<br/>
-								<input type='radio' name='machine_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
-								<input type='radio' name='machine_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<input type='radio' name='machine_{{word["pair_id"]}}' value='yes' id='machine_{{word["pair_id"]}}_yes'><label for="machine_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
+								<input type='radio' name='machine_{{word["pair_id"]}}' value='no'id='machine_{{word["pair_id"]}}_no'><label for="machine_{{word["pair_id"]}}_no">No</label> &nbsp;
 								<br/>
 							</td>
 						</tr>
