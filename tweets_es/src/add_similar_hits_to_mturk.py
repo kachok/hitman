@@ -110,7 +110,7 @@ for row in rows:
 		parameters2={
 			"HITTypeId":hittype_id,
 			'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>800</FrameHeight></ExternalQuestion>',
-			"Title":"Do these translations have similar meaning?",
+			"Title":"Judge the quality of translations",
 			'LifetimeInSeconds':settings["lifetimeinseconds"],
 			"MaxAssignments":settings["max_assignments"],
 			"UniqueRequestToken":guid,
