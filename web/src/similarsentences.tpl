@@ -67,42 +67,53 @@
 		
 		form_valid(true);
 
-		/*		v=$('input[name=pair_0000009431]:checked').val();
-		alert(v);
-		alert(v==undefined);
 
-		for (pair in pairs){
-			alert(pairs[pair]);
-		}
-		
+		%for word in params['words']:
+			v=$('input[name=same_{{word["pair_id"]}}]:checked').val();
+			if (v==undefined){form_valid(false);break;}
+			v=$('input[name=good_{{word["pair_id"]}}]:checked').val();
+			if (v==undefined){form_valid(false);break;}
+			v=$('input[name=machine_{{word["pair_id"]}}]:checked').val();
+			if (v==undefined){form_valid(false);break;}
 
-		alert(pairs);
-		*/
+		%end
 
-		for (pair in pairs){
-			v=$('input[name=pair_'+pairs[pair]["pair_id"]+']:checked').val();
-			//alert(pairs[pair]["pair_id"]+" "+v+" "+(v==undefined));
-			
-			if (v==undefined)
-			{
-				form_valid(false);
-				break;
-			}
-
-		};
 		
 	};
 	
-	//add show/hide events to words/help (3 sentences with word usage)
-	function add_pairhandler(i){
-		$("input[name=pair_"+i+"]").change(function(){
-			validate_form();
-		});
+	
+	$(document).ready(function() {
+	  // Handler for .ready() called.
+	
+	%for word in params['words']:
 
-		$("input[name=pair_"+i+"]").click(function(){
-			validate_form();
-		});
-	};
+	$("input[name=same_{{word["pair_id"]}}]").change(function(){
+		validate_form();
+	});
+
+	$("input[name=same_{{word["pair_id"]}}]").click(function(){
+		validate_form();
+	});
+
+	$("input[name=machine_{{word["pair_id"]}}]").change(function(){
+		validate_form();
+	});
+
+	$("input[name=machine_{{word["pair_id"]}}]").click(function(){
+		validate_form();
+	});
+
+	$("input[name=good_{{word["pair_id"]}}]").change(function(){
+		validate_form();
+	});
+
+	$("input[name=good_{{word["pair_id"]}}]").click(function(){
+		validate_form();
+	});
+
+	%end
+	
+	});
 	
 
 
@@ -232,8 +243,8 @@
 							<td colspan="2">
 								Does these two sentences above have the same meaning?
 								<br/>
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<input type='radio' name='same_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
+								<input type='radio' name='same_{{word["pair_id"]}}' value='no'>No &nbsp;
 								<br/>
 								<br/>
 
@@ -251,8 +262,8 @@
 							<td colspan="2">
 								Is this translation good enough? or should it be re-translated (e.g. is it grammatically correct English sentence and look like professional translation or not?)
 								<br/>
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
+								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
 								<br/>
 							</td>
 						</tr>
@@ -260,8 +271,8 @@
 							<td colspan="2">
 								Does this sentence above looks like it was machine translated? (example of machine translation is below)
 								<br/>
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='yes'>Yes &nbsp; 
-								<input type='radio' name='pair_"+data["words"][word]["pair_id"]+"' value='no'>No &nbsp;
+								<input type='radio' name='machine_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
+								<input type='radio' name='machine_{{word["pair_id"]}}' value='no'>No &nbsp;
 								<br/>
 							</td>
 						</tr>
