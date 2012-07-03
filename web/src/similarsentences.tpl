@@ -262,7 +262,25 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								Is this translation good enough? or should it be re-translated (e.g. is it grammatically correct English sentence and look like professional translation or not?)
+								 Is this translation a correctly spelled, grammatical translation?
+								<br/>
+								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
+								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<br/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								Is it close enough that a native English speaker could edit it to make it perfect?
+								<br/>
+								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
+								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
+								<br/>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								Is good enough to publish as-is?
 								<br/>
 								<input type='radio' name='good_{{word["pair_id"]}}' value='yes'>Yes &nbsp; 
 								<input type='radio' name='good_{{word["pair_id"]}}' value='no'>No &nbsp;
