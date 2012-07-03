@@ -1,6 +1,6 @@
 //var sentences = [ "${sent0}", "${sent1}", "${sent2}", "${sent3}", "${sent4}", "${sent5}", "${sent6}", "${sent7}", "${sent8}", "${sent9}" ];
 
-var sentences = [
+/*var sentences = [
 		"Sri Lanka 's forest region was destroyed by agriculture , wooden works , vetinary feeds , etc . ,",
 		"several commissions where created to protect the remaining forest region",
 		"Sri Lanka is considered as the bird 's sanctionary place .",
@@ -11,7 +11,7 @@ var sentences = [
 		"Among the bird species , 233 live in Srilanka , in that 26 belong to intra state .",
 		"Others live in the Indian sub continent , however more than 80 of them have special features that are unique to Sri Lanka .",
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
-
+*/
 var words = [ [], [], [], [], [], [], [], [], [], [] ];
 
 var step_list = [ 'spelling', 'prepositions', 'determiners', 'agreement',
