@@ -272,6 +272,16 @@ a.chosen{
 	var total=0;
 	var pairs={};
 	
+	var sentences = [
+	
+	
+	%for sentence in params['sentences']:
+	"{{sentence["sentence"]}}",
+	%end
+	
+			
+			];
+	
  $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
 	$("#debug").html($("#debug").html()+"city: "+data['cityName']+"<br/>");
