@@ -1,7 +1,7 @@
 <html>
 <head>
-  <title>Correct ESL mistakes in these sentences</title>
-  <link rel="stylesheet" href="/static/main.css" type="text/css" />
+ <title>Correct ESL mistakes in these sentences</title> 
+  <link rel="stylesheet" href="static/main.css" type="text/css" />
     
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 
@@ -16,7 +16,7 @@
 
 
   <!--script type="text/javascript" src="static/mturk.js"></script-->
-  <script type="text/javascript" src="/static/jquery.cookie.js"></script>
+  <script type="text/javascript" src="static/jquery.cookie.js"></script>
   
 <style type="text/css">
 div.correct {
@@ -41,7 +41,7 @@ div.hover {
 
 /*from http://www.elated.com/articles/drag-and-drop-with-jquery-your-essential-guide/ tutorial */
 div.space {
-	width: 12px;
+	width: 30px;
 	height: 30px;
 	padding: 2px;
 	border: 2px solid #333;
@@ -160,9 +160,108 @@ body {
 //
 </style>
 
-<script type="text/javascript" src="/static/jquery.qtip-1.0.0-rc3.min.js"></script>
+<!--from tutorial at http://www.kriesi.at/archives/create-a-multilevel-dropdown-menu-with-css-and-improve-it-via-jquery -->
 
-<script type="text/javascript" src="/static/ESLHIT.js"></script>
+<style type="text/css">
+#nav, #nav ul{
+     margin:0;
+     padding:0;
+     list-style-type:none;
+     list-style-position:outside;
+     position:relative;
+     line-height:1.0em;
+ }
+
+ #nav a:link, #nav a:active, #nav a:visited{
+    display:block;
+    padding:0px 5px;
+    border:1px solid #333;
+    color:#fff;
+    text-decoration:none;
+    background-color:#333;
+ }
+
+#nav a:hover{
+    background-color:#fff;
+    color:#333;
+}
+
+#nav a{
+    display:block;
+    padding:0px 5px;
+    border:1px solid #333;
+    color:#333;
+    text-decoration:none;
+    background-color:#fff;
+}
+
+a.chosen{
+    display:block;
+    padding:0px 5px;
+    border:1px solid #333;
+    color:#333;
+    text-decoration:none;
+    background-color:#fff;
+    text-align: center;
+}
+
+#nav a.desc{
+    background-color: lightblue;
+    color:#333;
+    text-align:center;
+    font-size:14px;
+    line-height:0.8em;
+    width:22em
+}
+
+#nav li{
+    float:left;
+    position:relative;
+}
+
+#nav ul {
+    position:absolute;
+    width:8em;
+    top:1.0em;
+    display:none;
+}
+
+#nav li ul a{
+    width:8em;
+    top:1.0em;
+    float:left;
+}
+
+#nav ul ul{
+	top:auto;
+	}
+
+#nav li ul ul {
+    left:8em;
+    margin:0px 0 0 10px;
+    }
+
+#nav li:hover ul ul, #nav li:hover ul ul ul, #nav li:hover ul ul ul ul, #nav li:hover ul ul ul ul ul{
+    display:none;
+    }
+#nav li:hover ul, #nav li li:hover ul, #nav li li li:hover ul, #nav li li li li:hover ul, #nav li li li li li:hover ul{
+    display:block;
+    }
+
+</style>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<link
+	href="http://ajax.googleapis.com/ajax
+	/libs/jqueryui/1.8/themes/base/jquery-ui.css"
+	rel="stylesheet" type="text/css" />
+<!--script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script-->
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="static/jquery.qtip-1.0.0-rc3.min.js"></script>
+
+<script type="text/javascript" src="static/ESLHIT.js"></script>
 
   
 </head>
@@ -172,18 +271,6 @@ body {
 	var ip="{{params['ip']}}";
 	var total=0;
 	var pairs={};
-	
-	
-	var sentences = [
-	
-	
-	%for sentence in params['sentences']:
-	"{{sentence["sentence"]}}",
-	%end
-	
-			
-			];
-	
 	
  $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
@@ -197,8 +284,8 @@ body {
 	$("#zipcode").val(data['zipCode']);
 	$("#lat").val(data['latitude']);
 	$("#lng").val(data['longitude']);	
-	//countryCode, countryName, zipCode, 
-	/* Format of JSON response from IP Info DB
+countryCode, countryName, zipCode, 
+Format of JSON response from IP Info DB
 	{
 		"statusCode" : "OK",
 		"statusMessage" : "",
@@ -212,7 +299,7 @@ body {
 		"longitude" : "-122.076",
 		"timeZone" : "-08:00"
 	}
-	*/
+
     }); 
 
 
@@ -235,7 +322,7 @@ body {
 		
 		form_valid(true);
 
-		/*		v=$('input[name=pair_0000009431]:checked').val();
+				v=$('input[name=pair_0000009431]:checked').val();
 		alert(v);
 		alert(v==undefined);
 
@@ -245,7 +332,7 @@ body {
 		
 
 		alert(pairs);
-		*/
+		
 
 		for (pair in pairs){
 			v=$('input[name=pair_'+pairs[pair]["pair_id"]+']:checked').val();
@@ -370,11 +457,11 @@ body {
    
   </script>
   
-  <h1>Correct ESL mistakes in these sentences?</h1>
+ <h1>Correct ESL mistakes in these sentences?</h1>
   <table width="100%">
   	<tr>
      	<td width="*">
-  <div id="instructions">
+   <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
 	            <ul>
 					<li>Correct common mistakes in sentences below.</li>
@@ -383,7 +470,7 @@ body {
   </div>
   <div id="instructions2"  style="display:none;">
     <a  href="" id="show_instructions">show instructions</a>
-  </div>
+  </div> 
 	<br/>
 	<div id="preview_panel" style="display:none;">
 		This is just a preview! You MUST accept the HIT before you can submit the results.
@@ -395,7 +482,7 @@ body {
   			%include templates/consent.tpl
   		</td>
   		
-  	</tr>
+  	</tr> 
   	<tr>
   		<td valign="top" >
   			<!-- This POST method is posting to the sandbox worker site-->
@@ -413,21 +500,26 @@ body {
 	              <input type="hidden" id="lng" name="lng" value=""/>
               
 
-				<div id="user_survey">
+			<div id="user_survey">
 		  			%include templates/englishspeakersurvey.tpl
-				</div>
+				</div> 
 
 				<div id="words_panel">
 					<h3>Correct ESL mistakes in these sentences</h3>
 					<table id="word_table">
 						
 					</table>
-				</div>
+				</div> 
 				
 				
 				<!--progress bar from http://caffeinatedcode.wordpress.com/2008/04/08/simple-javascript-progress-bar/-->
-				<center>
-					<table cols=4>
+				<!--<center>-->
+				<!--<h4 id="orig" align="center">Original Sentence</h4></center>-->
+				<!--p id="current-edits" align="center"></p-->
+				<p id="orig" align="center"></p>
+				<br>
+					<table id="allSentences" cols=4>
+					<center>
 						<tr>
 							<td width="10%" align="center">
 								<button id="buttonP" align="right" onClick="return prevSentence()">Previous
@@ -544,8 +636,6 @@ body {
 						</tr>
 					</table>
 				</center>
-				<h4 id="orig" align="center">Original Sentence</h4>
-				<br>
 				<!--  What are the different types of errors? <img id="help" src="http://www.homeserviceworld.com/images/vautomulti/icon_question_mark.png"></img>
 				-->
 
@@ -562,7 +652,7 @@ body {
 						name="ipAddress" /> <input type="hidden" name="country" /> <input
 						type="hidden" name="city" /> <input type="hidden" name="region" />
 				</p>
-				<!--
+				
 				<script type="text/javascript"
 					src="http://gd.geobytes.com/gd?after=-1&variables=GeobytesCountry,GeobytesCity,GeobytesRegion,GeobytesIpAddress"></script>
 				 <script type="text/javascript">function getUserInfo() {
