@@ -5,35 +5,16 @@ RUN ONCE:
 		populates langugages table in database
 		loads data from wikilanguages-pipeline into database to vocabulary and dictionary tables respectively
 
-	psql -h localhost -d tweets_es -f ../db/parallel_nottext.sql                
+	psql -h localhost -d esl2 -f ../db/esl.sql                
 	
 
-	    prepare_images_files.py
-			generates images descriptor files for all vocabulary and dictionary items
-
-		java  -Djava.awt.headless=true generateimages test_sentences.txt test_segments.txt images
-		#java  -Djava.awt.headless=true generateimages test_sentences.txt test_segments.txt ../test_images
-		#java  -Djava.awt.headless=true generateimages pilot_sentences.txt pilot_segments.txt ../pilot_images
-			renders PNG files
-			10MB of images per 1000 words+sentences
-
-	generate_10sentences_hits.py
+	generate_esl_hits.py
 		creates hittypes in MTurk and populates hittypes table in database
-		generates batches of vocabulary HITs in database based on vocabulary data
-		populates hits table and voc_hits_data tables in database
+		generates batches of esl HITs in database based on esl sentences data
+		populates hits table and esl_hits_data tables in database
 
-	add_10sentences_hits_to_mturk.py
-		generates HITs in MTurk and reference them to batches of words in database
+	add_esl_hits_to_mturk.py
+		generates HITs in MTurk and reference them to batches of sentences in database
 		creates HITs in MTurk for every HIT in datbase with empty mturk_hit_id column
 		updates hits table with non-empty mturk_hit_id value
 		
-
-
-LAUNCHD
-
-	http://blog.mattbrock.co.uk/2010/02/25/moving-from-cron-to-launchd-on-mac-os-x-server/
-	http://www.splinter.com.au/using-launchd-to-run-a-script-every-5-mins-on/
-	
-	sudo cp tweets_es.plist /Library/LaunchDaemons/
-	
-	launchctl load /Library/LaunchDaemons/tweets_es.plist

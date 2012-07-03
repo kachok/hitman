@@ -5,6 +5,8 @@ RUN ONCE:
 		populates langugages table in database
 		loads data from wikilanguages-pipeline into database to vocabulary and dictionary tables respectively
 
+	psql -h localhost -d tweets_es -f ../db/parallel_nottext.sql                
+	
 
 	    prepare_images_files.py
 			generates images descriptor files for all vocabulary and dictionary items
