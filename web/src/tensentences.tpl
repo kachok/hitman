@@ -232,7 +232,7 @@
 						<p>
 							<h2>Tweet translation instructions:</h2><br/>
 							- translate URLs using the token [URL]<br/>
-							<table border="1px" bgcolor="white" style="margin:0 0 0 50px;">
+							<table  bgcolor="white" style="margin:0 0 0 50px;border: 1px solid black;font-size:13px;">
 								<tr>
 									<td width="200px"><b>Examples</b></td>
 									<td width="200px"><b>Translation</b></td>
@@ -249,7 +249,7 @@
 							<br/>
 							- keep usernames the same
 							<br/>
-							<table border="1px" bgcolor="white" style="margin:0 0 0 50px;">
+							<table  bgcolor="white" style="margin:0 0 0 50px;border: 1px solid black;font-size:13px;">
 								<tr>
 									<td width="200px"><b>Examples</b></td>
 									<td width="200px"><b>Translation</b></td>
@@ -261,7 +261,7 @@
 							</table>
 							<br/>
 							- translate hashtags if possible
-							<table border="1px" bgcolor="white" style="margin:0 0 0 50px;">
+							<table  bgcolor="white" style="margin:0 0 0 50px;border: 1px solid black;font-size:13px;">
 								<tr>
 									<td width="200px"><b>Examples</b></td>
 									<td width="200px"><b>Translation</b></td>
