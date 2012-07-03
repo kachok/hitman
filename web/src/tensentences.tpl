@@ -230,10 +230,56 @@
 						<p>IMPORTANT: Please DO NOT simply type all the words into Google translate or another online translation tool.  The goal of this HIT is to improve the quality of translation systems using knowledge from bilingual individuals.  If you do not know either of the languages then do not do this HIT.</p>
 
 						<p>
-							Here are clarifications on how to translate tweets:<br/>
-							- instead of typing URLs/web links (e.g. http://jhu.edu) type [URL] instead.<br/>
-							- do not translate twitter names (e.g. @jhu )<br/>
-							- hash tags (e.g. #jhu or #mechanicalturk) should be translated if possible (include hash character - #)
+							<h2>Tweet translation instructions:</h2><br/>
+							- translate URLs using the token [URL]<br/>
+							<table border="1px" bgcolor="white" style="margin:0 0 0 50px;">
+								<tr>
+									<td width="200px"><b>Examples</b></td>
+									<td width="200px"><b>Translation</b></td>
+								</tr>
+								<tr>
+									<td>google.com</td>
+									<td>[URL]</td>
+								</tr>
+								<tr>
+									<td>http://bit.ly/LVEO6I</td>
+									<td>[URL]</td>
+								</tr>
+							</table>
+							<br/>
+							- keep usernames the same
+							<br/>
+							<table border="1px" bgcolor="white" style="margin:0 0 0 50px;">
+								<tr>
+									<td width="200px"><b>Examples</b></td>
+									<td width="200px"><b>Translation</b></td>
+								</tr>
+								<tr>
+									<td>@jhu</td>
+									<td>@jhu</td>
+								</tr>
+							</table>
+							<br/>
+							- translate hashtags if possible
+							<table border="1px" bgcolor="white" style="margin:0 0 0 50px;">
+								<tr>
+									<td width="200px"><b>Examples</b></td>
+									<td width="200px"><b>Translation</b></td>
+								</tr>
+								<tr>
+									<td>#jhu</td>
+									<td>#jhu</td>
+								</tr>
+								<tr>
+									<td>#miercoles</td>
+									<td>#wednesday</td>
+								</tr>
+								<tr>
+									<td>#vidaloca</td>
+									<td>#crazylife</td>
+								</tr>
+							</table>
+							<br/>
 						</p>
 						
     <a href="" id="hide_instructions">hide instructions</a>
