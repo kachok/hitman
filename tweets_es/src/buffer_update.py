@@ -147,7 +147,7 @@ for row in rows:
 				correct=results["correct_"+id_with_control]
 				machine=results["machine_"+id_with_control]
 										
-				sql2="SELECT add_similar_hits_result(%s, %s, %s, %s, %s, %s);"
+				sql2="SELECT add_similar_hits_result(%s, %s, %s, %s, %s, %s, %s, %s);"
 				cur2.execute(sql2,(assignment_id, int(pair_id), same, good, native, correct, machine, is_control))
 				#result_id = cur2.fetchone()[0]
 		conn.commit()
