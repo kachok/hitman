@@ -107,8 +107,8 @@ for line in f:
 		print ex
 		
 	#limit load for testing
-	if count>100:
-		break
+	#if count>100:
+	#	break
 
 conn.commit()
 
