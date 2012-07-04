@@ -70,7 +70,14 @@ function load_survey_data()
 
 function validate_survey()
 {
-	return "";
+	if ($('input[name=survey_is_native_foreign_speaker]:checked').val()==null ) return false;
+	if ($("#survey_years_speaking_foreign").val()==null ) return false;
+	if ($('input[name=survey_is_native_english_speaker]:checked').val()==null ) return false;
+	if ($("#survey_years_speaking_english").val()==null ) return false;
+	if ($("#survey_what_country").val()==null ) return false;
+	if ($("#survey_what_country_born").val()==null ) return false;
+	
+	return true;
 }
 
 function save_survey_data()
