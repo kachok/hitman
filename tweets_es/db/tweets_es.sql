@@ -166,9 +166,11 @@ CREATE TABLE similar_hits_results
   id serial NOT NULL,
   assignment_id integer,
   pair_id integer,
-  same_meaning character varying,
-  machine_translated character varying,
-  good_translation character varying,
+  same character varying,
+  good character varying,
+  native character varying,
+  correct character varying,
+  machine character varying,
   is_control integer,
   quality real,
   CONSTRAINT similar_hit_results_id_pk PRIMARY KEY (id )
@@ -178,6 +180,7 @@ WITH (
 );
 ALTER TABLE similar_hits_results
   OWNER TO dkachaev;
+
 
 -- Index: sshr_match
 
@@ -274,7 +277,7 @@ ALTER FUNCTION add_tensentences_hits_result(integer, integer, text, text, intege
 
 -- DROP FUNCTION add_syn_hits_result(integer, integer, text, text, integer);
 
-CREATE OR REPLACE FUNCTION add_similar_hits_result(assignment_id2 integer, pair_id2 integer, same_meaning2 text, machine_translated2 text, good_translation2 text, is_control2 integer)
+CREATE OR REPLACE FUNCTION add_similar_hits_result(assignment_id2 integer, pair_id2 integer, same2 text, good2 text, native2 text, correct2 text, machine2 text, is_control2 integer)
   RETURNS void AS
 $BODY$
 BEGIN
@@ -282,9 +285,11 @@ BEGIN
         -- first try to update the key
         UPDATE similar_hits_results 
         SET 
-		same_meaning=same_meaning2,
-		machine_translated=machine_translated2,
-		good_translation=good_translation2
+		same=same,
+		good=good2,
+		native=native2,
+		correct=correct2,
+		machine=machine2
         WHERE assignment_id=assignment_id2 AND pair_id=pair_id2 and is_control=is_control2;
         IF found THEN
             RETURN;
@@ -293,8 +298,8 @@ BEGIN
         -- if someone else inserts the same key concurrently,
         -- we could get a unique-key failure
         BEGIN
-	    INSERT INTO similar_hits_results (assignment_id, pair_id, same_meaning, machine_translated, good_translation, is_control) 
-	    VALUES (assignment_id2, pair_id2, same_meaning2, machine_translated2, good_translation2,  is_control2);
+	    INSERT INTO similar_hits_results (assignment_id, pair_id, same, good, native, correct, machine, is_control) 
+	    VALUES (assignment_id2, pair_id2, same2, good2, native2, correct2, machine2,  is_control2);
             RETURN;
         EXCEPTION WHEN unique_violation THEN
             -- do nothing, and loop to try the UPDATE again
@@ -304,7 +309,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION add_similar_hits_result(integer, integer, text, text, text, integer)
+ALTER FUNCTION add_similar_hits_result(integer, integer, text, text, text, text, text, integer)
   OWNER TO dkachaev;
 
 -- Function: add_assignment(text, integer, text, timestamp without time zone, timestamp without time zone, timestamp without time zone, timestamp without time zone, timestamp without time zone, text, text)
