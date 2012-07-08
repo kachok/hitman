@@ -221,13 +221,13 @@ a.chosen{
 
 #nav ul {
     position:absolute;
-    width:8em;
+    width:10em;
     top:1.0em;
     display:none;
 }
 
 #nav li ul a{
-    width:8em;
+    width:10em;
     top:1.0em;
     float:left;
 }
@@ -237,7 +237,7 @@ a.chosen{
 	}
 
 #nav li ul ul {
-    left:8em;
+    left:10em;
     margin:0px 0 0 10px;
     }
 
@@ -271,7 +271,6 @@ a.chosen{
 	var ip="{{params['ip']}}";
 	var total=0;
 	var pairs={};
-
 	var sentences = [
 	
 	
@@ -281,7 +280,6 @@ a.chosen{
 	
 			
 			];
-	
  $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
 	$("#debug").html($("#debug").html()+"city: "+data['cityName']+"<br/>");
