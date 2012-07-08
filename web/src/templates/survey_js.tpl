@@ -30,10 +30,19 @@ function show_survey()
 
 function hide_survey()
     {
-	  save_survey_data();
-      $("#survey").toggle();
-      $("#survey2").toggle();
-		return false;
+	  
+		if (validate_survey()) {
+			save_survey_data()
+	        $("#survey").toggle();
+	        $("#survey2").toggle();
+
+			return false;
+		}
+		else {
+			
+			alert ("Please, answer all questions in the survey.")
+			return false;
+		}
     }
 
     $("#show_survey").click(show_survey);

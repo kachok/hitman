@@ -137,27 +137,18 @@ for row in rows:
 	
 		#for i in range(settings["num_knowns"]+settings["num_unknowns"]):
 		for key in results.keys():
-			if key.find("pair")==0:
-				pairnum=key
-				pair_id=pairnum[5:14]
-				pair_id_with_control=pairnum[5:15]
-				is_control=pairnum[14:15]
-				are_synonyms=results[key]
-				machine_translated=results[key]
-				good_translation=results[key]
-				try:
-					misspelled=results["misspelled_"+pair_id_with_control]
-				except KeyError:
-					pass
-
-				#debug for misspelled issue, fixed now
-				#print "pair ",pair_id ," misspelled ", misspelled
-				#print "pair ", pair_id, " are_synonyms ", are_synonyms
-
-				#print assignment_id, int(pair_id), are_synonyms, misspelled, is_control
-
-				sql2="SELECT add_syn_hits_result(%s, %s, %s, %s, %s, %s);"
-				cur2.execute(sql2,(assignment_id, int(pair_id), same_meaning, machine_translated, good_translation, is_control))
+			if key.find("same")==0:
+				pair_id=key[5:14]
+				id_with_control=key[5:15]
+				is_control=key[14:15]
+				same=results[key]
+				good=results["good_"+id_with_control]
+				native=results["native_"+id_with_control]
+				correct=results["correct_"+id_with_control]
+				machine=results["machine_"+id_with_control]
+										
+				sql2="SELECT add_similar_hits_result(%s, %s, %s, %s, %s, %s, %s, %s);"
+				cur2.execute(sql2,(assignment_id, int(pair_id), same, good, native, correct, machine, is_control))
 				#result_id = cur2.fetchone()[0]
 		conn.commit()
 		

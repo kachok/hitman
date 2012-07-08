@@ -2,7 +2,7 @@
 
 // Removed sentences variable and pushed it into ESL.tpl file
 
-var sentences = [
+/*var sentences = [
 		"Sri Lanka 's forest region was destroyed by agriculture , wooden works , vetinary feeds , etc . ,",
 		"several commissions where created to protect the remaining forest region",
 		"Sri Lanka is considered as the bird 's sanctionary place .",
@@ -13,8 +13,7 @@ var sentences = [
 		"Among the bird species , 233 live in Srilanka , in that 26 belong to intra state .",
 		"Others live in the Indian sub continent , however more than 80 of them have special features that are unique to Sri Lanka .",
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
-
-
+*/
 
 var words = [ [], [], [], [], [], [], [], [], [], [] ];
 

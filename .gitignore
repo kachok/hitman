@@ -1,0 +1,15 @@
+*.pyc
+cache/
+data/
+settings.py
+.DS_Store
+
+.project
+
+.pydevproject
+
+.settings/
+
+old/
+
+settings_*

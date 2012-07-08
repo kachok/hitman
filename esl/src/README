@@ -1,0 +1,20 @@
+Backend - command line tools for interacting with MTurk API and creating HITs in MTurk
+
+RUN ONCE:
+	load_data_to_db.py
+		populates langugages table in database
+		loads data from wikilanguages-pipeline into database to vocabulary and dictionary tables respectively
+
+	psql -h localhost -d esl2 -f ../db/esl.sql                
+	
+
+	generate_esl_hits.py
+		creates hittypes in MTurk and populates hittypes table in database
+		generates batches of esl HITs in database based on esl sentences data
+		populates hits table and esl_hits_data tables in database
+
+	add_esl_hits_to_mturk.py
+		generates HITs in MTurk and reference them to batches of sentences in database
+		creates HITs in MTurk for every HIT in datbase with empty mturk_hit_id column
+		updates hits table with non-empty mturk_hit_id value
+		

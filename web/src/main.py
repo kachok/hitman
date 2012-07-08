@@ -186,7 +186,7 @@ def index():
 		bing=str(row[4])
 		words.append({"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing})
 		total=total+1
-		print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
+		#print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
 
 
 	conn.close()
@@ -233,7 +233,7 @@ def index():
 		synonym=str(row[2])
 		words.append({"pair_id":pair_id, "translation":translation, "synonym":synonym})
 		total=total+1
-		print {"pair_id":pair_id, "translation":translation, "synonym":synonym}
+		#print {"pair_id":pair_id, "translation":translation, "synonym":synonym}
 
 
 	conn.close()
@@ -400,7 +400,7 @@ def similar_hit():
 		bing=str(row[4])
 		words.append({"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing})
 		total=total+1
-		print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
+		#print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
 
 
 	conn.close()
