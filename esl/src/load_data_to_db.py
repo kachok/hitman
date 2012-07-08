@@ -87,7 +87,8 @@ conn.commit()
 
 cur = conn.cursor()
 
-f=open("../data/raw.en.final")
+# f=open("../data/raw.en.final")
+f=open("../data/raw.en.10")
 
 count=0
 

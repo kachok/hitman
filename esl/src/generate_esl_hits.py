@@ -113,7 +113,7 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num asc;"
+	sql="SELECT * from esl_sentences WHERE language_id=%s order by random();"
 	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 

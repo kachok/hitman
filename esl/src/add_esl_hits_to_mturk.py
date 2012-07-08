@@ -112,7 +112,7 @@ for i, lang in enumerate(langs):
 			operation="CreateHIT"
 			parameters2={
 				"HITTypeId":mturk_hittype_id,
-				'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>800</FrameHeight></ExternalQuestion>',
+				'Question':'<ExternalQuestion xmlns="http://mechanicalturk.amazonaws.com/AWSMechanicalTurkDataSchemas/2006-07-14/ExternalQuestion.xsd"><ExternalURL>'+web_endpoint+'</ExternalURL><FrameHeight>1600</FrameHeight></ExternalQuestion>',
 				'LifetimeInSeconds':settings["lifetimeinseconds"],
 				"MaxAssignments":settings["max_assignments"],
 				"UniqueRequestToken":guid,

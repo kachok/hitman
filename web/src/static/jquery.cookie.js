@@ -23,7 +23,6 @@ jQuery.cookie = function (key, value, options) {
         }
 
         value = String(value);
-
         return (document.cookie = [
             encodeURIComponent(key), '=',
             options.raw ? value : encodeURIComponent(value),

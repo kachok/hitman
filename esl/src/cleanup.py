@@ -62,8 +62,11 @@ conn=mturk.conn()
 
 for row in rows:
 	hitid=str(row[0])
-	conn.expire_hit(hitid)
-		
+#	print hitid
+	try:
+		conn.expire_hit(hitid)
+	except:
+		pass	
 
 conn.close()
 	

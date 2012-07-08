@@ -13,6 +13,7 @@
 		"Among the bird species , 233 live in Srilanka , in that 26 belong to intra state .",
 		"Others live in the Indian sub continent , however more than 80 of them have special features that are unique to Sri Lanka .",
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
+
 */
 
 var words = [ [], [], [], [], [], [], [], [], [], [] ];
@@ -275,7 +276,7 @@ function writeSentence(i, showSpaces) {
 			text += '</div> </td>';
 		}
 		num_words += 1
-		if(!showSpaces && num_words == 20){
+		if(!showSpaces && num_words == 15){
 			text+='</tr><tr align=center>';
 			num_words = 0;
 		}
@@ -389,12 +390,14 @@ function commitChange() {
 	updateTab();
 }
 
+
 /**
 * Remove unneeded text and buttons and write description of change that has been committed
 */
 function cleanUpChange() {
 	if (highlighting_mode == "pair") {
-		$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+	//	$("#corr_text" + num_corr).before('<table><tr><td><div class="corrected_word">'
+		$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+'<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td class="change"><div class="corrected_word">'
@@ -405,7 +408,8 @@ function cleanUpChange() {
 		$("#inputC" + num_corr + '_b').hide();
 		$("#corr_text" + num_corr).hide();
 	} else {
-		$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+//		$("#corr_text" + num_corr).before('<table><tr><td><div class="corrected_word">'
+		$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+ '<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td><div class="corrected_word">'
@@ -423,7 +427,8 @@ function cleanUpChange() {
 * Remove unneeded text and buttons and write description of delete that has been committed
 */
 function cleanUpDelete() {
-	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
 	+'<td class="change"><div width="14""> deleted </div></td>'
 	+ '<td><div class="corrected_word">'
@@ -438,7 +443,8 @@ function cleanUpDelete() {
 * Remove unneeded text and buttons and write description of move that has been committed
 */
 function cleanUpMove() {
-	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
 	+'<td class="change"><div width="14""> moved </div></td>'
 	+ '<td><div class="corrected_word">'
@@ -453,9 +459,10 @@ function cleanUpMove() {
 * Remove unneeded text and buttons and write description of insert that has been committed
 */
 function cleanUpInsert() {
-	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+//	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
+	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 	+ $("#inputC" + num_corr).val() + '</div></td>'
-	+ '<td class="change"><div width="14"> changed to </div></td>'
+	+ '<td class="change"><div width="14"> inserted </div></td>'
 	+ '<td><div class="corrected_word">'
 	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
@@ -594,6 +601,7 @@ function dragDrop() {
 			$(this).addClass("word", "highlight");
 			ui.draggable.hide();
 			$(".space").hide();
+			$("#orig").qtip("destroy");
 		},
 	});
 	$(".highlight").draggable(

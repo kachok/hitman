@@ -1,7 +1,7 @@
 <html>
 <head>
  <title>Correct ESL mistakes in these sentences</title> 
-  <link rel="stylesheet" href="static/main.css" type="text/css" />
+  <link rel="stylesheet" href="/static/main.css" type="text/css" />
     
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 
@@ -15,8 +15,8 @@
 	src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
 
-  <!--script type="text/javascript" src="static/mturk.js"></script-->
-  <script type="text/javascript" src="static/jquery.cookie.js"></script>
+  <!--script type="text/javascript" src="/static/mturk.js"></script-->
+  <script type="text/javascript" src="/static/jquery.cookie.js"></script>
   
 <style type="text/css">
 div.correct {
@@ -259,9 +259,9 @@ a.chosen{
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script-->
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="static/jquery.qtip-1.0.0-rc3.min.js"></script>
+<script type="text/javascript" src="/static/jquery.qtip-1.0.0-rc3.min.js"></script>
 
-<script type="text/javascript" src="static/ESLHIT.js"></script>
+<script type="text/javascript" src="/static/ESLHIT.js"></script>
 
   
 </head>
@@ -271,7 +271,7 @@ a.chosen{
 	var ip="{{params['ip']}}";
 	var total=0;
 	var pairs={};
-	
+
 	var sentences = [
 	
 	
@@ -294,8 +294,8 @@ a.chosen{
 	$("#zipcode").val(data['zipCode']);
 	$("#lat").val(data['latitude']);
 	$("#lng").val(data['longitude']);	
-countryCode, countryName, zipCode, 
-Format of JSON response from IP Info DB
+//countryCode, countryName, zipCode, 
+/*Format of JSON response from IP Info DB
 	{
 		"statusCode" : "OK",
 		"statusMessage" : "",
@@ -309,9 +309,8 @@ Format of JSON response from IP Info DB
 		"longitude" : "-122.076",
 		"timeZone" : "-08:00"
 	}
-
+*/
     }); 
-
 
 	//disable/enable form submit (when input is valid)
 	function form_valid(param)
@@ -331,7 +330,7 @@ Format of JSON response from IP Info DB
 	function validate_form(){
 		
 		form_valid(true);
-
+/*
 				v=$('input[name=pair_0000009431]:checked').val();
 		alert(v);
 		alert(v==undefined);
@@ -342,7 +341,7 @@ Format of JSON response from IP Info DB
 		
 
 		alert(pairs);
-		
+*/		
 
 		for (pair in pairs){
 			v=$('input[name=pair_'+pairs[pair]["pair_id"]+']:checked').val();
@@ -370,7 +369,7 @@ Format of JSON response from IP Info DB
 	};
 	
 
-
+/*
  $.getJSON("/synonyms?hitId={{params['hitid']}}", function(data) {
 	total=data["total"];
 	pairs=data["words"]
@@ -411,8 +410,8 @@ Format of JSON response from IP Info DB
 		add_pairhandler(data["words"][i]["pair_id"]);
 	}
 
-
     });
+*/
 
     
  $.getJSON("/ip", function(json) {
@@ -467,7 +466,7 @@ Format of JSON response from IP Info DB
    
   </script>
   
- <h1>Correct ESL mistakes in these sentences?</h1>
+ <h1>Correct ESL mistakes in these sentences</h1>
   <table width="100%">
   	<tr>
      	<td width="*">
@@ -511,7 +510,7 @@ Format of JSON response from IP Info DB
               
 
 			<div id="user_survey">
-		  			%include templates/englishspeakersurvey.tpl
+		  			<!--%include templates/englishspeakersurvey.tpl-->
 				</div> 
 
 				<div id="words_panel">
@@ -528,7 +527,7 @@ Format of JSON response from IP Info DB
 				<!--p id="current-edits" align="center"></p-->
 				<p id="orig" align="center"></p>
 				<br>
-					<table id="allSentences" cols=4>
+				<table id="prevNext" cols=4>
 					<center>
 						<tr>
 							<td width="10%" align="center">
@@ -539,7 +538,11 @@ Format of JSON response from IP Info DB
 								<button id="buttonN" align="right" onClick="return nextSentence()">Next
 									Sentence</button>
 							</td>
-						</tr><tr>
+						</tr></center></table>
+				<br>
+					<table id="allSentences" cols=4>
+					<center>
+						<tr>
 						<td colspan=2 width="50%">
 								<div align="center">Original Sentence</div>
 							</td>
@@ -662,7 +665,7 @@ Format of JSON response from IP Info DB
 						name="ipAddress" /> <input type="hidden" name="country" /> <input
 						type="hidden" name="city" /> <input type="hidden" name="region" />
 				</p>
-				
+			<!--	
 				<script type="text/javascript"
 					src="http://gd.geobytes.com/gd?after=-1&variables=GeobytesCountry,GeobytesCity,GeobytesRegion,GeobytesIpAddress"></script>
 				 <script type="text/javascript">function getUserInfo() {
@@ -686,7 +689,8 @@ Format of JSON response from IP Info DB
 
 				
 
-				<input id="submitbutton" type="submit" value="Done!" disabled="disabled"/>
+				<!--input id="submitbutton" type="submit" value="Done!" disabled="disabled"/-->
+				<input id="submitbutton" type="submit" value="Done!"/>
 				<div id="validation_text">
 					All pairs should be completed before this HIT can be submitted.
 				</div>
@@ -704,7 +708,7 @@ Format of JSON response from IP Info DB
 
 
 
-%include templates/instructions_js
+<!-- %include templates/instructions_js-->
 
 </body>
 </html>
