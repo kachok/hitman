@@ -2,7 +2,7 @@
 
 // Removed sentences variable and pushed it into ESL.tpl file
 
-/*var sentences = [
+var sentences = [
 		"Sri Lanka 's forest region was destroyed by agriculture , wooden works , vetinary feeds , etc . ,",
 		"several commissions where created to protect the remaining forest region",
 		"Sri Lanka is considered as the bird 's sanctionary place .",
@@ -13,7 +13,7 @@
 		"Among the bird species , 233 live in Srilanka , in that 26 belong to intra state .",
 		"Others live in the Indian sub continent , however more than 80 of them have special features that are unique to Sri Lanka .",
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
-*/
+
 
 var words = [ [], [], [], [], [], [], [], [], [], [] ];
 
@@ -175,7 +175,6 @@ function updateTab() {
 	txt += writeSentence(curr_sentence, false);
 	$("#orig").html(txt);
 	$("#current-edits").html(sentences[curr_sentence]);
-//	alert($("#orig"));
 //	$("#orig").before(txt);
 	$(".space").hide();
 	for ( var s = 0; s < sentences.length; s++) {
@@ -237,12 +236,10 @@ function hideCorrectionsTable() {
  */
 function writeSentenceWithSpaces(i) {
 	var origTxt =  $("#orig").html();
-	//alert(origTxt);
 	var divs = origTxt.split('<td><div class="space"');
 	var newTxt = divs[0];
 	var cnt = 0;
 	for(n = 1; n < divs.length; n++){
-	//	alert(divs[n]);
 		newTxt += '<td><div class="space"'+divs[n];
 		cnt += 1;
 		if(cnt == 10){
@@ -250,7 +247,6 @@ function writeSentenceWithSpaces(i) {
 			cnt = 0;
 		}
 	} 
-//	alert(newTxt);
 	return newTxt;	
 }
 
@@ -299,11 +295,12 @@ function writeCorrectionsTable() {
 	text += '<tr class="hidden" id="C' + i + '">';
 	text += '</tr>';
 	text += '</table>';
-	if (num_corr == 0) {
+	$("#prevNext").after(text);
+/*	if (num_corr == 0) {
 		$("#allSentences").before(text);
 	} else {
 		$("#C" + (num_corr - 1)).before(text);
-	}
+	}*/
 }
 
 /**
@@ -712,14 +709,16 @@ function correctionUI() {
 	}
 	var text = "";
 	if (highlighting_mode != "insert") {
-		text = '<td id="corr_text' + num_corr
+		text = '<table><tr><td id="corr_text' + num_corr
 				+ '"><div id="corr_div'+num_corr+'" class="corrected_word">' + txt + '</div>';
 	} else {
 		text = '<td id="corr_text' + num_corr + '">';
 	}
 	text += promptForType();
 	text += getButtons();
-	$('#C' + num_corr).after(text);
+	text += '</tr></table>';
+//	$('#C' + num_corr).after(text);
+	$('#prevNext').after(text);
 	enableDropDown();
 }
 
@@ -753,7 +752,6 @@ function enableDropDown(){
 			});
 			menuLocked = false;
 /*		}else{
-			alert("here");
 			$("li").attr("display", "block");
 			menuLocked = true;
 		}*/
@@ -817,7 +815,6 @@ function moveClick() {
 	var phrase = "";
 	var group_start = false;
 	var first = "";
-//	alert($("#orig").html());
 	$('.highlight').each(function() {
 		if (!$(this).hasClass("corrected_word")) {
 			phrase += $(this).text() + ' ';
@@ -913,7 +910,7 @@ function stepButtons(txt) {
 */
 function displayChoices() {
 	if (!in_progress) {
-		writeCorrectionsTable();
+		//writeCorrectionsTable();
 		var txt = "";
 		$(".highlight").each(function() {
 			txt += $(this).text() + " ";
@@ -925,8 +922,9 @@ function displayChoices() {
 			old_word = pair[0];
 			old_word2 = pair[1];
 		}
-		$("#C" + num_corr).show();
-		$("#C" + num_corr).append(stepButtons(txt));
+	//	$("#C" + num_corr).show();
+	//	$("#C" + num_corr).append(stepButtons(txt));
+		$("#prevNext").after(stepButtons(txt));
 		$('#enter' + num_corr).hide();
 		$("#delete" + num_corr).click(function() {
 			if (!option_chosen) {
@@ -1054,6 +1052,10 @@ function cancel() {
 		$("#inputC" + num_corr + '_b').hide();
 	}
 	$("#C" + num_corr).hide();
+	$("#step_buttons" + num_corr).hide();
+	$("#step_text" + num_corr).hide();
+	$("#qmark" + num_corr).hide();
+	$("#early_cancel" + num_corr).hide();
 	$("#help" + num_corr).hide();
 	$("#cancel" + num_corr).hide();
 	$("#enter" + num_corr).hide();
@@ -1242,7 +1244,14 @@ function nextSentence() {
 			curr_sentence++;
 			visited[curr_sentence] = true;
 			new_sentence = true;
+			if ($('#buttonN').attr('disabled')){
+				 $('#buttonN').removeAttr('disabled');
+			}
+			$("#buttonN").text("Next Sentence");
 			updateTab();
+		}if(curr_sentence + 1 == sentences.length){
+			$("#buttonN").attr("disabled", "disabled");
+			$("#buttonN").text("All Sentences Completed");
 		}
 	}
 	return false;
@@ -1258,6 +1267,10 @@ function prevSentence() {
 			new_sentence = true;
 			updateTab();
 		}
+			if ($('#buttonN').attr('disabled')){
+				 $('#buttonN').removeAttr('disabled');
+			}
+			$("#buttonN").text("Next Sentence");
 	}
 	return false;
 }
@@ -1396,7 +1409,7 @@ function insert() {
 		$(this).removeClass("tmp_highlight");
 		$(this).addClass("highlight");
 		insert_idx = $(this).attr('id');
-		writeCorrectionsTable();
+		////writeCorrectionsTable();
 		correctionUI();
 		onBlur();
 		$(".finish").mouseover(function() {
@@ -1431,7 +1444,6 @@ $("#nav li").hover(function(){
                 $(this).find('ul:first').css({visibility: "hidden"});
                 });
 $("#nav a").click(function(){
-		//alert($(this).text());
 	});
 }
 
