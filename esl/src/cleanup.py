@@ -55,6 +55,7 @@ cur=conn.cursor()
 #getting hittype_id from database
 sql="SELECT mturk_hit_id from hits;"
 cur.execute(sql, )
+print(cur.rowcount)
 rows = cur.fetchall()
 
 

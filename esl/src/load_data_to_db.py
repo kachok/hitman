@@ -88,12 +88,13 @@ conn.commit()
 cur = conn.cursor()
 
 # f=open("../data/raw.en.final")
-f=open("../data/raw.en.10")
+f=open("../data/data-2012-07-10")
 
 count=0
 
 
-eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
+#eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
+eslReader = csv.reader(open('../data/data-2012-07-10', 'rb'), delimiter='@', quotechar='"')
 
 count=0
 for row in eslReader:
