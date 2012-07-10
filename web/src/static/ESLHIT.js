@@ -168,9 +168,9 @@ function writeOriginalSentences() {
 	for(var i = 0; i < words.length; i++){
 		var s = "";
 		for(var j = 0; i < words[i].length; j++){
-			s += word[i][j]+ " ";
+			s += words[i][j]+ " ";
 		}
-		$("#sent" + 1).text(s);
+		$("#sent" + i).text(s);
 	}
 }
 
