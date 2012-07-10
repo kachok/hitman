@@ -365,3 +365,34 @@ ALTER FUNCTION add_assignment(text, integer, text, timestamp without time zone, 
   OWNER TO dkachaev;
 
 
+-- View: similar_workers_performance
+
+-- DROP VIEW similar_workers_performance;
+
+CREATE OR REPLACE VIEW similar_workers_performance AS 
+ SELECT w.id AS worker_id, avg(shr.quality) AS quality, count(*)/2 AS total
+   FROM workers w, similar_hits_results shr, assignments a
+  WHERE a.worker_id = w.id AND shr.assignment_id = a.id AND shr.is_control > 0
+  GROUP BY w.id;
+
+ALTER TABLE similar_workers_performance
+  OWNER TO dkachaev;
+
+
+
+CREATE OR REPLACE VIEW tensentences_workers_performance AS 
+ SELECT w.id AS worker_id, avg(thr.quality) AS quality, count(*)/2 AS total
+   FROM workers w, tensentences_hits_results thr, assignments a
+  WHERE a.worker_id = w.id AND thr.assignment_id = a.id AND thr.is_control > 0
+  GROUP BY w.id;
+
+ALTER TABLE tensentences_workers_performance
+  OWNER TO dkachaev;
+
+
+ALTER TABLE tweets
+   ADD COLUMN google text;
+
+ALTER TABLE tweets
+   ADD COLUMN bing text;
+

@@ -37,3 +37,31 @@ LAUNCHD
 	sudo cp tweets_es.plist /Library/LaunchDaemons/
 	
 	launchctl load /Library/LaunchDaemons/tweets_es.plist
+	
+CONTINUOUS:
+
+python multi_test.py
+	get all assignments from MTurk
+
+python buffer_update.py
+	sync them with main database and load into tables by type of HIT
+
+psql -h localhost -d tweets_es -f ../db/10sentences_to_similar.sql  
+     genereate QC HITs from all completed 10 sentences assignments
+
+python generate_similar_hits.py
+	generate QC HITs batches
+	
+
+python add_similar_hits_to_mturk.py
+	load batches/HITs into MTurk
+
+
+#psql -h localhost -d mturk -f ../db/grade_qc.sql
+	grade all QC hits automatically
+
+#python process_qc.py
+	process all graded QC HITs and pay/reject work done so far (and redo all messed up (low quality) work)
+
+#psql -h localhost -d mturk -f ../db/update_10sentences_from_qc.sql
+	load good quality data based on QC evaluations into original table - e.g. tweets/tensentences_hits_data(results)
