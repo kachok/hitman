@@ -87,7 +87,7 @@ cur2=conn.cursor()
 mturk_conn=mturk.conn()
 
 #select all Graded assignment (with any  status including Approved/Rejected mturk_status) and pay workers and Approve/Reject them in MTurk
-sql="""SELECT a.id, a.mturk_assignment_id, a.hit_id, a.data_status, a.worker_id, p.quality as worker_quality, p.total as worker_total a.mturk_status, sh.mturk_hit_id 
+sql="""SELECT a.id, a.mturk_assignment_id, a.hit_id, a.data_status, a.worker_id, p.quality as worker_quality, p.total as worker_total, a.mturk_status, sh.mturk_hit_id 
 		FROM assignments a, similar_hits sh, similar_workers_performance p 
 		WHERE a.hit_id = sh.id and a.mturk_status ='Submitted' and a.data_status is not null
 			and p.worker_id=a.worker_id;"""
@@ -101,7 +101,7 @@ for row in rows:
 	data_status=float(row[3])
 	worker_id=str(row[4])
 	worker_quality=float(row[5])
-	worker_total=flot(row[6])
+	worker_total=float(row[6])
 
 	db_mturk_status=str(row[7]) # MTurk status (Approved/Rejected if worker was already paid)
 	
