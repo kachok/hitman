@@ -154,6 +154,8 @@ for row in rows:
 			except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while rejecting assignment"
 
+		#if data quality is not perfect, rerun this assignment again
+		if data_status!=1:
 			try:
 				#increase number of assignments on related HIT
 				mturk_conn.extend_hit(mturk_hit_id, assignments_increment=1)
@@ -164,6 +166,7 @@ for row in rows:
 	else:
 		#we can't change MTurk status if it is already Approved/Rejected
 		mturk_status=db_mturk_status
+
 
 	status='Closed'
 	
