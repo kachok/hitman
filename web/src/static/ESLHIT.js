@@ -1,6 +1,3 @@
-//var sentences = [ "${sent0}", "${sent1}", "${sent2}", "${sent3}", "${sent4}", "${sent5}", "${sent6}", "${sent7}", "${sent8}", "${sent9}" ];
-
-// Removed sentences variable and pushed it into ESL.tpl file
 /*
 var sentences = [
 		"Sri Lanka 's forest region was destroyed by agriculture , wooden works , vetinary feeds , etc . ,",
