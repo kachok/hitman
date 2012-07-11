@@ -1,7 +1,7 @@
 #select h.id, h.mturk_hit_id, count(*) from similar_hits h, assignments a where a.hit_id=h.id and a.data_status=1 group by h.id, h.mturk_hit_id;
 
-
-
+# this query will show all unbalanced similar HITs:
+#select h.id, h.mturk_hit_id, count(*) from similar_hits h, assignments a where a.hit_id=h.id and a.data_status=1 group by h.id, h.mturk_hit_id having count(*)<3;
 
 # -*- coding: utf-8 -*-
 
