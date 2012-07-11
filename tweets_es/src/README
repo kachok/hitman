@@ -63,5 +63,8 @@ python add_similar_hits_to_mturk.py
 #python process_qc.py
 	process all graded QC HITs and pay/reject work done so far (and redo all messed up (low quality) work)
 
+#level_qc_hits.py
+	if similar HITs somehow still have less than 3 correctly done assignments, increment number of assignments manually
+
 #psql -h localhost -d mturk -f ../db/update_10sentences_from_qc.sql
 	load good quality data based on QC evaluations into original table - e.g. tweets/tensentences_hits_data(results)
