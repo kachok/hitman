@@ -10,7 +10,7 @@ python generate_similar_hits.py
 
 python add_similar_hits_to_mturk.py
 
-psql -h localhost -d mturk -f ../db/grade_qc.sql
+psql -h localhost -d tweets_es -f ../db/grade_qc.sql
 
 python process_qc.py
 
