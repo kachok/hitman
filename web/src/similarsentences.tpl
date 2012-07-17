@@ -197,12 +197,11 @@
   	<tr>
      	<td width="*">
   <div id="instructions">
-	<p>This HIT is only for people who speak English.  In this HIT you will be asked to judge the quality of translation.</p>
+	<p>This HIT is only for people who speak both Spanish and English.  In this HIT you will be asked to judge the quality of translation.</p>
 	            <ul>
-					<li>For 6 different translations you'll be asked five questions about the HIT.</li>
-					<li>First, we want to know if one translation has the same meaning as another translation.</li>
-					<li>Second, we want to know what you think about the translation quality.</li>
-					<li>Finally, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
+					<li>For 10 different translations you'll be asked two questions about the HIT.</li>
+					<li>First, we want to know if one translation is correct.</li>
+					<li>Second, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
@@ -269,6 +268,18 @@
 								<br/>
 							</td>
 						</tr>
+						
+						<tr>
+							<td colspan="2">
+								Does these two sentences above have the same meaning?
+								<br/>
+								<input type='radio' name='same_{{word["pair_id"]}}' value='yes' id='same_{{word["pair_id"]}}_yes'><label for="same_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
+								<input type='radio' name='same_{{word["pair_id"]}}' value='no' id='same_{{word["pair_id"]}}_no'><label for="same_{{word["pair_id"]}}_no">No</label> &nbsp;
+								<br/>
+								<br/>
+
+							</td>
+						</tr>						
 						<tr>
 							<td colspan="2">
 								Does English translation abovelooks like it was machine translated? (example of machine translation is below)
