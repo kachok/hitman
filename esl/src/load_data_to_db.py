@@ -38,6 +38,7 @@ langs_properties=wikilanguages.langs
 
 try:
 	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+	print settings["esl_dbname"]
 	logging.info("successfully connected to database")
 except:
 	logging.error("unable to connect to the database")
@@ -70,13 +71,15 @@ logging.info("languages table is loaded")
 
 lang="en"
 
-logging.info("processing esl sentences tweets ")
+logging.info("processing esl sentences")
 
 cur = conn.cursor()
 
 sql="SELECT id from languages where prefix=%s;"
 cur.execute(sql, (lang,))
 rows = cur.fetchall()
+print len(rows)
+print cur.description
 
 lang_id=0
 for row in rows:

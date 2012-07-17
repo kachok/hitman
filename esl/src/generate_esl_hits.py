@@ -113,17 +113,21 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-	sql="SELECT * from esl_sentences WHERE language_id=%s order by random();"
+	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num;" #random();"
 	cur.execute(sql, (lang_id,))
 	rows = cur.fetchall()
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_esl_hit_path"]+"/"+lang
+	
+	print "rows "+ str(rows)
 
 	for batchiter in batch(rows, settings["num_unknowns"]):
-
+		print "batchiter "+ str(batchiter)
+	
 		guid=str(uuid.uuid4())
 
 		sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
+		#sql="SELECT add_esl_hits_data(%s, %s, %s, %s, %s, %s, %s);"
 		cur2.execute(sql,("", guid, hittype_id, lang_id, 0, 0, 0))
 		hit_id = cur2.fetchone()[0]
 
