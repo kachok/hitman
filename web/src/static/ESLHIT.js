@@ -15,6 +15,8 @@ var sentences = [
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
 
 
+var annotations = [];
+
 var words = [ [], [], [], [], [], [], [], [], [], [] ];
 
 var step_list = [ 'spelling', 'prepositions', 'determiners', 'agreement',
@@ -535,7 +537,7 @@ function displayWarning() {
 function correctWord() {
 	if (err_type_chosen == false) { displayWarning(); } 
 	else {
-		$("#allSentences").before(getTrackChangesTable(num_corr));
+		//$("#user_survey").before(getTrackChangesTable(num_corr));
 		trackChanges(num_corr, span_start);
 		if (moving_phrase) { commitMove(); } 
 		else if (highlighting_mode == "insert") { commitInsert(); } 
@@ -1348,61 +1350,123 @@ function compileCorrections(i) {
 * Build a new row of the hidden table to save data about the new edit 
 */
 function getTrackChangesTable(id) {
-	var text = '<table>';
-	text += '<input type="hidden" name = "corr-' + id + '-num" id="corr-' + id
-			+ '-num" />';
-	text += '<input type="hidden" name = "corr-' + id + '-sentence" id="corr-'
-			+ id + '-sentence" />';
-	text += '<input type="hidden" name = "corr-' + id + '-spanst" id="corr-'
-			+ id + '-spanst" />';
-	text += '<input type="hidden" name = "corr-' + id + '-spanend" id="corr-'
-			+ id + '-spanend" />';
-	text += '<input type="hidden" name = "corr-' + id + '-oldword" id="corr-'
-			+ id + '-oldword" />';
-	text += '<input type="hidden" name = "corr-' + id + '-newword" id="corr-'
-			+ id + '-newword" />';
-	text += '<input type="hidden" name = "corr-' + id + '-mode" id="corr-'
-			+ id + '-mode" />';
-	text += '<input type="hidden" name = "corr-' + id + '-annotn" id="corr-' + id
-			+ '-annotn" />';
-	text += '</table>';
-	return text;
+/*        var text = '<form id="mainform"' + id + 'method="GET" action="http://workersandbox.mturk.com/mturk/externalSubmit">'
+	text =  ""; //'<table>';
+	alert(text);
+        text += '<input type="text" name = "corr.' + id + '.num" id="corr.' + id
+                        + '.num" value=""/>';
+        text += '<input type="text" name = "corr.' + id + '.snt" id="corr.'
+                        + id + '.snt" value=""/>';
+        text += '<input type="hidden" name = "corr.' + id + '.sst" id="corr.'
+                        + id + '.sst" value=""/>';
+        text += '<input type="hidden" name = "corr.' + id + '.snd" id="corr.'
+                        + id + '.snd" value=""/>';
+        text += '<input type="text" name = "corr.' + id + '.old" id="corr.'
+                        + id + '.old" value=""/>';
+        text += '<input type="hidden" name = "corr.' + id + '.new" id="corr.'
+                        + id + '.new" value=""/>';
+        text += '<input type="hidden" name = "corr.' + id + '.mod" id="corr.'
+                        + id + '.mod" value=""/>';
+        text += '<input type="hidden" name = "corr.' + id + '.atn" id="corr.' + id
+                        + '.atn" value=""/>';
+//        text += '</table></form>';
+     //   text += '</table>';
+	alert(text);
+        return text;*/
+}
+
+function record(id, num, snt, sst, snd, old, nw, mod, atn){
+	var text = "";
+	text += '<input type="hidden" name = "corr.' + id + '.num" id="corr.' + id + '.num" value="'+num+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.snt" id="corr.' + id + '.snt" value="'+snt+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.sst" id="corr.' + id + '.sst" value="'+sst+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.snd" id="corr.' + id + '.snd" value="'+snd+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.old" id="corr.' + id + '.old" value="'+old+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.new" id="corr.' + id + '.new" value="'+nw+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.mod" id="corr.' + id + '.mod" value="'+mod+'"/>';
+        text += '<input type="hidden" name = "corr.' + id + '.atn" id="corr.' + id + '.atn" value="'+atn+'"/>';
+	$("#HITend").after(text);
+       return false;
+//	$("#user_survey").after('<input type="text" name="name" id="atest" value="'+value+'" />');
+}
+
+
+function trackChanges(id, j) {
+	var num = num_corr;
+        var snt = curr_sentence;
+        var sst = span_start;
+        var snd = span_start + num_highlighted;
+        var old = $("#corr_text" + num_corr).text();
+        var mod = current_step;
+        var atn = errType;
+        var wd1 = $("#inputC" + id).val();
+        var wd2 = $("#inputC" + id + "_b").val();
+	var nw = wd1;
+        if (highlighting_mode == "pair") {
+                var pair = old.split("...");
+                old = pair[0] + ", " + pair[1];
+                nw = wd1 + ", " + wd2;
+                sst = span_start + ", " + span_start2;
+                snd = (span_start + num_highlighted) + ", " + (span_start2 + num_highlighted);
+        } 
+        if (current_step == "reorder") {
+                nw = insert_idx;
+        }
+        if (current_step == "delete") {
+                nw = "";
+        }
+        in_progress = false;
+        option_chosen = false;
+        input_displayed = false;
+        err_type_chosen = false;
+//	record("id", "num", "snt", "sst", "snd", "old", "nw", "mod", "atn");
+	record(id, num, snt, sst, snd, old, nw, mod, atn);
+	return false;
 }
 
 /**
 * Gather data about the most recent edit and save it into the hidden changes data structure 
 */
-function trackChanges(id, j) {
-	var cid = "corr-" + id;
-	$("#" + cid + "-num").val(num_corr);
-	$("#" + cid + "-sentence").val(curr_sentence);
-	$("#" + cid + "-spanst").val(span_start);
-	$("#" + cid + "-spanend").val(span_start + num_highlighted);
-	var txt = $("#corr_text" + num_corr).text();
-	$("#" + cid + "-oldword").val(txt);
-	$("#" + cid + "-mode").val(current_step);
-	$("#" + cid + "-annotn").val(errType); //$("#errTypeC" + id).val());
-	var wd1 = $("#inputC" + id).val();
-	var wd2 = $("#inputC" + id + "_b").val();
-	if (highlighting_mode == "pair") {
-		var pair = txt.split("...");
-		$("#" + cid + "-oldword").val(pair[0] + ", " + pair[1]);
-		$("#" + cid + "-newword").val(wd1 + ", " + wd2);
-		$("#" + cid + "-spanst").val(span_start + ", " + span_start2);
-		$("#" + cid + "-spanend").val(
-				(span_start + num_highlighted) + ", "
-						+ (span_start2 + num_highlighted));
+/*function trackChanges(id, j) {
+	recordNum("this is the value");
+	return false;
+        var cid = "corr." + id;
+	$("#" + cid + ".num").val(num_corr);
+	//alert(document.getElementById(cid+".num"));
+	//document.getElementById(cid+".num").Value = num_corr;
+        $("#" + cid + ".snt").val(curr_sentence);
+        $("#" + cid + ".sst").val(span_start);
+        $("#" + cid + ".snd").val(span_start + num_highlighted);
+        var txt = $("#corr_text" + num_corr).text();
+        $("#" + cid + ".old").val(txt);
+        $("#" + cid + ".mod").val(current_step);
+        $("#" + cid + ".atn").val(errType); //$("#errTypeC" + id).val());
+        var wd1 = $("#inputC" + id).val();
+        var wd2 = $("#inputC" + id + "_b").val();
+        if (highlighting_mode == "pair") {
+                var pair = txt.split("...");
+                $("#" + cid + ".old").val(pair[0] + ", " + pair[1]);
+                $("#" + cid + ".new").val(wd1 + ", " + wd2);
+                $("#" + cid + ".sst").val(span_start + ", " + span_start2);
+                $("#" + cid + ".snd").val(
+                                (span_start + num_highlighted) + ", "
+                                                + (span_start2 + num_highlighted));
 
-	} else {
-		$("#" + cid + "-newword").val(wd1);
-	}
-	if (current_step == "reorder") {
-		$("#" + cid + "-newword").val(insert_idx);
-	}
-	in_progress = false;
-	option_chosen = false;
-	input_displayed = false;
-	err_type_chosen = false;}
+        } else {
+                $("#" + cid + ".new").val(wd1);
+        }
+        if (current_step == "reorder") {
+                $("#" + cid + ".new").val(insert_idx);
+        }
+        in_progress = false;
+        option_chosen = false;
+        input_displayed = false;
+        err_type_chosen = false;
+}*/
+
+
+
+
 
 /**
 * Insert a word into the sentence
