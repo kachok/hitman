@@ -604,6 +604,7 @@ function dragDrop() {
 	});
 	$(".space").click( function(){
 		insert_idx = $(this).attr('id');
+		alert(insert_idx);
 		$(this).text(dropText);
 		$(this).removeClass("space", "hover");
 		$(this).addClass("word", "highlight");

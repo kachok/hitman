@@ -16,6 +16,8 @@ logging.basicConfig(
 
 logging.info("load data to db pipeline - START")
 
+DATA_PATH = "../data/data-2012-07-10"
+
 # generate list of languages to process
 #TODO: for now just load this list from data/languages/languages.txt (list of wikipedia languages with 10,000+ articles)
 
@@ -91,13 +93,13 @@ conn.commit()
 cur = conn.cursor()
 
 # f=open("../data/raw.en.final")
-f=open("../data/data-2012-07-10")
+f=open(DATA_PATH)
 
 count=0
 
 
 #eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
-eslReader = csv.reader(open('../data/data-2012-07-10', 'rb'), delimiter='@', quotechar='"')
+eslReader = csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
 
 count=0
 for row in eslReader:
