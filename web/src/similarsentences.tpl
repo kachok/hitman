@@ -238,7 +238,7 @@
               
 
 				<div id="user_survey">
-		  			%include templates/foreignenglishspeakersurvey.tpl
+		  			%include templates/foreignenglishspeakersurvey.tpl lang_name=params['lang_name']
 				</div>
 
 
