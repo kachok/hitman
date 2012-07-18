@@ -222,6 +222,31 @@ BEGIN
 END;
 $$;
 
+
+CREATE FUNCTION add_esl_edit(assignment_id2 integer, edit_num2 integer, esl_sentence_id2 integer, span_start2 integer, span_end2 integer, old_word2 varying, new_word2 varying, edit_type2 varying, annotation2 varying ) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    LOOP
+        -- first try to update the key
+        --UPDATE esl_hits_data
+        ---IF found THEN
+        --    RETURN;
+        ---END IF;
+        -- not there, so try to insert the key
+        -- if someone else inserts the same key concurrently,
+        -- we could get a unique-key failure
+        BEGIN
+            INSERT INTO esl_edits (assignment_id, edit_num, esl_sentence_id, span_start, span_end, old_word, new_word, edit_type, annotation)
+            VALUES (assignment_id2, edit_num2, esl_sentence_id2, span_start2, span_end2, old_word2, new_word2, edit_type2, annotation2)
+            RETURN;
+        EXCEPTION WHEN unique_violation THEN
+            -- do nothing, and loop to try the UPDATE again
+        END;
+    END LOOP;
+END;
+$$;
+
 --
 -- Name: add_syn_hits_result(integer, integer, text, text, integer); Type: FUNCTION; Schema: public; Owner: -
 --

@@ -1386,10 +1386,6 @@ function record(id, num, snt, sst, snd, old, nw, mod, atn){
         text += '<input type="hidden" name = "corr.' + id + '.mod" id="corr.' + id + '.mod" value="'+mod+'"/>';
         text += '<input type="hidden" name = "corr.' + id + '.atn" id="corr.' + id + '.atn" value="'+atn+'"/>';
 	$("#allSentences").after(text);
-	alert("here");
-	$("#corr."+id+".num").hide();
-	$("#corr."+id+".snt").hide();
-	$("#corr."+id+".sst").hide();
        return false;
 //	$("#user_survey").after('<input type="text" name="name" id="atest" value="'+value+'" />');
 }

@@ -84,6 +84,8 @@ for i, lang in enumerate(langs):
 		lang_id=str(row[0])
 
 	
+	print lang_id
+	
 	sql="SELECT add_hittype (%s, %s, %s, %s);"
 	cur.execute(sql,("ESL sentences HIT for "+langs_properties[lang]["name"], mturk_hittype_id,  lang_id, "esl"))
 	hittype_id = cur.fetchone()[0]
@@ -119,11 +121,10 @@ for i, lang in enumerate(langs):
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_esl_hit_path"]+"/"+lang
 	
-	print "rows "+ str(rows)
+	#print "rows "+ str(rows)
 
 	for batchiter in batch(rows, settings["num_unknowns"]):
-		print "batchiter "+ str(batchiter)
-	
+		
 		guid=str(uuid.uuid4())
 
 		sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
@@ -132,11 +133,12 @@ for i, lang in enumerate(langs):
 		hit_id = cur2.fetchone()[0]
 
 		logging.info("Batch added")
+		i = 0
 		for item in batchiter:
 			tweet_id=item[0]
-			
-			sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id) VALUES (%s, %s, %s);"
-			cur2.execute(sql,(hit_id, tweet_id, lang_id))
+			sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s, %s, %s, %s);"
+			cur2.execute(sql,(hit_id, tweet_id, lang_id, i))
+			i += 1
 
 	conn.commit()
 
