@@ -292,9 +292,12 @@
 						</tr>
 						<tr>
 							<td colspan="2" bgcolor="whitesmoke">
-								Example of machine translation:<br/>
+								Examples of machine translation:<br/><br/>
 								<i>
 								{{word['google']}}
+								</i><br/><br/>
+								<i>
+								{{word['bing']}}
 								</i>
 								<br/>
 							</td>
