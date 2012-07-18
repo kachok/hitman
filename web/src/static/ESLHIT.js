@@ -406,9 +406,9 @@ function cleanUpChange() {
 		+'<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td class="change"><div class="corrected_word">'
 		+ $("#inputC" + num_corr).val() + " ... "
-		+ $("#inputC" + num_corr + '_b').val() + '</div></td>'
-		+ '<td><div class="corrected_word">'
-		+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
+		+ $("#inputC" + num_corr + '_b').val() + '</div></td></tr></table>');
+//		+ '<td><div class="corrected_word">'+'</div></td></tr></table>');
+	//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 		$("#inputC" + num_corr + '_b').hide();
 		$("#corr_text" + num_corr).hide();
 		$("#C" + num_corr).hide();
@@ -418,9 +418,9 @@ function cleanUpChange() {
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+ '<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td><div class="corrected_word">'
-		+ $("#inputC" + num_corr).val() + '</div></td>'
-		+ '<td><div class="corrected_word">'
-		+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
+		+ $("#inputC" + num_corr).val() + '</div></td></tr></table>');
+//		+ '<td><div class="corrected_word">'+'</div></td></tr></table>');
+	//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 		$("#corr_text" + num_corr).hide();
 		$("#C" + num_corr).hide();
 	}
@@ -436,9 +436,9 @@ function cleanUpDelete() {
 	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
 	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
-	+'<td class="change"><div width="14""> deleted </div></td>'
-	+ '<td><div class="corrected_word">'
-	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
+	+'<td class="change"><div width="14""> deleted </div></td></tr></table>');
+	//+ '<td><div class="corrected_word">'
+	//+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
 	$("#inputC" + num_corr).hide();
 	$("#errTypeC" + num_corr).hide();
@@ -453,9 +453,9 @@ function cleanUpMove() {
 	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
 	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
-	+'<td class="change"><div width="14""> moved </div></td>'
-	+ '<td><div class="corrected_word">'
-	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
+	+'<td class="change"><div width="14""> moved </div></td></tr></table>');
+//	+ '<td><div class="corrected_word">'
+//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
 	$("#inputC" + num_corr).hide();
 	$("#errTypeC" + num_corr).hide();
@@ -470,9 +470,9 @@ function cleanUpInsert() {
 //	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
 	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
 	+ $("#inputC" + num_corr).val() + '</div></td>'
-	+ '<td class="change"><div width="14"> inserted </div></td>'
-	+ '<td><div class="corrected_word">'
-	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
+	+ '<td class="change"><div width="14"> inserted </div></td></tr></table>');
+//	+ '<td><div class="corrected_word">'
+//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
 	$("#inputC" + num_corr).hide();
 	$("#errTypeC" + num_corr).hide();
@@ -535,15 +535,15 @@ function displayWarning() {
  * see if the correction is blank before replacing the word.
  */
 function correctWord() {
-	if (err_type_chosen == false) { displayWarning(); } 
-	else {
+//	if (err_type_chosen == false) { displayWarning(); } 
+//	else {
 		//$("#user_survey").before(getTrackChangesTable(num_corr));
 		trackChanges(num_corr, span_start);
 		if (moving_phrase) { commitMove(); } 
 		else if (highlighting_mode == "insert") { commitInsert(); } 
 		else { commitChange(); }
 		cleanUpUI();
-	}
+//	}
 	return false; // to stop MTurk from submitting the form early
 }
 
@@ -723,7 +723,7 @@ function correctionUI() {
 	} else {
 		text = '<td id="corr_text' + num_corr + '">';
 	}
-	text += promptForType();
+//	text += promptForType();
 	text += getButtons();
 	text += '</tr></table>';
 //	$('#C' + num_corr).after(text);
@@ -1385,7 +1385,7 @@ function record(id, num, snt, sst, snd, old, nw, mod, atn){
         text += '<input type="hidden" name = "corr.' + id + '.new" id="corr.' + id + '.new" value="'+nw+'"/>';
         text += '<input type="hidden" name = "corr.' + id + '.mod" id="corr.' + id + '.mod" value="'+mod+'"/>';
         text += '<input type="hidden" name = "corr.' + id + '.atn" id="corr.' + id + '.atn" value="'+atn+'"/>';
-	$("#HITend").after(text);
+	$("#allSentences").after(text);
        return false;
 //	$("#user_survey").after('<input type="text" name="name" id="atest" value="'+value+'" />');
 }
