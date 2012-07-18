@@ -200,7 +200,7 @@
 	<p>This HIT is only for people who speak both Spanish and English.  In this HIT you will be asked to judge the quality of translation.</p>
 	            <ul>
 					<li>For 10 different translations you'll be asked two questions about the HIT.</li>
-					<li>First, we want to know if one translation is correct.</li>
+					<li>First, please say whether the English translation has (approximately) the same meaning as the original Spanish.</li>
 					<li>Second, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
@@ -238,7 +238,7 @@
               
 
 				<div id="user_survey">
-		  			%include templates/englishspeakersurvey.tpl
+		  			%include templates/foreignenglishspeakersurvey.tpl
 				</div>
 
 
@@ -282,10 +282,11 @@
 						</tr>						
 						<tr>
 							<td colspan="2">
-								Does English translation abovelooks like it was machine translated? (example of machine translation is below)
+								Does English translation above look like it was machine translated? (an example machine translation is given below - look for clues like untranslated slang, or very bad translations)
 								<br/>
 								<input type='radio' name='machine_{{word["pair_id"]}}' value='yes' id='machine_{{word["pair_id"]}}_yes'><label for="machine_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
 								<input type='radio' name='machine_{{word["pair_id"]}}' value='no'id='machine_{{word["pair_id"]}}_no'><label for="machine_{{word["pair_id"]}}_no">No</label> &nbsp;
+								<input type='radio' name='machine_{{word["pair_id"]}}' value='maybe'id='machine_{{word["pair_id"]}}_maybe'><label for="machine_{{word["pair_id"]}}_maybe">Maybe</label> &nbsp;
 								<br/>
 							</td>
 						</tr>

@@ -413,6 +413,8 @@ def similar_hit():
 		"hit_type":"vocabulary-ru",
 		"assignmentid":assignmentid,
 		"hitid":hitid,
+		"lang":"es",
+		"lang_name":"Spanish",
 		"ip":get_client_ip(request),
 		"words":words,
 		}
