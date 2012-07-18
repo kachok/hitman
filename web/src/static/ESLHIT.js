@@ -722,7 +722,7 @@ function correctionUI() {
 		text = '<table><tr><td id="corr_text' + num_corr
 				+ '"><div id="corr_div'+num_corr+'" class="corrected_word">' + txt + '</div>';
 	} else {
-		text = '<td id="corr_text' + num_corr + '">';
+		text = '<table><tr><td id="corr_text' + num_corr + '">';
 	}
 //	text += promptForType();
 	text += getButtons();
@@ -1481,6 +1481,8 @@ function insert() {
 		$(this).removeClass("tmp_highlight");
 		$(this).addClass("highlight");
 		insert_idx = $(this).attr('id');
+		span_start = parseInt($(this).attr('id'));
+		num_highlighted = 1;
 		////writeCorrectionsTable();
 		correctionUI();
 		onBlur();
@@ -1564,7 +1566,7 @@ $(document).ready(function() {
 	visited[0] = true;
 	if (curr_sentence == 0) {
 		writeOriginalSentences();
-	}
+	}	
 	updateTab();
 });
 
