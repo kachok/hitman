@@ -5,12 +5,12 @@
             <table id="surveytable" border="0" cellspacing="0" cellpadding="0">
                 <tbody>
                     <tr class="odd">
-                        <td>Is {{lang_name}} language your native language?</td>
+                        <td>Is {{lang_name}} your native language?</td>
                         <td><input type="radio" name="survey_is_native_foreign_speaker" value="yes" id="survey_is_native_foreign_speaker_yes"/><label for="survey_is_native_foreign_speaker_yes">Yes</label> 
 							<input type="radio" name="survey_is_native_foreign_speaker" value="no" id="survey_is_native_foreign_speaker_no" /><label for="survey_is_native_foreign_speaker_no">No</label> </td>
                     </tr>
                     <tr class="even">
-                        <td>How many years have you spoken {{lang_name}} language?</td>
+                        <td>How many years have you spoken {{lang_name}}?</td>
                         <td><input size="4" name="survey_years_speaking_foreign" id="survey_years_speaking_foreign" type="text" /> <span class="answertext">years</span></td>
                     </tr>
                     <tr class="odd">
