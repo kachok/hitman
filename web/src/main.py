@@ -374,11 +374,11 @@ def similar_hit():
 
 	sql=""
 	sql=sql+" select * from "
-	sql=sql+" ((select d.id, d.translation, d.similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
+	sql=sql+" ((select d.id, t.tweet, d.similar_sentence, google, bing, 0 as bit from similar_hits_data d, similar_hits h, translations t where t.id=d.tweet_id and h.id=d.hit_id and h.mturk_hit_id=%s)"
 	sql=sql+" union"
-	sql=sql+" (select id, text1, text2, google, bing, 1 as bit from parallel s where active=true order by random() limit 1)"
+	sql=sql+" (select id, tweet, translation, google, bing, 1 as bit from translations s order by random() limit 1)"
 	sql=sql+" union"
-	sql=sql+" (select id, text1, nottext,google, bing, 2 as bit from parallel s where active=true order by random() limit 1)"
+	sql=sql+" (select id, tweet, notsame ,google, bing, 2 as bit from translations s order by random() limit 1)"
 	sql=sql+" ) t order by random()" 
 
 	#sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
@@ -394,11 +394,11 @@ def similar_hit():
 		#bit="0" #regular pair
 		bit=str(row[5])
 		pair_id=str(row[0]).zfill(9)+bit
-		translation=str(row[1])
-		similar_sentence=str(row[2])
+		tweet=str(row[1])
+		translation=str(row[2])
 		google=str(row[3])
 		bing=str(row[4])
-		words.append({"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing})
+		words.append({"pair_id":pair_id, "tweet":tweet, "translation":translation, "google":google, "bing":bing})
 		total=total+1
 		#print {"pair_id":pair_id, "translation":translation, "similar_sentence":similar_sentence, "google":google, "bing":bing}
 
@@ -413,6 +413,8 @@ def similar_hit():
 		"hit_type":"vocabulary-ru",
 		"assignmentid":assignmentid,
 		"hitid":hitid,
+		"lang":"es",
+		"lang_name":"Spanish",
 		"ip":get_client_ip(request),
 		"words":words,
 		}

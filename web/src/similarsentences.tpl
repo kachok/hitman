@@ -197,12 +197,11 @@
   	<tr>
      	<td width="*">
   <div id="instructions">
-	<p>This HIT is only for people who speak English.  In this HIT you will be asked to judge the quality of translation.</p>
+	<p>This HIT is only for people who speak both Spanish and English.  In this HIT you will be asked to judge the quality of translation.</p>
 	            <ul>
-					<li>For 6 different translations you'll be asked five questions about the HIT.</li>
-					<li>First, we want to know if one translation has the same meaning as another translation.</li>
-					<li>Second, we want to know what you think about the translation quality.</li>
-					<li>Finally, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
+					<li>For 10 different translations you'll be asked two questions about the HIT.</li>
+					<li>First, please say whether the English translation has (approximately) the same meaning as the original Spanish.</li>
+					<li>Second, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
 	            </ul>
     <a href="" id="hide_instructions">hide instructions</a>
   </div>
@@ -239,7 +238,7 @@
               
 
 				<div id="user_survey">
-		  			%include templates/englishspeakersurvey.tpl
+		  			%include templates/foreignenglishspeakersurvey.tpl lang_name=params['lang_name']
 				</div>
 
 
@@ -249,18 +248,27 @@
 						%for word in params['words']:
 
 
-						<tr bgcolor="lightgrey">
+						<tr>
 							<td width="50%" >
-								<b>{{word['translation']}}</b>
+								Spanish original:
+							</td>
+							<td width="50%">
+								English translation:
+							</td>
+						</tr>
+						<tr>
+							<td width="50%"  bgcolor="lightgrey">
+								<b>{{word['tweet']}}</b>
 								<br/>
 								<br/>
 							</td>
 							<td width="50%" bgcolor="lightgrey">
-								<b>{{word['similar_sentence']}}</b>
+								<b>{{word['translation']}}</b>
 								<br/>
 								<br/>
 							</td>
 						</tr>
+						
 						<tr>
 							<td colspan="2">
 								Does these two sentences above have the same meaning?
@@ -271,56 +279,25 @@
 								<br/>
 
 							</td>
-						</tr>
-						
-						<tr>
-							<td colspan="2" bgcolor="lightgrey">
-								<b>{{word['translation']}}</b>
-								<br/>
-								<br/>
-							</td>
-						</tr>
+						</tr>						
 						<tr>
 							<td colspan="2">
-								 Is this translation a correctly spelled, grammatical translation?
-								<br/>
-								<input type='radio' name='correct_{{word["pair_id"]}}' value='yes' id='correct_{{word["pair_id"]}}_yes'><label for="correct_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
-								<input type='radio' name='correct_{{word["pair_id"]}}' value='no'id='correct_{{word["pair_id"]}}_no'><label for="correct_{{word["pair_id"]}}_no">No</label> &nbsp;
-								<br/>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								Is it close enough that a native English speaker could edit it to make it perfect?
-								<br/>
-								<input type='radio' name='native_{{word["pair_id"]}}' value='yes' id='native_{{word["pair_id"]}}_yes'><label for="native_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
-								<input type='radio' name='native_{{word["pair_id"]}}' value='no'id='native_{{word["pair_id"]}}_no'><label for="native_{{word["pair_id"]}}_no">No</label> &nbsp;
-								<br/>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								Is good enough to publish as-is?
-								<br/>
-								<input type='radio' name='good_{{word["pair_id"]}}' value='yes' id='good_{{word["pair_id"]}}_yes'><label for="good_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
-								<input type='radio' name='good_{{word["pair_id"]}}' value='no'id='good_{{word["pair_id"]}}_no'><label for="good_{{word["pair_id"]}}_no">No</label> &nbsp;
-								<br/>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="2">
-								Does this sentence above looks like it was machine translated? (example of machine translation is below)
+								Does English translation above look like it was machine translated? (an example machine translation is given below - look for clues like untranslated slang, or very bad translations)
 								<br/>
 								<input type='radio' name='machine_{{word["pair_id"]}}' value='yes' id='machine_{{word["pair_id"]}}_yes'><label for="machine_{{word["pair_id"]}}_yes">Yes</label> &nbsp; 
 								<input type='radio' name='machine_{{word["pair_id"]}}' value='no'id='machine_{{word["pair_id"]}}_no'><label for="machine_{{word["pair_id"]}}_no">No</label> &nbsp;
+								<input type='radio' name='machine_{{word["pair_id"]}}' value='maybe'id='machine_{{word["pair_id"]}}_maybe'><label for="machine_{{word["pair_id"]}}_maybe">Maybe</label> &nbsp;
 								<br/>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="2" bgcolor="whitesmoke">
-								Example of machine translation:<br/>
+								Examples of machine translation:<br/><br/>
 								<i>
 								{{word['google']}}
+								</i><br/><br/>
+								<i>
+								{{word['bing']}}
 								</i>
 								<br/>
 							</td>
