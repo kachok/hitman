@@ -142,9 +142,9 @@ for row in rows:
 				id_with_control=key[5:15]
 				is_control=key[14:15]
 				same=results[key]
-				good=results["good_"+id_with_control]
-				native=results["native_"+id_with_control]
-				correct=results["correct_"+id_with_control]
+				good=""
+				native=""
+				correct=""
 				machine=results["machine_"+id_with_control]
 										
 				sql2="SELECT add_similar_hits_result(%s, %s, %s, %s, %s, %s, %s, %s);"
