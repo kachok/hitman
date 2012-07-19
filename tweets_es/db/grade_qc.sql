@@ -32,20 +32,16 @@ where t_id=id;
 
 update similar_hits_data
 set data_quality=avg_quality,
-	native=avg_native,
-	good=avg_good,
-	correct=avg_correct,
+	same=avg_same,
 	machine=avg_machine
 from (
-	select r.pair_id, avg(r.quality) as avg_quality, avg(r.native) as avg_native, avg(r.good) as avg_good, avg(r.correct) as avg_correct, avg(r.machine) as avg_machine
+	select r.pair_id, avg(r.quality) as avg_quality, avg(r.same) as avg_same,  avg(r.machine) as avg_machine
 	from
 		similar_hits_data d,
 		(
 				select assignment_id, pair_id, quality, 
-					case when native='yes' then 1 else 0 end as native,
-					case when good='yes' then 1 else 0 end as good,
-					case when correct='yes' then 1 else 0 end as correct,
-					case when machine='yes' then 1 else 0 end as machine
+					case when same='yes' then 1 else 0 end as same,
+					case when machine='yes' then 1 when machine='maybe' then 0.5 else 0 end as machine
 				from similar_hits_results  where is_control=0 and quality=1
 			) r,
 		hits h,
