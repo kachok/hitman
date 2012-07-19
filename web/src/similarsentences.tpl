@@ -71,12 +71,7 @@
 		%for word in params['words']:
 			v=$('input[name=same_{{word["pair_id"]}}]:checked').val();
 			if (v==undefined){form_valid(false);return;}
-			v=$('input[name=good_{{word["pair_id"]}}]:checked').val();
-			if (v==undefined){form_valid(false);return;}
-			v=$('input[name=native_{{word["pair_id"]}}]:checked').val();
-			if (v==undefined){form_valid(false);return;}
-			v=$('input[name=correct_{{word["pair_id"]}}]:checked').val();
-			if (v==undefined){form_valid(false);return;}
+
 			v=$('input[name=machine_{{word["pair_id"]}}]:checked').val();
 			if (v==undefined){form_valid(false);return;}
 
@@ -107,29 +102,6 @@
 		validate_form();
 	});
 
-	$("input[name=correct_{{word["pair_id"]}}]").change(function(){
-		validate_form();
-	});
-
-	$("input[name=correct_{{word["pair_id"]}}]").click(function(){
-		validate_form();
-	});
-
-	$("input[name=native_{{word["pair_id"]}}]").change(function(){
-		validate_form();
-	});
-
-	$("input[name=native_{{word["pair_id"]}}]").click(function(){
-		validate_form();
-	});
-
-	$("input[name=good_{{word["pair_id"]}}]").change(function(){
-		validate_form();
-	});
-
-	$("input[name=good_{{word["pair_id"]}}]").click(function(){
-		validate_form();
-	});
 
 	%end
 	
