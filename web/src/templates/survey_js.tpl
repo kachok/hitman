@@ -3,8 +3,14 @@ if ($.cookie(survey_name)!=null)
 
 	  load_survey_data();
       //alert("instructions !=null");
+
+      $("#survey2").hide();
+	  $("#survey").show();
+
+	  if (validate_survey()){
       $("#survey").hide();
 	  $("#survey2").show();
+	}
     }
     //$.cookie("test","test message");
     //alert("cookie test:"+ $.cookie("test"));

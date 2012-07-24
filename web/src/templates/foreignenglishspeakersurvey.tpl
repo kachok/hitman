@@ -76,6 +76,13 @@ function validate_survey()
 	if ($("#survey_years_speaking_english").val()==null ) return false;
 	if ($("#survey_what_country").val()==null ) return false;
 	if ($("#survey_what_country_born").val()==null ) return false;
+
+	if ($('input[name=survey_is_native_foreign_speaker]:checked').val()=='' ) return false;
+	if ($("#survey_years_speaking_foreign").val()=='' ) return false;
+	if ($('input[name=survey_is_native_english_speaker]:checked').val()=='' ) return false;
+	if ($("#survey_years_speaking_english").val()=='' ) return false;
+	if ($("#survey_what_country").val()=='' ) return false;
+	if ($("#survey_what_country_born").val()=='' ) return false;
 	
 	return true;
 }
