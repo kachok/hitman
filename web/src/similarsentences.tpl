@@ -171,7 +171,7 @@
   <div id="instructions">
 	<p>This HIT is only for people who speak both Spanish and English.  In this HIT you will be asked to judge the quality of translation.</p>
 	            <ul>
-					<li>For 10 different translations you'll be asked two questions about the HIT.</li>
+					<li>For 11 different translations you'll be asked two questions about the HIT.</li>
 					<li>First, please say whether the English translation has (approximately) the same meaning as the original Spanish.</li>
 					<li>Second, we want you to say whether you think it was produced by a machine translation system (like Google translate) or a person.</li>
 	            </ul>

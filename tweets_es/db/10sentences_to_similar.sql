@@ -4,4 +4,6 @@ insert into similar_hits_data (tweet_id, translation, similar_sentence, tensente
 	t.assignment_id=a.id and a.hit_id=h.id
 	and tt.id=t.tweet_id
 	and
+	trim(t.translation)!=''
+	and
 	not exists (select * from similar_hits_data s where s.tensentences_assignment_id=t.assignment_id);

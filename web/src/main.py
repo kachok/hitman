@@ -379,6 +379,8 @@ def similar_hit():
 	sql=sql+" (select id, tweet, translation, google, bing, 1 as bit from translations s order by random() limit 1)"
 	sql=sql+" union"
 	sql=sql+" (select id, tweet, notsame ,notgoogle, notbing, 2 as bit from translations s order by random() limit 1)"
+	sql=sql+" union"
+	sql=sql+" (select id, tweet, bing, google, bing, 3 as bit from translations s order by random() limit 1)"
 	sql=sql+" ) t order by random()" 
 
 	#sql="select * from syn_hits_data d, syn_hits h where h.id=d.hit_id and h.mturk_hit_id=%s"
