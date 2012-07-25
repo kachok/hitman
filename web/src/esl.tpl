@@ -1,7 +1,7 @@
 <html>
 <head>
- <title>Correct ESL mistakes in these sentences</title> 
-  <link rel="stylesheet" href="static/main.css" type="text/css" />
+ <title>Correct English grammar and language errors made by foreign speakers of English</title> 
+  <link rel="stylesheet" href="/static/main.css" type="text/css" />
     
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 
@@ -16,7 +16,7 @@
 
 
   <!--script type="text/javascript" src="/static/mturk.js"></script-->
-  <script type="text/javascript" src="static/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/static/jquery.cookie.js"></script>
   
 <style type="text/css">
 div.correct {
@@ -259,9 +259,9 @@ a.chosen{
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script-->
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="static/jquery.qtip-1.0.0-rc3.min.js"></script>
+<script type="text/javascript" src="/static/jquery.qtip-1.0.0-rc3.min.js"></script>
 
-<script type="text/javascript" src="static/ESLHIT.js"></script>
+<script type="text/javascript" src="/static/ESLHIT.js"></script>
 
   
 </head>
@@ -271,7 +271,6 @@ a.chosen{
 	var ip="{{params['ip']}}";
 	var total=0;
 	var pairs={};
-/*
 	var sentences = [
 	
 	
@@ -281,7 +280,6 @@ a.chosen{
 	
 			
 			];
-*/	
  $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
 	$("#debug").html($("#debug").html()+"city: "+data['cityName']+"<br/>");
@@ -466,20 +464,18 @@ a.chosen{
    
   </script>
   
- <h1>Correct ESL mistakes in these sentences</h1>
+ <h1>Correct English grammar and language errors made by foreign speakers of English.</h1>
   <table width="100%">
   	<tr>
      	<td width="*">
    <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
-	            <ul>
-					<li>Correct common mistakes in sentences below.</li>
-	            </ul>
-    <a href="" id="hide_instructions">hide instructions</a>
+	            <ul> Below are 5 English sentences which were written by foreign English speakers. Please correct grammar mistakes and stylistic errors to make the sentences sound fluent.  </ul>
+    <!--a href="" id="hide_instructions">hide instructions</a-->
   </div>
-  <div id="instructions2"  style="display:none;">
+  <!--div id="instructions2"  style="display:none;">
     <a  href="" id="show_instructions">show instructions</a>
-  </div> 
+  </div>--> 
 	<br/>
 	<div id="preview_panel" style="display:none;">
 		This is just a preview! You MUST accept the HIT before you can submit the results.
@@ -597,7 +593,7 @@ a.chosen{
 								<div class="edited" id="edit4" align="left">Sentences</div>
 							</td>
 						</tr>
-						<tr>
+						<!-- tr>
 							<td colspan=2 width="50%">
 
 								<div class="orig" id="sent5" align="left">Sentences</div>
@@ -646,7 +642,7 @@ a.chosen{
 
 								<div class="edited" id="edit9" align="left">Sentences</div>
 							</td>
-						</tr>
+						</tr-->
 					</table>
 				</center>
 				<!--  What are the different types of errors? <img id="help" src="http://www.homeserviceworld.com/images/vautomulti/icon_question_mark.png"></img>
