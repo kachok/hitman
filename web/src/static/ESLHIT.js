@@ -63,9 +63,9 @@ instructions['modes'] = "<center><table border=2 width=100% cellspacing=5 cellpa
 		+ '<tr><td colspan=2 align=center>Use buttons to change between different highlighting modes</td>'
 		+ '<tr><td width="50%" align=center>Word</td>'
 		+ '<td>Select and change individual words. Use to correct spelling errors, incorrect prepositions or determiners, incorrect verb conjugations, or to delete unnecessary words. </td>'
-		+ '<tr><td width="50%" align=center>Pair</td>'
+/*		+ '<tr><td width="50%" align=center>Pair</td>'
 		+ '<td>Select pairs of words. Use to correct agreement errors such as subject-verb or pronoun-noun mismatches.</td>'
-		+ '<tr><td width="50%" align=center>Phrase</td>'
+*/		+ '<tr><td width="50%" align=center>Phrase</td>'
 		+ '<td>Highlight contiguous, multi-word phrases. Use to reorder phrases within a sentence or reword awkward phrases.</td>'
 		+ '<tr><td width="50%" align=center>Insert</td>'
 		+ '<td>Select empty space between two words in order to insert a word or phrase into the sentence.</td>'
@@ -122,12 +122,12 @@ function writeTabs() {
 	var text = "";
 	text += '<br> <br>';
 	text += '<button class="button" type="button" id="insertButton"> Insert </button>';
-	text += ' a new word or phrase.';
+	text += ' a new word or phrase,';
 	text += ' or select a ';
-	text += '<button class="button" type="button" id="wordButton" disabled="true"> Word </button>, ';
-	text += '<button class="button" type="button" id="pairButton"> Pair </button>';
-	text += ', or <button class="button" type="button" id="phraseButton"> Phrase </button>';
-	text += ' to change or delete.   ';
+	text += '<button class="button" type="button" id="wordButton" disabled="true"> Word </button> ';
+	//text += '<button class="button" type="button" id="pairButton"> Pair </button>';
+	text += ' or <button class="button" type="button" id="phraseButton"> Phrase </button>';
+	text += ' to move, change, or delete.   ';
 	text += '<input class="img" type="image" onClick="return false;" id="modes"'
 			+ 'style="width:34;height:34;border=none"'
 			+ 'src="http://www.fingerhut.com/assets/f/nonselling/icon_questionmark.gif">'
@@ -401,7 +401,7 @@ function commitChange() {
 function cleanUpChange() {
 	if (highlighting_mode == "pair") {
 	//	$("#corr_text" + num_corr).before('<table><tr><td><div class="corrected_word">'
-		$("#allSentences").before('<table><tr><td><div class="corrected_word">'
+		$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+'<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td class="change"><div class="corrected_word">'
@@ -414,7 +414,7 @@ function cleanUpChange() {
 		$("#C" + num_corr).hide();
 	} else {
 //		$("#corr_text" + num_corr).before('<table><tr><td><div class="corrected_word">'
-		$("#allSentences").before('<table><tr><td><div class="corrected_word">'
+		$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+ '<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td><div class="corrected_word">'
@@ -434,7 +434,7 @@ function cleanUpChange() {
 */
 function cleanUpDelete() {
 	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
-	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
+	$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
 	+'<td class="change"><div width="14""> deleted </div></td></tr></table>');
 	//+ '<td><div class="corrected_word">'
@@ -451,7 +451,7 @@ function cleanUpDelete() {
 */
 function cleanUpMove() {
 	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
-	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
+	$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
 	+'<td class="change"><div width="14""> moved </div></td></tr></table>');
 //	+ '<td><div class="corrected_word">'
@@ -468,7 +468,7 @@ function cleanUpMove() {
 */
 function cleanUpInsert() {
 //	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
-	$("#allSentences").before('<table><tr><td><div class="corrected_word">'
+	$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 	+ $("#inputC" + num_corr).val() + '</div></td>'
 	+ '<td class="change"><div width="14"> inserted </div></td></tr></table>');
 //	+ '<td><div class="corrected_word">'
@@ -604,7 +604,6 @@ function dragDrop() {
 	});
 	$(".space").click( function(){
 		insert_idx = $(this).attr('id');
-		alert(insert_idx);
 		$(this).text(dropText);
 		$(this).removeClass("space", "hover");
 		$(this).addClass("word", "highlight");
@@ -1263,7 +1262,8 @@ function nextSentence() {
 			$("#buttonN").attr("disabled", "disabled");
 			$("#buttonN").text("All Sentences Completed");
 		}
-	}
+	}	
+	$(".pastchange").hide();
 	return false;
 }
 

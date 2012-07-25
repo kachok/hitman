@@ -16,7 +16,7 @@ logging.basicConfig(
 
 logging.info("load data to db pipeline - START")
 
-DATA_PATH = "../data/data-2012-07-10"
+DATA_PATH = "../data/best.ur.punct.250"
 
 # generate list of languages to process
 #TODO: for now just load this list from data/languages/languages.txt (list of wikipedia languages with 10,000+ articles)
@@ -55,7 +55,7 @@ try:
 except:
 	print "error"
 
-print langs
+#print langs
 
 for lang in langs:
 	print lang
@@ -80,8 +80,8 @@ cur = conn.cursor()
 sql="SELECT id from languages where prefix=%s;"
 cur.execute(sql, (lang,))
 rows = cur.fetchall()
-print len(rows)
-print cur.description
+#print len(rows)
+#print cur.description
 
 lang_id=0
 for row in rows:
@@ -99,18 +99,19 @@ count=0
 
 
 #eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
-eslReader = csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
+eslReader = open(DATA_PATH).readlines() #csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
 
 count=0
-for row in eslReader:
-	for line in row:
+for line in eslReader:
+	if(not(line == "")):
+	#	for line in row:
 		count=count+1
 		print count, line
 		sentence=line.strip()
-		
-		if count<11:
-			continue
-
+	
+	#	if count<11:
+	#		continue
+	
 		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id) VALUES (%s,%s,%s);"
 		try:
 			cur.execute(sql,(sentence, count, lang_id))

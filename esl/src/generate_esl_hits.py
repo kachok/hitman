@@ -84,8 +84,6 @@ for i, lang in enumerate(langs):
 		lang_id=str(row[0])
 
 	
-	print lang_id
-	
 	sql="SELECT add_hittype (%s, %s, %s, %s);"
 	cur.execute(sql,("ESL sentences HIT for "+langs_properties[lang]["name"], mturk_hittype_id,  lang_id, "esl"))
 	hittype_id = cur.fetchone()[0]
@@ -115,9 +113,11 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num;" #random();"
-	cur.execute(sql, (lang_id,))
+#	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num;" #random();"
+	sql="SELECT * from esl_sentences order by sequence_num;" #random();"
+	cur.execute(sql)
 	rows = cur.fetchall()
+	print len(rows)
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_esl_hit_path"]+"/"+lang
 	
