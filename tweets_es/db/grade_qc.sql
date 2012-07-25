@@ -3,6 +3,14 @@ update similar_hits_results set quality=1 where quality is null;
 	
 update similar_hits_results set quality=0 where is_control=1 and same='no';
 update similar_hits_results set quality=0 where is_control=2 and same='yes';
+update similar_hits_results set quality=0 where is_control=3 and same='yes';
+update similar_hits_results set quality=0.5 where is_control=3 and same='yes' and machine='no';
+update similar_hits_results set quality=0.75 where is_control=3 and same='yes'and machine ='maybe';
+update similar_hits_results set quality=1 where is_control=3 and same='yes'and machine ='yes';
+update similar_hits_results set quality=0.5 where is_control=3 and same='no'and machine ='yes';
+update similar_hits_results set quality=0.25 where is_control=3 and same='no'and machine ='maybe';
+update similar_hits_results set quality=0 where is_control=3 and same='no'and machine ='no';
+
 	
 -- update individual non-control results for similar HIT
 update similar_hits_results shr set quality=(select quality from 
