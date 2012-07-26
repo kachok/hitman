@@ -56,7 +56,7 @@ var error_type_list = [
 'Run-on Sentence', 'Fragment', 'Unnecessary Transition']
 
 var instructions = new Array();
-instructions['reorder'] = "Drag and drop phrase to new location";
+instructions['reorder'] = "Click on space to insert phrase or drag and drop phrase to new location";
 instructions['confirm'] = "Click green check to confirm change";
 instructions['insert'] = "Click on open space to insert word";
 instructions['modes'] = "<center><table border=2 width=100% cellspacing=5 cellpadding=3 cols=2>"
