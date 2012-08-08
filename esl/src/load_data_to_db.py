@@ -16,7 +16,8 @@ logging.basicConfig(
 
 logging.info("load data to db pipeline - START")
 
-DATA_PATH = "../data/best.ur.punct.250"
+DATA_PATH = "../data/best-by-doc-20120808.250"
+CONTROL_PATH = "../data/ctrl-by-doc-20120808.test"
 
 # generate list of languages to process
 #TODO: for now just load this list from data/languages/languages.txt (list of wikipedia languages with 10,000+ articles)
@@ -102,19 +103,17 @@ count=0
 eslReader = open(DATA_PATH).readlines() #csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
 
 count=0
-for line in eslReader:
-	if(not(line == "")):
-	#	for line in row:
+for csvline in eslReader:
+	if(not(csvline == "")):
+		line = csvline.split('\t')
 		count=count+1
-		print count, line
-		sentence=line.strip()
+		print count, line[0], line[1]
+		doc = line[0]
+		sentence=line[1].strip()
 	
-	#	if count<11:
-	#		continue
-	
-		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id) VALUES (%s,%s,%s);"
+		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id, doc_id, qc) VALUES (%s,%s,%s,%s,%s);"
 		try:
-			cur.execute(sql,(sentence, count, lang_id))
+			cur.execute(sql,(sentence, count, lang_id, doc, '0'))
 		except Exception, ex:
 			print "voc error"
 			print ex
@@ -123,6 +122,30 @@ conn.commit()
 
 logging.info("esl sentences table is loaded")
 
+ctrlReader = open(CONTROL_PATH).readlines()
+for csvline in ctrlReader:
+	if(not(csvline == "")):
+		line = csvline.split('\t')
+		count=count+1
+		print line[0], line[1]
+		doc = line[0]
+		sentence=line[1].strip()
+	
+		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id, doc_id, qc) VALUES (%s,%s,%s,%s,%s);"
+		try:
+			cur.execute(sql,(sentence, count, lang_id, doc+'c', '1'))
+		except Exception, ex:
+			print "voc error"
+			print ex
+		sql="INSERT INTO esl_controls (esl_sentence_id, sentence) VALUES (%s,%s);"
+		try:
+			cur.execute(sql,(doc, sentence))
+		except Exception, ex:
+			print "voc error"
+			print ex
+		
+conn.commit()
+logging.info("esl controls table is loaded")
 		
 conn.close()
 		
