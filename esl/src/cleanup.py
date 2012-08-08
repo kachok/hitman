@@ -53,17 +53,23 @@ except:
 cur=conn.cursor()
 
 #getting hittype_id from database
-sql="SELECT mturk_hit_id from hits;"
+#sql="SELECT mturk_hit_id from hits;"
+sql="SELECT mturk_hit_id from esl_hits;"
 cur.execute(sql, )
+print(cur.rowcount)
 rows = cur.fetchall()
 
+#rows = ["20AC0RYNJ92NJ7L9YGDJWUH718N49A", "22RVXX2Q45UUKDN79S9W4NS8O0R9R5", "2W151Y7QEOZFYDRA5XKMRFXRJVCGDQ"]; 
 
 conn=mturk.conn()
 
 for row in rows:
-	hitid=str(row[0])
-	conn.expire_hit(hitid)
-		
+	hitid= str(row[0])#row
+	print hitid
+	try:
+		conn.expire_hit(hitid)
+	except:
+		pass	
 
 conn.close()
 	

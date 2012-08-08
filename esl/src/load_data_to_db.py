@@ -16,6 +16,9 @@ logging.basicConfig(
 
 logging.info("load data to db pipeline - START")
 
+DATA_PATH = "../data/best-by-doc-20120808.250"
+CONTROL_PATH = "../data/ctrl-by-doc-20120808.test"
+
 # generate list of languages to process
 #TODO: for now just load this list from data/languages/languages.txt (list of wikipedia languages with 10,000+ articles)
 
@@ -38,6 +41,7 @@ langs_properties=wikilanguages.langs
 
 try:
 	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+	print settings["esl_dbname"]
 	logging.info("successfully connected to database")
 except:
 	logging.error("unable to connect to the database")
@@ -52,7 +56,7 @@ try:
 except:
 	print "error"
 
-print langs
+#print langs
 
 for lang in langs:
 	print lang
@@ -70,13 +74,15 @@ logging.info("languages table is loaded")
 
 lang="en"
 
-logging.info("processing esl sentences tweets ")
+logging.info("processing esl sentences")
 
 cur = conn.cursor()
 
 sql="SELECT id from languages where prefix=%s;"
 cur.execute(sql, (lang,))
 rows = cur.fetchall()
+#print len(rows)
+#print cur.description
 
 lang_id=0
 for row in rows:
@@ -87,26 +93,27 @@ conn.commit()
 
 cur = conn.cursor()
 
-f=open("../data/raw.en.final")
+# f=open("../data/raw.en.final")
+f=open(DATA_PATH)
 
 count=0
 
 
-eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
+#eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
+eslReader = open(DATA_PATH).readlines() #csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
 
 count=0
-for row in eslReader:
-	for line in row:
+for csvline in eslReader:
+	if(not(csvline == "")):
+		line = csvline.split('\t')
 		count=count+1
-		print count, line
-		sentence=line.strip()
-		
-		if count<11:
-			continue
-
-		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id) VALUES (%s,%s,%s);"
+		print count, line[0], line[1]
+		doc = line[0]
+		sentence=line[1].strip()
+	
+		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id, doc_id, qc) VALUES (%s,%s,%s,%s,%s);"
 		try:
-			cur.execute(sql,(sentence, count, lang_id))
+			cur.execute(sql,(sentence, count, lang_id, doc, '0'))
 		except Exception, ex:
 			print "voc error"
 			print ex
@@ -115,6 +122,30 @@ conn.commit()
 
 logging.info("esl sentences table is loaded")
 
+ctrlReader = open(CONTROL_PATH).readlines()
+for csvline in ctrlReader:
+	if(not(csvline == "")):
+		line = csvline.split('\t')
+		count=count+1
+		print line[0], line[1]
+		doc = line[0]
+		sentence=line[1].strip()
+	
+		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id, doc_id, qc) VALUES (%s,%s,%s,%s,%s);"
+		try:
+			cur.execute(sql,(sentence, count, lang_id, doc+'c', '1'))
+		except Exception, ex:
+			print "voc error"
+			print ex
+		sql="INSERT INTO esl_controls (esl_sentence_id, sentence) VALUES (%s,%s);"
+		try:
+			cur.execute(sql,(doc, sentence))
+		except Exception, ex:
+			print "voc error"
+			print ex
+		
+conn.commit()
+logging.info("esl controls table is loaded")
 		
 conn.close()
 		
