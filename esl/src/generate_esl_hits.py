@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 import mturk
 from settings import settings
 import wikilanguages
@@ -8,7 +6,8 @@ import psycopg2
 from itertools import islice, chain
 import uuid
 import random
-
+import controls
+import codecs
 
 def batch(iterable, size):
 	sourceiter = iter(iterable)
@@ -90,6 +89,13 @@ for i, lang in enumerate(langs):
 
 sentcounts = [] 
 
+cur0 = conn.cursor()
+sentsql = "SELECT sentence from esl_sentences;"
+cur0.execute(sentsql)
+allsents = [c[0] for c in cur0.fetchall()]
+dfs = controls.inv_doc_freq(allsents)
+
+outfile = codecs.open('bestctrls.out', encoding='utf-8', mode='w+')
 # iterate over each language individually
 for i, lang in enumerate(langs):
 	
@@ -101,7 +107,6 @@ for i, lang in enumerate(langs):
 	#get all words from vocabulary
 	cur = conn.cursor()
 	cur2 = conn.cursor()
-
 
 	sql="SELECT id from languages where prefix=%s;"
 	cur.execute(sql, (lang,))
@@ -135,26 +140,36 @@ for i, lang in enumerate(langs):
 
 		logging.info("Batch added")
 		i = 0
+		sents = []
 		for item in batchiter:
 			doc_id = item[4]
-			cdoc_id = doc_id.split('_')[0] + 'c'
-			idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-			cur2.execute(idsql, (cdoc_id,))
-			res = cur2.fetchone()
-			if(not(res == None)):
-				if(i == qcnum):
-					eslid = res[0]
-					print cdoc_id, eslid
-					sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-					cur2.execute(sql,(hit_id, eslid, lang_id, i))
-				else:
-					idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-					cur2.execute(idsql, (doc_id,))
-					eslid = cur2.fetchone()[0]
-					print doc_id, eslid
-					sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-					cur2.execute(sql,(hit_id, eslid, lang_id, i))
-				i += 1
+		#	cdoc_id = doc_id.split('_')[0] + 'c'
+		#	idsql = 'SELECT id from esl_sentences where doc_id=%s;'
+		#	cur2.execute(idsql, (cdoc_id,))
+		#	res = cur2.fetchone()
+		#	if(not(res == None)):
+			candidates = controls.pull_candidates(doc_id.split('_')[0])			
+			idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
+			cur2.execute(idsql, (doc_id,))
+			sents.append(cur2.fetchone()[0])	
+#		control = controls.get_raw_control(sents, candidates, dfs)
+        	b = controls.best_control(sents, candidates, dfs)
+		print b
+        	outfile.write(b+'\n')
+
+			#if(i == qcnum):
+			#	eslid = res[0]
+			#	print cdoc_id, eslid
+			#	sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
+			#	cur2.execute(sql,(hit_id, eslid, lang_id, i))
+			#else:
+			#	idsql = 'SELECT id from esl_sentences where doc_id=%s;'
+			#	cur2.execute(idsql, (doc_id,))
+			#	eslid = cur2.fetchone()[0]
+			#	print doc_id, eslid
+			#	sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
+			#	cur2.execute(sql,(hit_id, eslid, lang_id, i))
+			#i += 1
 
 	#purge HITs with missing sentences or missing controls
 	for hit in sentcounts:
