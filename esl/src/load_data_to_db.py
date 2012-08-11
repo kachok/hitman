@@ -4,7 +4,7 @@ from settings import settings
 import wikilanguages
 import pickle
 import psycopg2
-
+from operator import itemgetter
 import csv
 
 # basic logging setup for console output
@@ -102,18 +102,23 @@ count=0
 #eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
 eslReader = open(DATA_PATH).readlines() #csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
 
+lines = []
 count=0
 for csvline in eslReader:
-	if(not(csvline == "")):
-		line = csvline.split('\t')
+	line = csvline.split('\t')
+	lines.append(line)
+lines = sorted(lines, key=itemgetter(0))
+for line in lines:
+	if(not(line == "")):
 		count=count+1
-		print count, line[0], line[1]
-		doc = line[0]
+	#	print count, line[0], line[1]
+		docid = line[0]
+		doc = docid.split('_')[0]
 		sentence=line[1].strip()
 	
-		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id, doc_id, qc) VALUES (%s,%s,%s,%s,%s);"
+		sql="INSERT INTO esl_sentences (sentence, sequence_num, language_id, doc_id, qc, doc) VALUES (%s,%s,%s,%s,%s,%s);"
 		try:
-			cur.execute(sql,(sentence, count, lang_id, doc, '0'))
+			cur.execute(sql,(sentence, count, lang_id, docid, '0', doc))
 		except Exception, ex:
 			print "voc error"
 			print ex
