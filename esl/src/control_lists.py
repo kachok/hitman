@@ -95,7 +95,7 @@ cur0.execute(sentsql)
 allsents = [c[0] for c in cur0.fetchall()]
 dfs = controls.inv_doc_freq(allsents)
 
-outfile = codecs.open('bestctrls.out', encoding='utf-8', mode='w+')
+outfile = codecs.open('bestctrls.3sentwindow.out', encoding='utf-8', mode='w+')
 # iterate over each language individually
 for i, lang in enumerate(langs):
 	
@@ -116,16 +116,12 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-#	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num;" #random();"
-	sql="SELECT * from esl_sentences order by doc_id" #sequence_num;" #random();"
+	sql="SELECT * from esl_sentences order by doc_id"
 	cur.execute(sql)
 	rows = cur.fetchall()
-	print len(rows)
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_esl_hit_path"]+"/"+lang
 	
-	#print "rows "+ str(rows)
-
 	for batchiter in batch(rows, settings["num_unknowns"] + settings["num_knowns"]):
 
 		qcnum = random.randint(0, settings["num_unknowns"] + settings["num_knowns"] -1)	
@@ -141,48 +137,45 @@ for i, lang in enumerate(langs):
 		logging.info("Batch added")
 		i = 0
 		sents = []
+		docs = []
+		ids = []
 		for item in batchiter:
 			doc_id = item[4]
-		#	cdoc_id = doc_id.split('_')[0] + 'c'
-		#	idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-		#	cur2.execute(idsql, (cdoc_id,))
-		#	res = cur2.fetchone()
-		#	if(not(res == None)):
+			dbid = item[0]
+			doc = item[4].split('_')[0]
+			if(not(doc in docs)):
+				docs.append(doc)
+			if(not(dbid in ids)):
+				ids.append(dbid)
 			candidates = controls.pull_candidates(doc_id.split('_')[0])			
 			idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
 			cur2.execute(idsql, (doc_id,))
 			sents.append(cur2.fetchone()[0])	
+		print ids
+		augment_ids = []
+		ids = sorted(ids)
+		for nid in range(ids[0] - 3, ids[len(ids)-1] + 3):
+			augment_ids.append(nid)
+		docsents = []
+		#for d in docs:
+		#	idsql = 'SELECT sentence from esl_sentences where doc=%s;'
+		#	cur2.execute(idsql, (d,))
+		#	print d
+		#	docsents += [row[0] for row in cur2.fetchall()]	
+		for i in augment_ids:
+			idsql = 'SELECT sentence from esl_sentences where id=%s;'
+			cur2.execute(idsql, (i,))
+		#	print i
+			docsents += [row[0] for row in cur2.fetchall()]	
+	
 #		control = controls.get_raw_control(sents, candidates, dfs)
-        	b = controls.best_control(sents, candidates, dfs)
+		print len(docsents)
+        	b = controls.best_control(docsents, candidates, dfs)
 		print b
-        	outfile.write(b+'\n')
-
-			#if(i == qcnum):
-			#	eslid = res[0]
-			#	print cdoc_id, eslid
-			#	sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-			#	cur2.execute(sql,(hit_id, eslid, lang_id, i))
-			#else:
-			#	idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-			#	cur2.execute(idsql, (doc_id,))
-			#	eslid = cur2.fetchone()[0]
-			#	print doc_id, eslid
-			#	sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-			#	cur2.execute(sql,(hit_id, eslid, lang_id, i))
-			#i += 1
-
-	#purge HITs with missing sentences or missing controls
-	for hit in sentcounts:
-		delsql = "select id from esl_hits_data where hit_id=%s;"
-		cur2.execute(delsql, (hit,))
-		if(cur2.rowcount < 5):
-			delsql = "delete from esl_hits_data where hit_id=%s;"
-			cur2.execute(delsql, (hit,))
-			delsql = "delete from hits where id=%s;"
-			cur2.execute(delsql, (hit,))
-			if(cur2.rowcount > 0):
-				print "purged", hit
-	conn.commit()
+		for s in sents:
+			outfile.write(s+'\n')
+        	outfile.write("Control: "+b+'\n')
+        	outfile.write('\n')
 
 conn.close()
 	
