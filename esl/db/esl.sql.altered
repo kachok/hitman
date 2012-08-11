@@ -1,0 +1,76 @@
+-- Table: vocabulary
+
+-- DROP TABLE esl2.esl_sentences;
+
+CREATE TABLE esl2.esl_sentences
+(
+  id serial NOT NULL,
+  sentence character varying,
+  sequence_num integer,
+
+  language_id integer,
+  CONSTRAINT esl_sentences_id_pk PRIMARY KEY (id ),
+  CONSTRAINT esl_sentences_language_id_fk FOREIGN KEY (language_id)
+      REFERENCES languages (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE esl2.esl_sentences
+  OWNER TO dkachaev;
+
+
+-- Table: esl2.esl_hits_data
+
+-- DROP TABLE esl2.esl_hits_data;
+
+CREATE TABLE esl2.esl_hits_data
+(
+  id serial NOT NULL,
+  hit_id integer,
+  esl_sentence_id integer,
+  output character varying,
+  data_quality real,
+  language_id integer,
+  CONSTRAINT esl_hits_data_id_pk PRIMARY KEY (id )
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE esl2.esl_hits_data
+  OWNER TO dkachaev;
+
+
+-- View: esl2.esl_hits
+
+-- DROP VIEW esl2.esl_hits;
+
+CREATE OR REPLACE VIEW esl2.esl_hits AS 
+ SELECT h.id, h.mturk_hit_id, h.uuid, h.hittype_id, h.language_id, h.assignments, h.rejected, h.approved, ht.mturk_hittype_id, h.status
+   FROM hits h, hittypes ht
+  WHERE h.hittype_id = ht.id AND ht.typename::text = 'esl'::text;
+
+ALTER TABLE esl2.esl_hits
+  OWNER TO dkachaev;
+
+-- Table: esl2.esl_hits_results
+
+-- DROP TABLE esl2.esl_hits_results;
+
+CREATE TABLE esl2.esl_hits_results
+(
+  id serial NOT NULL,
+  assignment_id integer,
+  pair_id integer,
+  correct character varying,
+  machine character varying,
+  is_control integer,
+  quality real,
+  CONSTRAINT esl_hit_results_id_pk PRIMARY KEY (id )
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE esl2.esl_hits_results
+  OWNER TO dkachaev;
