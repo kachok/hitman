@@ -1,3 +1,5 @@
+import psycopg2
+from settings import settings
 import wikipydia
 import sys
 import os
@@ -47,23 +49,26 @@ def best_control(origs, allsents, dfs):
 				tf = 0 
 				df = 1
 				if w in tfs:
-					#tfidf += tfs[w]
 					tf = tfs[w]
 					soverlapw.append(w)
 				if w in dfs:
-					#df = 1 + math.log(float(len(tfs)) / float(dfs[w])) 
 					df = 1 + dfs[w] 
 				tfidf +=  float(tf) / df
-				#tfidf = float(tfidf) / (float(len(words)))
-				#if(tfidf > maxx):
 			tfidf = float(tfidf) / math.sqrt(len(words))
 			if(tfidf > maxx):
 				maxx = tfidf	
 				best = s
 				overlapw = soverlapw
-	#print maxx, overlapw, 
 	return best
 
+def insert_into_db(control_sent, cur):
+#	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+#	cur = conn.cursor()
+	sql="INSERT INTO esl_sentences(sentence, language_id, doc_id, qc, doc )VALUES (%s,%s,%s,%s,%s) RETURNING id;"
+        cur.execute(sql, (control_sent, 23, 'control', 1, 'control'))
+        insid = cur.fetchone()[0]
+	return insid
+	
 def all_best_control(origs, allsents):
 	avg_len = avglen(allsents)
 	best = {}

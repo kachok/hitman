@@ -95,7 +95,7 @@ cur0.execute(sentsql)
 allsents = [c[0] for c in cur0.fetchall()]
 dfs = controls.inv_doc_freq(allsents)
 
-outfile = codecs.open('bestctrls.out', encoding='utf-8', mode='w+')
+#outfile = codecs.open('bestctrls.out', encoding='utf-8', mode='w+')
 # iterate over each language individually
 for i, lang in enumerate(langs):
 	
@@ -139,8 +139,8 @@ for i, lang in enumerate(langs):
 			sentcounts.append(hit_id)
 
 		logging.info("Batch added")
-		i = 0
 		sents = []
+		sentids = []
 		for item in batchiter:
 			doc_id = item[4]
 		#	cdoc_id = doc_id.split('_')[0] + 'c'
@@ -152,24 +152,24 @@ for i, lang in enumerate(langs):
 			idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
 			cur2.execute(idsql, (doc_id,))
 			sents.append(cur2.fetchone()[0])	
+			sentids.append(doc_id)
 #		control = controls.get_raw_control(sents, candidates, dfs)
         	b = controls.best_control(sents, candidates, dfs)
-		print b
-        	outfile.write(b+'\n')
-
-			#if(i == qcnum):
-			#	eslid = res[0]
-			#	print cdoc_id, eslid
-			#	sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-			#	cur2.execute(sql,(hit_id, eslid, lang_id, i))
-			#else:
-			#	idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-			#	cur2.execute(idsql, (doc_id,))
-			#	eslid = cur2.fetchone()[0]
-			#	print doc_id, eslid
-			#	sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-			#	cur2.execute(sql,(hit_id, eslid, lang_id, i))
-			#i += 1
+		cid = controls.insert_into_db("CONTROL "+b, cur2)
+		conn.commit()
+        	#outfile.write(b+'\n')
+		for s in enumerate(sentids):
+			print s
+			i = s[0]	
+			if(i == qcnum):
+				sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
+				cur2.execute(sql,(hit_id, cid, lang_id, i))
+			else:
+				idsql = 'SELECT id from esl_sentences where doc_id=%s;'
+				cur2.execute(idsql, (s[1],))
+				eslid = cur2.fetchone()[0]
+				sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
+				cur2.execute(sql,(hit_id, eslid, lang_id, i))
 
 	#purge HITs with missing sentences or missing controls
 	for hit in sentcounts:
