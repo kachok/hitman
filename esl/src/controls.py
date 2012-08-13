@@ -4,13 +4,18 @@ import wikipydia
 import sys
 import os
 import nltk
+from nltk.corpus import treebank
 import re
 import time
 import math
 import argparse
+import itertools
 #import progressbar
 from bs4 import BeautifulSoup
 import codecs
+from nltk.grammar import ContextFreeGrammar, Nonterminal
+import nltk.chunk
+import nltk.tag
 
 PATH_TO_DATA = "/home/ellie/Documents/Research/ESL/javascript/working/web/src/input-data/data-20120718"
 METADATA = "/Users/epavlick/hitman/esl/data/ur-en/ur-en.metadata"
@@ -34,10 +39,11 @@ def avglen(allsents):
 	
 	return float(num_words) / num_sents
 
-def best_control(origs, allsents, dfs):
-	best = ""
+def best_control(origs, allsents, dfs, nbest=1):
+	best = [("", 0)]*nbest
+	#best = ""
 	tfs = term_freq(origs)
-	maxx = 0
+	#maxx = 0
 	overlapw = []
 	for s in allsents:
 		if(len(s.split()) <= MAXLEN and len(s.split()) >= MINLEN):
@@ -55,10 +61,15 @@ def best_control(origs, allsents, dfs):
 					df = 1 + dfs[w] 
 				tfidf +=  float(tf) / df
 			tfidf = float(tfidf) / math.sqrt(len(words))
+			maxx = best[nbest-1][1] #tfidf of worst best sentence
 			if(tfidf > maxx):
-				maxx = tfidf	
-				best = s
-				overlapw = soverlapw
+				print best
+				best[nbest-1] = (s, tfidf)
+				best.sort(key=lambda s : s[1], reverse=True)
+				print best
+#				maxx = tfidf	
+#				best = s
+#				overlapw = soverlapw
 	return best
 
 def insert_into_db(control_sent, cur):
@@ -68,6 +79,7 @@ def insert_into_db(control_sent, cur):
         cur.execute(sql, (control_sent, 23, 'control', 1, 'control'))
         insid = cur.fetchone()[0]
 	return insid
+
 	
 def all_best_control(origs, allsents):
 	avg_len = avglen(allsents)
@@ -173,39 +185,103 @@ def get_en_page(ur_name):
 			return "" 
 
 def get_sentences(page_title):
+#	tbank_productions = set(production for sent in treebank.parsed_sents() for production in sent.productions())
+#	g = ContextFreeGrammar(Nonterminal('S'), list(tbank_productions))
 	all_sents = []
-	#tmp = open('cntrl.tmp', 'w')
 	txt = wikipydia.query_text_rendered(page_title)
 	parse = BeautifulSoup(txt['html'])
 	justtext = parse.get_text()
-	#os.system("python html2text.py < cntrl.tmp > html.tmp")
-	#os.remove('cntrl.tmp')
-	html = ""
-	#for line in open("html.tmp").readlines():
-	#	html += line
-	#sents = html.split("\\n")
+	justtext = justtext.encode('utf-8')
 	tok = nltk.tokenize.PunktSentenceTokenizer()
-	sents = tok.tokenize(justtext)
+	sents0 = tok.tokenize(justtext)
+	#sents = [s.replace('\n', ' ') for s in sents0]
+	#sents = nltk.pos_tag(sents1)
+	chunker = TagChunker(treebank_chunker())
 	i = 0
-	for s in sents:
-		if(not(s == "")):
-			all_sents.append(remove_hlinks(s))
-		#s = s.strip()
-		#ss = tok.tokenize(s)
-		#for sss in ss:
-		#	all_sents.append(remove_hlinks(sss))
-		#i += 1
+	for s0 in sents0:
+		i += 1
+		sents = s0.split('\n')
+		for s in sents:
+			verbfound = False
+			nounfound = False
+			ss = s.split()
+			if(len(ss) > 0):
+#				poss = nltk.pos_tag(ss)
+#				for tag in [p[1] for p in poss]:
+#					if(tag[0] == 'V'):
+#						verbfound = True
+#						break
+				tree = chunker.parse(nltk.pos_tag(ss))
+#				print tree
+				for tag in [p[1] for p in tree.leaves()]:
+					if(tag[0] == 'V'):
+						verbfound = True
+						break
+				if(verbfound):
+					for tag in [p[1] for p in tree.pos()]:
+						if(tag == 'NP'):
+							nounfound = True
+							break
+			if(verbfound and nounfound):
+				#print remove_hlinks(s)
+				all_sents.append(remove_hlinks(s))
+#				if(not(verbfound)):
+#					print s
+		#		trees = chunker.parse(nltk.pos_tag(ss)).leaves() #subtrees()
+		#		for tree in trees:	
+		#			print tree
+#					if(not(verbfound)):
+#						for tag in [p[1] for p in tree.pos()]:
+#							print tag, tag[0] == 'V'
+#							if(tag[0] == 'V'):
+#								verbfound = True
+#								break
+#				if(not(verbfound)):
+#					print s 							
+#					all_sents.append(remove_hlinks(s))
 	return all_sents
+
+###########STOLEN CODE##############
+class TagChunker(nltk.chunk.ChunkParserI):
+    def __init__(self, chunk_tagger):
+        self._chunk_tagger = chunk_tagger
+ 
+    def parse(self, tokens):
+        # split words and part of speech tags
+        (words, tags) = zip(*tokens)
+        # get IOB chunk tags
+        chunks = self._chunk_tagger.tag(tags)
+        # join words with chunk tags
+        wtc = itertools.izip(words, chunks)
+        # w = word, t = part-of-speech tag, c = chunk tag
+        lines = [' '.join([w, t, c]) for (w, (t, c)) in wtc if c]
+        # create tree from conll formatted chunk lines
+        return nltk.chunk.conllstr2tree('\n'.join(lines))
+
+
+###########STOLEN CODE##############
+def conll_tag_chunks(chunk_sents):
+    tag_sents = [nltk.chunk.tree2conlltags(tree) for tree in chunk_sents]
+    return [[(t, c) for (w, t, c) in chunk_tags] for chunk_tags in tag_sents]
+
+def treebank_chunker():
+    train_chunks = conll_tag_chunks(nltk.corpus.treebank_chunk.chunked_sents())
+    chunker = nltk.tag.TrigramTagger(train_chunks)
+    return chunker
+def stolen_chunk_parse():
+	# treebank chunking accuracy test
+	treebank_sents = nltk.corpus.treebank_chunk.chunked_sents()
+	ubt_conll_chunk_accuracy(treebank_sents[:2000], treebank_sents[2000:]) 
 
 def remove_hlinks(sentence):
 	sentence = sentence.replace('\n', " ")
-	sentence = sentence.replace('\W', "", re.UNICODE)
-	m = reg.match(sentence)
-	while(not(m == None)):
-		if(m):
-			sentence = sentence.replace(m.group(2), m.group(3))
-			sentence = sentence.replace(m.group(5), "")
-		m = reg.match(sentence)
+	sentence = re.sub('\[(\d)*\]', "", sentence, flags=re.UNICODE)
+#	m = reg.match(sentence)
+#	while(not(m == None)):
+#		if(m):
+#			sentence = sentence.replace(m.group(2), m.group(3))
+#			sentence = sentence.replace(m.group(5), "")
+#		m = reg.match(sentence)
 	return sentence
 
 def debug_html(path):

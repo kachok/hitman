@@ -143,18 +143,13 @@ for i, lang in enumerate(langs):
 		sentids = []
 		for item in batchiter:
 			doc_id = item[4]
-		#	cdoc_id = doc_id.split('_')[0] + 'c'
-		#	idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-		#	cur2.execute(idsql, (cdoc_id,))
-		#	res = cur2.fetchone()
-		#	if(not(res == None)):
 			candidates = controls.pull_candidates(doc_id.split('_')[0])			
 			idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
 			cur2.execute(idsql, (doc_id,))
 			sents.append(cur2.fetchone()[0])	
 			sentids.append(doc_id)
-#		control = controls.get_raw_control(sents, candidates, dfs)
         	b = controls.best_control(sents, candidates, dfs)
+		print b
 		cid = controls.insert_into_db("CONTROL "+b, cur2)
 		conn.commit()
         	#outfile.write(b+'\n')
