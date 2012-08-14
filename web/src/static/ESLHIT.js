@@ -7,13 +7,14 @@ var sentences = [
 		"several commissions where created to protect the remaining forest region",
 		"Sri Lanka is considered as the bird 's sanctionary place .",
 		"For further information please see the article on bird sanctionary rights in Indian Subcontinent",
-		"There is thousand of animals living in Sri Lanka which includes several Sri Lanka orignated animals .",
+		"There is thousand of animals living in Sri Lanka which includes several Sri Lanka orignated animals ."];
+/*,
 		"When we compare the area of Sri lanka 's Island , birds are highly found here .",
 		"Apart from the birds that live here , specific number of migrant birds that come from the north pole to avoind their winter season come to SriLanka .",
 		"Among the bird species , 233 live in Srilanka , in that 26 belong to intra state .",
 		"Others live in the Indian sub continent , however more than 80 of them have special features that are unique to Sri Lanka .",
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
-
+*/
 
 var annotations = [];
 
@@ -1261,6 +1262,7 @@ function nextSentence() {
 		}if(curr_sentence + 1 == sentences.length){
 			$("#buttonN").attr("disabled", "disabled");
 			$("#buttonN").text("All Sentences Completed");
+			$('#submitbutton').removeAttr('disabled');
 		}
 	}	
 	$(".pastchange").hide();
