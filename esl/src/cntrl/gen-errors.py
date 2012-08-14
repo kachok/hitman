@@ -66,7 +66,7 @@ def spellerr(words, idx):
 
 def verberr(words, idx):
 	beverbs = ['be', 'is', 'am', 'are', 'was', 'were', 'being']
-	print words, idx
+	#print words, idx
 	if words[idx] in beverbs:
 		return beverberr(words, idx)
 	else:
@@ -81,8 +81,9 @@ def otherverberr(words, idx):
 			nend = endings.keys()[random.randint(0, len(endings.keys()) - 1)]
 			while(end == nend):
 				nend = endings.keys()[random.randint(0, len(endings.keys()) - 1)]
-			words[idx] = '['+m.group(1) + nend+']'
-			return words
+			words[idx] = m.group(1) + nend
+			error = {'idx' : idx, 'old' : w, 'new' : words[idx], 'mode' : "change"}
+			return (words, error)
 	nend = endings.keys()[random.randint(0, len(endings.keys()) - 1)]
 	#words[idx] = '['+words[idx] + nend+']'
 	words[idx] = words[idx] + nend
@@ -116,6 +117,12 @@ def getpos(sent):
 			prep.append(p[0])
 	return {"verb" : verb, "prep" : prep, "noun" : noun}
 
+def list2str(words):
+	s = ""
+	for w in words:
+		s += w + " "
+	return s
+
 def randerr(sent):
 	errors = []
 	alteredidx = []
@@ -127,54 +134,59 @@ def randerr(sent):
 		noun = pos['noun']
 		#introduce preposition errors
 		timeout = 0
-		print words
+		#print words
 		if(len(prep) > 0):
 			pidx = random.randint(0, len(prep) -1)
 			while(timeout < 50 and pidx in alteredidx):
 				timeout += 1
 				pidx = random.randint(0, len(prep) -1)
 			r = preperr(words, prep[pidx])
+			print "prep returned" , r
 			errors.append(r)
 			words = r[0]
 			alteredidx.append(pidx)
 		#introduce determiner errors
 		timeout = 0
-		print words
+		#print words
 		if(len(noun) > 0):
 			nidx = random.randint(0, len(noun) -1)
 			while((timeout < 50 and nidx in alteredidx) or (nidx >= len(words))):
 				timeout += 1
 				nidx = random.randint(0, len(noun) -1)
 			r = deterr(words, noun[nidx])
+			print "det returned" , r
 			errors.append(r)
 			words = r[0]
 			alteredidx.append(nidx)
 		#introduce verb errors
 		timeout = 0
-		print words
+		#print words
 		if(len(verb) > 0):
 			vidx = random.randint(0, len(verb) -1)
 			while((timeout < 50 and vidx in alteredidx) or (vidx >= len(words))):
 				timeout += 1
 				vidx = random.randint(0, len(verb) - 1)
 			r = verberr(words, verb[vidx])
+			print "verb returned" , r
 			errors.append(r)
 			words = r[0]
 		#introduce spelling errors
 		timeout = 0
-		print words
+		#print words
 		sidx = random.randint(0, len(words) - 1)
 		while((timeout < 50 and sidx in alteredidx) or (sidx >= len(words))):
 				timeout += 1
 				sidx = random.randint(0, len(words) -1)
 		r = spellerr(words, sidx)
+		print "spelling returned" , r
 		errors.append(r)
 		words = r[0]
-	
-	s = ""
-	for w in words:
-		s += w + " "
-	return s
+
+#	print errors
+	retval = []
+	for e in errors:
+		retval.append(e[1])
+	return (list2str(words), retval)
 
 
 

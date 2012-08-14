@@ -18,7 +18,7 @@ import nltk.chunk
 import nltk.tag
 
 PATH_TO_DATA = "/home/ellie/Documents/Research/ESL/javascript/working/web/src/input-data/data-20120718"
-METADATA = "/Users/epavlick/hitman/esl/data/ur-en/ur-en.metadata.short"
+METADATA = "/Users/epavlick/hitman/esl/data/ur-en/ur-en.metadata"
 MAXLEN = 30
 MINLEN = 5
 
@@ -75,15 +75,17 @@ def best_control(origs, allsents, dfs, nbest=1):
 #				overlapw = soverlapw
 	return best
 
-def insert_into_db(control_sent, cur):
+def insert_into_db(hit_id, control_sent, cur):
 #	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 #	cur = conn.cursor()
-	print control_sent
+#	print control_sent
 	sql="INSERT INTO esl_sentences(sentence, language_id, doc_id, qc, doc )VALUES (%s,%s,%s,%s,%s) RETURNING id;"
-        cur.execute(sql, (control_sent, 23, 'control', 1, 'control'))
+        cur.execute(sql, (control_sent[0], 23, 'control', 1, 'control'))
         insid = cur.fetchone()[0]
-	sql="INSERT INTO esl_controls(esl_sentence_id, sentence, err_idx, oldwd, newwd, mode)VALUES (%s,%s,%s,%s,%s) RETURNING id;"
-        cur.execute(sql, (insid, control_sent[0], control_sent[1]['idx'], control_sent[1]['old'], control_sent[1]['new'], control_sent[1]['mode']))
+	for e in control_sent[1]:
+	#	print e
+		sql="INSERT INTO esl_controls(hit_id, esl_sentence_id, err_idx, oldwd, newwd, mode)VALUES (%s,%s,%s,%s,%s,%s);"
+	        cur.execute(sql, (hit_id, insid, e['idx'], e['old'], e['new'], e['mode']))
 	return insid
 
 	

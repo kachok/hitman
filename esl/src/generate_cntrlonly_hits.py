@@ -147,15 +147,18 @@ for i, lang in enumerate(langs):
 			cur2.execute(idsql, (doc_id,))
 			sents.append(cur2.fetchone()[0])	
 			sentids.append(doc_id)
-        	b = controls.best_control(sents, candidates, dfs, nbest=5)
-		for bb in b:
-			bbuni = controls.touni(bb[0])
-			newb = generrors.randerr(bb[0])
-			cid = controls.insert_into_db(newb, cur2)
-			outfile.write(bbuni+'\t')
-			sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-			cur2.execute(sql,(hit_id, cid, lang_id, i))
-		outfile.write('\n')
+		if(len(candidates) > 0):
+        		b = controls.best_control(sents, candidates, dfs, nbest=5)
+			for bb in b:
+				bbuni = controls.touni(bb[0])
+				#print "bb", bb[0]
+				newb = generrors.randerr(bb[0])
+				#print "newb", newb
+				cid = controls.insert_into_db(hit_id, newb, cur2)
+				outfile.write(bbuni+'\t')
+				sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+				cur2.execute(sql,(hit_id, cid, lang_id, i))
+			outfile.write('\n')
 		conn.commit()
 	#purge HITs with missing sentences or missing controls
 	for hit in sentcounts:
