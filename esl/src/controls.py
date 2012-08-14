@@ -18,14 +18,17 @@ import nltk.chunk
 import nltk.tag
 
 PATH_TO_DATA = "/home/ellie/Documents/Research/ESL/javascript/working/web/src/input-data/data-20120718"
-METADATA = "/Users/epavlick/hitman/esl/data/ur-en/ur-en.metadata"
+METADATA = "/Users/epavlick/hitman/esl/data/ur-en/ur-en.metadata.short"
 MAXLEN = 30
 MINLEN = 5
 
 reg = re.compile('(.)*(\[((.)*)\])(\((.)*\))(.)*')
 
 def touni(x, enc='utf8', err='strict'):
+#	if(isinstance(x, unicode)):
 	return unicode(x, encoding='utf-8')
+#	else:
+#		return None
 
 def avglen(allsents):
 	num_words = 0
@@ -63,10 +66,10 @@ def best_control(origs, allsents, dfs, nbest=1):
 			tfidf = float(tfidf) / math.sqrt(len(words))
 			maxx = best[nbest-1][1] #tfidf of worst best sentence
 			if(tfidf > maxx):
-				print best
+			#	print best
 				best[nbest-1] = (s, tfidf)
 				best.sort(key=lambda s : s[1], reverse=True)
-				print best
+			#	print best
 #				maxx = tfidf	
 #				best = s
 #				overlapw = soverlapw
@@ -75,9 +78,12 @@ def best_control(origs, allsents, dfs, nbest=1):
 def insert_into_db(control_sent, cur):
 #	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 #	cur = conn.cursor()
+	print control_sent
 	sql="INSERT INTO esl_sentences(sentence, language_id, doc_id, qc, doc )VALUES (%s,%s,%s,%s,%s) RETURNING id;"
         cur.execute(sql, (control_sent, 23, 'control', 1, 'control'))
         insid = cur.fetchone()[0]
+	sql="INSERT INTO esl_controls(esl_sentence_id, sentence, err_idx, oldwd, newwd, mode)VALUES (%s,%s,%s,%s,%s) RETURNING id;"
+        cur.execute(sql, (insid, control_sent[0], control_sent[1]['idx'], control_sent[1]['old'], control_sent[1]['new'], control_sent[1]['mode']))
 	return insid
 
 	
@@ -177,12 +183,13 @@ def get_originals():
 	return by_doc	
 
 def get_en_page(ur_name):
-	if(wikipydia.query_exists(touni(ur_name), language='ur')):
-		links = wikipydia.query_language_links(touni(ur_name), language='ur')
-		if('en' in links):
-			return links['en']
-		else:
-			return "" 
+	if(touni(ur_name)):
+		if(wikipydia.query_exists(touni(ur_name), language='ur')):
+			links = wikipydia.query_language_links(touni(ur_name), language='ur')
+			if('en' in links):
+				return links['en']
+			else:
+				return "" 
 
 def get_sentences(page_title):
 #	tbank_productions = set(production for sent in treebank.parsed_sents() for production in sent.productions())
@@ -338,9 +345,10 @@ def pull_all_candidates(path):
 def pull_candidates(docid):
 	candidates = []
 	qterms = get_query_terms(METADATA)
-	enpg = get_en_page(qterms[docid])
-	if(not(enpg == "")):
-		candidates = get_sentences(enpg)
+	if docid in qterms:
+		enpg = get_en_page(qterms[docid])
+		if(not(enpg == "")):
+			candidates = get_sentences(enpg)
 	#print candidates
 	return candidates
 
