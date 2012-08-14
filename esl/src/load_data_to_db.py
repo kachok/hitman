@@ -98,9 +98,7 @@ f=open(DATA_PATH)
 
 count=0
 
-
-#eslReader = csv.reader(open('../data/raw.en.final', 'rb'), delimiter=',', quotechar='"')
-eslReader = open(DATA_PATH).readlines() #csv.reader(open(DATA_PATH, 'rb'), delimiter='@', quotechar='"')
+eslReader = open(DATA_PATH).readlines()
 
 lines = []
 count=0

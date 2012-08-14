@@ -70,6 +70,10 @@ sql="DELETE FROM esl_sentences"
 cur.execute(sql, )
 print(cur.rowcount)
 
+sql="DELETE FROM esl_controls"
+cur.execute(sql, )
+print(cur.rowcount)
+
 sql="DELETE FROM esl_hits_data"
 cur.execute(sql, )
 print(cur.rowcount)
