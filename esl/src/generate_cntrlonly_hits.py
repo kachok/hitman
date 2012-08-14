@@ -9,6 +9,7 @@ import random
 import controls
 import codecs
 import generrors
+import argparse 
 
 def batch(iterable, size):
 	sourceiter = iter(iterable)
@@ -42,6 +43,9 @@ if len(langs)<=5:
 langs_properties={} #list of languages' properties (e.g. LTR vs RTL script, non latin characters, etc) 
 langs_properties=wikilanguages.langs
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--reload', dest='reload',  help='requery wikipedia for all control sentences', action='store_true', default=False)
+args = parser.parse_args()
 
 logging.info("generating HITTypes for each language")
 # iterate over each language individually
@@ -96,7 +100,9 @@ cur0.execute(sentsql)
 allsents = [c[0] for c in cur0.fetchall()]
 dfs = controls.inv_doc_freq(allsents)
 
-outfile = codecs.open('controls.log', encoding='utf-8', mode='w+')
+if(args.reload):
+	outfile = codecs.open('controls.log', encoding='utf-8', mode='w+')
+	hitslogged = []
 # iterate over each language individually
 for i, lang in enumerate(langs):
 	
@@ -140,26 +146,41 @@ for i, lang in enumerate(langs):
 		logging.info("Batch added")
 		sents = []
 		sentids = []
-		for item in batchiter:
-			doc_id = item[4]
-			candidates = controls.pull_candidates(doc_id.split('_')[0])			
-			idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
-			cur2.execute(idsql, (doc_id,))
-			sents.append(cur2.fetchone()[0])	
-			sentids.append(doc_id)
-		if(len(candidates) > 0):
-        		b = controls.best_control(sents, candidates, dfs, nbest=5)
-			for bb in b:
-				bbuni = controls.touni(bb[0])
-				#print "bb", bb[0]
-				newb = generrors.randerr(bb[0])
-				#print "newb", newb
-				cid = controls.insert_into_db(hit_id, newb, cur2)
-				outfile.write(bbuni+'\t')
-				sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-				cur2.execute(sql,(hit_id, cid, lang_id, i))
-			outfile.write('\n')
-		conn.commit()
+		if(args.reload):
+			for item in batchiter:
+				doc_id = item[4]
+				candidates = controls.pull_candidates(doc_id.split('_')[0])			
+				idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
+				cur2.execute(idsql, (doc_id,))
+				sents.append(cur2.fetchone()[0])	
+				sentids.append(doc_id)
+			if(len(candidates) > 0):
+				i = 0
+        			b = controls.best_control(sents, candidates, dfs, nbest=5)
+				for bb in b:
+					bbuni = controls.touni(bb[0])
+					newb = generrors.randerr(bb[0])
+					cid = controls.insert_into_db(hit_id, newb, cur2)
+					outfile.write(bbuni+'\t')
+					sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+					cur2.execute(sql,(hit_id, cid, lang_id, i))
+					i += 1
+				outfile.write('\n')
+			conn.commit()
+		else:
+			cachedsents = open('controls.log')
+			for hit in cachedsents.readlines():
+				b = hit.split('\t')
+				i = 0
+				for bb in b:
+					bbuni = controls.touni(bb)
+					newb = generrors.randerr(bb)
+					cid = controls.insert_into_db(hit_id, newb, cur2)
+					sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+					cur2.execute(sql,(hit_id, cid, lang_id, i))
+					i += 1
+			conn.commit()
+					
 	#purge HITs with missing sentences or missing controls
 	for hit in sentcounts:
 		delsql = "select id from esl_hits_data where hit_id=%s;"
@@ -175,7 +196,8 @@ for i, lang in enumerate(langs):
 	conn.commit()
 
 conn.close()
-	
-outfile.close()
+
+if(args.reload):	
+	outfile.close()
 logging.info("esl hit creation pipeline - FINISH")
 
