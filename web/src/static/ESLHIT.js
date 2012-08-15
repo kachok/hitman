@@ -1,7 +1,7 @@
 //var sentences = [ "${sent0}", "${sent1}", "${sent2}", "${sent3}", "${sent4}", "${sent5}", "${sent6}", "${sent7}", "${sent8}", "${sent9}" ];
 
 // Removed sentences variable and pushed it into ESL.tpl file
-
+/*
 var sentences = [
 		"Sri Lanka 's forest region was destroyed by agriculture , wooden works , vetinary feeds , etc . ,",
 		"several commissions where created to protect the remaining forest region",
@@ -13,7 +13,7 @@ var sentences = [
 		"Among the bird species , 233 live in Srilanka , in that 26 belong to intra state .",
 		"Others live in the Indian sub continent , however more than 80 of them have special features that are unique to Sri Lanka .",
 		"Some of the breeds based on their feather formation characteristics largely differ from the Indian breeds ." ];
-
+*/
 
 var annotations = [];
 
@@ -70,10 +70,6 @@ instructions['modes'] = "<center><table border=2 width=100% cellspacing=5 cellpa
 		+ '<tr><td width="50%" align=center>Insert</td>'
 		+ '<td>Select empty space between two words in order to insert a word or phrase into the sentence.</td>'
 		+ "</table></center>";
-
-var errorChoices = new Array();
-
-errorChoices["all"] = " <ul id=nav> "+ " <li><a>Choose Error Type</a> "+ " <ul> "+ " <li><a>Grammatical</a> "+ " <ul> "+ " <li><a>Article</a> "+ " <ul> "+ " <li><a class=desc><b>Article errors include missing,"+ "extraneous, or incorrect articles.</b><br> <i>Ex.  I go to "+ "store.<br>Ex. I want to be the doctor when I grow up.<br>Ex. "+ "I like to drink the tea. "+ " </i></a></li> "+ " </ul></li> "+ " <li><a>Noun</a> "+ " <ul> "+ " <li><a>Mass Count</a> "+ " <ul> "+ " <li><a class=desc><b>Mass count errors occur when"+ "an article does not match its corresponding noun in number.</b><br> "+ "<i>Ex. I hope you have many success in life. </i></a></li> "+ " </ul></li> "+ " <li><a>Repeat Subject/Pronoun</a> "+ " <ul> "+ " <li><a class=desc><b>Repeated subject errors occur"+ "when an unnecessary pronoun appears, marking a subject which "+ "is already clear from the context of the sentence.</b><br>"+ "<i>Ex. My sister she likes to sing in the shower.</i></a></li> "+" </ul></li> "+ " <li><a>Missing Noun</a> "+ " <ul> "+ " <li><a class=desc><b>Insert nouns that should be present, if possible.</b><br> "+ "</a></li> "+" </ul></li> "+ " <li><a>Other</a> "+ " <ul> "+ " <li><a class=desc><b>Other noun-related errors.</b><br>"+ "</a></li> "+ " </ul></li> "+ " </ul></li> "+ " <li><a>Preposition</a> "+ " <ul> "+ " <li><a class=desc><b>Preposition errors include "+"missing, extraneous, or incorrect prepositions.</b><br> <i>Ex."+ "I go store.<br>Ex. I feel very worried for it.<br>Ex."+ "Let's meet at tomorrow. "+ " </i></a></li> "+ " </ul></li> "+ " <li><a>Punctuation</a> "+ " <ul> "+ " <li><a class=desc><b>You should correct any missing"+ "or incorrectly used punctuation. </b><br> <i>Ex.  I like, "+ "chocolate </i></a></li> "+ " </ul></li> "+ " <li><a>Spelling/Capitalization</a> "+ " <ul> "+ " <li><a class=desc><b>You should correct any misspelled words. </b><br> <i>Ex. I like, "+ "chocolate </i></a></li>"+ " </ul></li> "+ " <li><a>Verb</a> "+ " <ul> "+ " <li><a>Form</a> "+ " <ul> "+ " <li><a>Infinitive</a> "+ " <ul> "+ " <li><a class=desc><b>Mark an infinitive use "+"error when an infinitive (a 'to' verb) is used in place of "+ "a conjugated verb. </b><br> <i>Ex. In the evening, we "+ "to eat dinner. </i></a></li> "+ " </ul></li> "+ " <li><a>Gerund</a> "+ " <ul> "+ " <li><a class=desc><b>Mark a gerund use error "+"when a gerund (an 'ing' verb) is used in place of a "+"conjugated verb. </b><br> <i>In the evening, we "+"eating dinner. </i></a></li> "+ " </ul></li> "+ " <li><a>Passive Voice</a> "+ " <ul> "+ " <li><a class=desc><b>You should correct any "+"awkward or incorrectly-used passive voice. </b><br> <i>Ex."+ "I was slept for 10 hours last night.</i></a></li> "+ " </ul></li> "+ " </ul></li> "+ " <li><a>Tense</a> "+ " <ul> "+ " <li><a class=desc><b>Tense errors should be "+"identified when a verb is in the incorrect tense.</b><br> <i>Ex. "+ "I Yesterday, I go home after school. </i></a></li> "+ " </ul></li> "+ " <li><a>Negation</a> "+ " <ul> "+ " <li><a class=desc><b>Negation errors occur when "+"there is a misplaced or missing 'no' or 'not', or when the"+ "verb is in the wrong form during a negation.</b><br> <i>Ex."+ "I no like this soup.<br>Ex. I didn't swore in front of "+ "my mother. "+ " </i></a></li> "+ " </ul></li> "+ " <li><a>Agreement</a> "+ " <ul> "+ " <li><a>Subject-Verb</a> "+ " <ul> "+ " <li><a class=desc><b>Subject-Verb agreement "+"errors occur when the verb does not match the noun to "+"which it relates in number or in person.</b><br> <i>"+ "Ex. I goes home after school. </i></a></li> "+ " </ul></li> "+ " <li><a>Verb-Verb</a> "+ " <ul> "+ " <li><a class=desc><b>Verb-Verb agreement errors"+ "occur when two verbs in the same sentence appear "+"incorrectly in different tenses.</b><br> <i> Ex.  "+"Yesterday I woke up and going downstairs for breakfast.  </i></a></li>"+ " </ul></li> "+ " </ul> "+ " <li><a>Missing Verb</a> "+ " <ul> "+ " <li><a class=desc><b>Insert verb that should be present, if possible.</b><br></a></li> "+" </ul></li> "+ " <li><a>Other</a> "+ " <ul> "+ " <li><a class=desc><b>Other verb-related errors.</b><br>"+ "</a></li> "+ " </ul></li> "+ " </ul></li> "+ " <li><a>Word Form</a> "+ " <ul> "+ " <li><a>Part of Speech</a> "+ " <ul> "+ " <li><a class=desc><b>Part of speech errors occur"+ "when a form of a word is used in the incorrect part of"+ "speech.</b><br> <i> Ex. I was very delightful about the "+ "good news. </i></a></li> "+ " </ul></li> "+ " <li><a>Pluralization</a> "+ " <ul> "+ " <li><a class=desc><b>You should mark pluralization"+ "errors when a plural of a word includes misplaced "+"apostrophes, missing apostrophes, or wrong word form. </b><br>"+ "<i> Ex. It was in the Stevensons's yard. </i></a></li> "+ " </ul></li> "+ " <li><a>Other</a> "+ " <ul> "+ " <li><a class=desc><b>Other form-related errors.</b><br>"+ "</a></li> "+ " </ul></li> "+ " </ul></li> "+ " <li><a>Wrong Word/Homonyms</a> "+ " <ul> "+ " <li><a class=desc><b>Replace misused words with correct ones if the authors appears to have confused two similar words.</b><br> <i>Ex. Global warming is one affect of carbon emissions.<br>Correction: Global warming is one <b>effect</b> of carbon emissions.. "+ " </i></a></li> "+ " </i> </ul></li> "+ " <li><a>Other</a> "+ " <ul> "+ " <li><a class=desc><b>Other grammatical errors.</b><br>"+ "</a></li> "+ " </ul></li> "+ " </ul></li> "+ " <li><a>Stylistic</a> "+ " <ul> "+ " <li><a>Run-On Sentence</a> "+ " <ul> "+ " <li><a class=desc><b>Run-on sentences are "+"sentences that consist of too many clauses and appear clumsy "+ "or unnatural.</b><br> <i> Ex. I like school and "+ "especially I like math class but I do not like when we have "+ "a lot of homework but I still work very hard on our "+ "homework. </i></a></li> "+ " </ul></li> "+ " <li><a>Fragment</a> "+ " <ul> "+ " <li><a class=desc><b>Sentence fragments are "+"phrases which do not communicate a complete idea, often "+"because they are missing either a subject or a verb.</b><br>"+ "<i> Ex. And then going outside. </i></a></li> "+ " </ul></li> "+ " <li><a>Ordering</a> "+ " <ul> "+ " <li><a>Word Order</a> "+ " <ul> "+ " <li><a class=desc><b>Word order errors occur when"+ "words or phrases appear in an order that is unnatural or"+ "does not flow well.</b><br> <i> Ex.  Marie returned the "+ "bike to the store that she borrowed </i></a></li> "+ " </ul></li> "+ " <li><a>Adjective Order</a> "+ " <ul> "+ " <li><a class=desc><b>Adjective order errors occur"+ "when adjectives appear in an unnatural or unusual order.</b><br>"+ "<i> Ex. I am next to the brick tall building. </i></a></li> "+ " </ul></li> "+ " <li><a>Split Infinitive</a> "+ " <ul> "+ " <li><a class=desc><b>A split infinitive is the "+"placement of an adverb between the word 'to' and the verb.</b><br>"+ "<i> Ex. It is best to quickly run. </i></a></li> "+ " </ul></li> "+ " </ul></li> "+ " <li><a>Word Choice</a> "+ " <ul> "+ " <li><a>Wrong Noun</a> "+ " <ul> "+ " <li><a class=desc><b>If necessary, replace nouns with words that better express the idea the author seems to be communicating.</b><br> "+ "<i>Ex. I went to see a movie on Friday with my comrades. <br> Correction: I went to see a movie on Friday with my <b>friends</b>.  </i></a></li> "+" </ul></li> "+ " <li><a>Wrong Verb</a> "+ " <ul> "+ " <li><a class=desc><b>If necessary, replace verbs with words that better express the idea the author seems to be communicating.</b><br> "+ "<i>Ex. I had to dash to keep up with her.<br> Correction: I had to <b>run</b> to keep up with her.  </i></a></li> "+" </ul></li> "+ " <li><a>Wrong Adjective/Adverb</a> "+ " <ul> "+ " <li><a class=desc><b>If necessary, replace descriptors with words that better express the idea the author seems to be communicating.</b><br> "+ "<i>Ex. I was not gleeful about the news.<br> Correction: I was not <b>happy</b> about the news.  </i></a></li> "+" </ul></li> "+ " <li><a>Other Wrong Words</a> "+ " <ul> "+ " <li><a class=desc><b>Replace words for which you believe another word would be more appropriate or read more naturally.</b><br> "+ "</a></li> "+" </ul></li> "+ " </ul></li> "+ " <li><a>Other</a> "+ " <ul> "+ " <li><a class=desc><b>Other structural errors.</b><br>"+ "</a></li> "+ " </ul></li> "+ " </ul></li> "+ " </ul> "+ " </ul> "+ " </li> " ; 
 
 var curr_sentence = 0;
 var num_entered = 0;
@@ -167,13 +163,6 @@ function writeOriginalSentences() {
 	for ( var s = 0; s < sentences.length; s++) {
 		$("#sent" + s).text(sentences[s]);
 	}
-	/*for(var i = 0; i < words.length; i++){
-		var s = "";
-		for(var j = 0; i < words[i].length; j++){
-			s += words[i][j]+ " ";
-		}
-		$("#sent" + 1).text(s);
-	}*/
 }
 
 /**
@@ -184,7 +173,6 @@ function updateTab() {
 	txt += writeSentence(curr_sentence, false);
 	$("#orig").html(txt);
 	$("#current-edits").html(sentences[curr_sentence]);
-//	$("#orig").before(txt);
 	$(".space").hide();
 	for ( var s = 0; s < sentences.length; s++) {
 		if (visited[s]) { $("#edit" + s).text(sentences[s]); } 
@@ -305,11 +293,6 @@ function writeCorrectionsTable() {
 	text += '</tr>';
 	text += '</table>';
 	$("#prevNext").after(text);
-/*	if (num_corr == 0) {
-		$("#allSentences").before(text);
-	} else {
-		$("#C" + (num_corr - 1)).before(text);
-	}*/
 }
 
 /**
@@ -346,7 +329,6 @@ function insertWord(idx, word) {
 */
 function commitMove() {
 	moving_phrase = false;
-	//confirmSpanStart();
 	sentences[curr_sentence] = moveSpan(span_start, num_highlighted);
 	words[curr_sentence] = sentences[curr_sentence].split(/\s/);
 	updateTables();
@@ -400,27 +382,21 @@ function commitChange() {
 */
 function cleanUpChange() {
 	if (highlighting_mode == "pair") {
-	//	$("#corr_text" + num_corr).before('<table><tr><td><div class="corrected_word">'
 		$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+'<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td class="change"><div class="corrected_word">'
 		+ $("#inputC" + num_corr).val() + " ... "
 		+ $("#inputC" + num_corr + '_b').val() + '</div></td></tr></table>');
-//		+ '<td><div class="corrected_word">'+'</div></td></tr></table>');
-	//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 		$("#inputC" + num_corr + '_b').hide();
 		$("#corr_text" + num_corr).hide();
 		$("#C" + num_corr).hide();
 	} else {
-//		$("#corr_text" + num_corr).before('<table><tr><td><div class="corrected_word">'
 		$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 		+ $("#corr_div" + num_corr).text() + '</div></td>'
 		+ '<td class="change"><div width="14"> changed to </div></td>'
 		+ '<td><div class="corrected_word">'
 		+ $("#inputC" + num_corr).val() + '</div></td></tr></table>');
-//		+ '<td><div class="corrected_word">'+'</div></td></tr></table>');
-	//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 		$("#corr_text" + num_corr).hide();
 		$("#C" + num_corr).hide();
 	}
@@ -433,12 +409,9 @@ function cleanUpChange() {
 * Remove unneeded text and buttons and write description of delete that has been committed
 */
 function cleanUpDelete() {
-	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
 	$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
 	+'<td class="change"><div width="14""> deleted </div></td></tr></table>');
-	//+ '<td><div class="corrected_word">'
-	//+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
 	$("#inputC" + num_corr).hide();
 	$("#errTypeC" + num_corr).hide();
@@ -450,12 +423,9 @@ function cleanUpDelete() {
 * Remove unneeded text and buttons and write description of move that has been committed
 */
 function cleanUpMove() {
-	//$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
 	$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 	+ $("#corr_div" + num_corr).text() + '</div></td>'
 	+'<td class="change"><div width="14""> moved </div></td></tr></table>');
-//	+ '<td><div class="corrected_word">'
-//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
 	$("#inputC" + num_corr).hide();
 	$("#errTypeC" + num_corr).hide();
@@ -467,12 +437,9 @@ function cleanUpMove() {
 * Remove unneeded text and buttons and write description of insert that has been committed
 */
 function cleanUpInsert() {
-//	$("#corr_text" + num_corr).after('<table><tr><td><div class="corrected_word">'
 	$("#allSentences").before('<table class="pastchange"><tr><td><div class="corrected_word">'
 	+ $("#inputC" + num_corr).val() + '</div></td>'
 	+ '<td class="change"><div width="14"> inserted </div></td></tr></table>');
-//	+ '<td><div class="corrected_word">'
-//	+$('#chosenErr'+num_corr).text()+'</div></td></tr></table>');
 	$("#corr_text" + num_corr).hide();
 	$("#inputC" + num_corr).hide();
 	$("#errTypeC" + num_corr).hide();
@@ -523,7 +490,6 @@ function displayWarning() {
 		content : warning,
 		show : { ready : true, effect : { type : 'fade', length : '500' } },
 		hide : { when : { event : 'unfocus' }, effect : { type : 'fade', length : '500' } },
-		//hide : { when : { target : $("#errType" + num_corr), event : 'focus' }, effect : { type : 'fade', length : '500' } },
 		position : { target : $('#orig'), corner : { target : 'topMiddle', tooltip : 'topMiddle' } },
 		style : { name : 'blue' },
 		api : { beforeShow : function() { hasWarningQtip = true; }, beforeDestroy : function() { hasWarningQtip = false; } }
@@ -535,9 +501,6 @@ function displayWarning() {
  * see if the correction is blank before replacing the word.
  */
 function correctWord() {
-//	if (err_type_chosen == false) { displayWarning(); } 
-//	else {
-		//$("#user_survey").before(getTrackChangesTable(num_corr));
 		trackChanges(num_corr, span_start);
 		if (moving_phrase) { commitMove(); } 
 		else if (highlighting_mode == "insert") { commitInsert(); } 
@@ -576,20 +539,6 @@ function promptForType() {
 				+ 'src="http://www.fingerhut.com/assets/f/nonselling/icon_questionmark.gif">'
 				+ '</img></td>';
 	return text;
-	/*if (highlighting_mode != "phrase" && current_step != "reorder") {
-		var text = "";
-		text += '<td><select id="errTypeC' + num_corr + '">';
-		text += getOptions();
-		text += '</select>';
-		text += '<input class="img" type="image" onClick="return false;" id="help'
-				+ num_corr
-				+ '" style="width:34;height:34;border=none"'
-				+ 'src="http://www.fingerhut.com/assets/f/nonselling/icon_questionmark.gif">'
-				+ '</img></td>';
-//		return text;
-		return '<td id="errTypeC'+num_corr+'">'+multiMenu+'</td>';
-	}
-	return "";*/
 }
 
 /**
@@ -692,10 +641,6 @@ function commitHighlights() {
 */
 function generalClick(id) {
 	$("#" + id).addClass('clicked');
-	/*
-	 * $(".option").each(function() { if ($(this).attr('id') != id) {
-	 * $(this).hide(); } });
-	 */
 }
 
 /**
@@ -723,10 +668,8 @@ function correctionUI() {
 	} else {
 		text = '<table><tr><td id="corr_text' + num_corr + '">';
 	}
-//	text += promptForType();
 	text += getButtons();
 	text += '</tr></table>';
-//	$('#C' + num_corr).after(text);
 	$('#prevNext').after(text);
 	enableDropDown();
 }
@@ -1353,7 +1296,6 @@ function compileCorrections(i) {
 function getTrackChangesTable(id) {
 /*        var text = '<form id="mainform"' + id + 'method="GET" action="http://workersandbox.mturk.com/mturk/externalSubmit">'
 	text =  ""; //'<table>';
-	alert(text);
         text += '<input type="text" name = "corr.' + id + '.num" id="corr.' + id
                         + '.num" value=""/>';
         text += '<input type="text" name = "corr.' + id + '.snt" id="corr.'
@@ -1372,7 +1314,6 @@ function getTrackChangesTable(id) {
                         + '.atn" value=""/>';
 //        text += '</table></form>';
      //   text += '</table>';
-	alert(text);
         return text;*/
 }
 
@@ -1420,54 +1361,13 @@ function trackChanges(id, j) {
         option_chosen = false;
         input_displayed = false;
         err_type_chosen = false;
-//	record("id", "num", "snt", "sst", "snd", "old", "nw", "mod", "atn");
 	record(id, num, snt, sst, snd, old, nw, mod, atn);
 	return false;
 }
 
-/**
-* Gather data about the most recent edit and save it into the hidden changes data structure 
-*/
-/*function trackChanges(id, j) {
-	recordNum("this is the value");
-	return false;
-        var cid = "corr." + id;
-	$("#" + cid + ".num").val(num_corr);
-	//alert(document.getElementById(cid+".num"));
-	//document.getElementById(cid+".num").Value = num_corr;
-        $("#" + cid + ".snt").val(curr_sentence);
-        $("#" + cid + ".sst").val(span_start);
-        $("#" + cid + ".snd").val(span_start + num_highlighted);
-        var txt = $("#corr_text" + num_corr).text();
-        $("#" + cid + ".old").val(txt);
-        $("#" + cid + ".mod").val(current_step);
-        $("#" + cid + ".atn").val(errType); //$("#errTypeC" + id).val());
-        var wd1 = $("#inputC" + id).val();
-        var wd2 = $("#inputC" + id + "_b").val();
-        if (highlighting_mode == "pair") {
-                var pair = txt.split("...");
-                $("#" + cid + ".old").val(pair[0] + ", " + pair[1]);
-                $("#" + cid + ".new").val(wd1 + ", " + wd2);
-                $("#" + cid + ".sst").val(span_start + ", " + span_start2);
-                $("#" + cid + ".snd").val(
-                                (span_start + num_highlighted) + ", "
-                                                + (span_start2 + num_highlighted));
-
-        } else {
-                $("#" + cid + ".new").val(wd1);
-        }
-        if (current_step == "reorder") {
-                $("#" + cid + ".new").val(insert_idx);
-        }
-        in_progress = false;
-        option_chosen = false;
-        input_displayed = false;
-        err_type_chosen = false;
-}*/
-
-
-
-
+function gradeControl(){
+	alert(control)
+}
 
 /**
 * Insert a word into the sentence
@@ -1475,7 +1375,6 @@ function trackChanges(id, j) {
 function insert() {
 	txt = writeSentence(curr_sentence, true);
 	$("#orig").html(txt);
-//	$("#current-version").html(sentences[curr_sentence]);
 	$(".space").show();
 	$(".space").click(function() {
 		$(this).removeClass("tmp_highlight");
@@ -1483,7 +1382,6 @@ function insert() {
 		insert_idx = $(this).attr('id');
 		span_start = parseInt($(this).attr('id'));
 		num_highlighted = 1;
-		////writeCorrectionsTable();
 		correctionUI();
 		onBlur();
 		$(".finish").mouseover(function() {
@@ -1524,7 +1422,6 @@ $("#nav a").click(function(){
 $(document).ready(function() {
 	multimenu();	
 	writeTabs();
-	
 	$(".button").click(function() {
 		if (!in_progress) {
 			$(":disabled").each(function() {
@@ -1556,7 +1453,7 @@ $(document).ready(function() {
 		$(this).toggleClass("hover", false);
 	});
 		
-
+//	$('#submitbutton').click(gradeControl());
 	
 	highlighting_mode = "word";
 	current_step = "spelling";

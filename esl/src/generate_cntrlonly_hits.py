@@ -176,9 +176,10 @@ for i, lang in enumerate(langs):
 					bbuni = controls.touni(bb)
 					newb = generrors.randerr(bb)
 					cid = controls.insert_into_db(hit_id, newb, cur2)
-					sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-					cur2.execute(sql,(hit_id, cid, lang_id, i))
-					i += 1
+					if(not(cid == -1)):
+						sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+						cur2.execute(sql,(hit_id, cid, lang_id, i))
+						i += 1
 			conn.commit()
 					
 	#purge HITs with missing sentences or missing controls

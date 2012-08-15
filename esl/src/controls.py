@@ -71,13 +71,15 @@ def best_control(origs, allsents, dfs, nbest=1):
 #insert control_sent into the database, with one entry per error introduced into the sent
 def insert_into_db(hit_id, control_sent, cur):
 	sql="INSERT INTO esl_sentences(sentence, language_id, doc_id, qc, doc )VALUES (%s,%s,%s,%s,%s) RETURNING id;"
-        print control_sent, isinstance(control_sent[0], unicode)
-	cur.execute(sql, (control_sent[0], 23, 'control', 1, 'control'))
-        insid = cur.fetchone()[0]
-	for e in control_sent[1]:
-		sql="INSERT INTO esl_controls(hit_id, esl_sentence_id, err_idx, oldwd, newwd, mode)VALUES (%s,%s,%s,%s,%s,%s);"
-	        cur.execute(sql, (hit_id, insid, e['idx'], e['old'], e['new'], e['mode']))
-	return insid
+	try:
+		cur.execute(sql, (control_sent[0], 23, 'control', 1, 'control'))
+        	insid = cur.fetchone()[0]
+		for e in control_sent[1]:
+			sql="INSERT INTO esl_controls(hit_id, esl_sentence_id, err_idx, oldwd, newwd, mode)VALUES (%s,%s,%s,%s,%s,%s);"
+		        cur.execute(sql, (hit_id, insid, e['idx'], e['old'], e['new'], e['mode']))
+		return insid
+	except: 
+		return -1
 
 #find best control for each set of sentences in allsents, where allsents in of the form {sent_id : [list of sentences]}	
 def all_best_control(origs, allsents):

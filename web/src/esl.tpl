@@ -271,6 +271,7 @@ a.chosen{
 	var ip="{{params['ip']}}";
 	var total=0;
 	var pairs={};
+	var control = "{{params['control']}}";
 	var sentences = [
 	
 	
@@ -685,9 +686,9 @@ a.chosen{
 				
 
 				<!--input id="submitbutton" type="submit" value="Done!" disabled="disabled"/-->
-				<input id="submitbutton" type="submit" value="Done!"/>
+				<input id="submitbutton" type="submit" value="Done!" />
 				<div id="validation_text">
-					All pairs should be completed before this HIT can be submitted.
+					All sentences should be completed before this HIT can be submitted.
 				</div>
 				
   			</form>
