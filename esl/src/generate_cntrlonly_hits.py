@@ -102,7 +102,6 @@ dfs = controls.inv_doc_freq(allsents)
 
 if(args.reload):
 	outfile = codecs.open('controls.log', encoding='utf-8', mode='w+')
-	hitslogged = []
 # iterate over each language individually
 for i, lang in enumerate(langs):
 	

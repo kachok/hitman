@@ -328,7 +328,7 @@ a.chosen{
 	//function with form validation for translation of 10 words
 	function validate_form(){
 		
-		form_valid(true);
+		form_valid(false);
 /*
 				v=$('input[name=pair_0000009431]:checked').val();
 		alert(v);
@@ -686,7 +686,7 @@ a.chosen{
 				
 
 				<!--input id="submitbutton" type="submit" value="Done!" disabled="disabled"/-->
-				<input id="submitbutton" type="submit" value="Done!" />
+				<input id="submitbutton" type="submit" disabled=True value="Done!"/>
 				<div id="validation_text">
 					All sentences should be completed before this HIT can be submitted.
 				</div>
