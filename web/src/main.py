@@ -353,6 +353,7 @@ def esl_hit(language):
 		"hitid":hitid,
 		"ip":get_client_ip(request),
 		"sentences":sentences,
+		"control":"i am the control",
 		}
 	return dict(params=params)
 
