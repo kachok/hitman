@@ -1,7 +1,7 @@
 <html>
 <head>
  <title>Correct English grammar and language errors made by foreign speakers of English</title> 
-  <link rel="stylesheet" href="/static/main.css" type="text/css" />
+  <link rel="stylesheet" href="static/main.css" type="text/css" />
     
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 
@@ -16,7 +16,7 @@
 
 
   <!--script type="text/javascript" src="/static/mturk.js"></script-->
-  <script type="text/javascript" src="/static/jquery.cookie.js"></script>
+  <script type="text/javascript" src="static/jquery.cookie.js"></script>
   
 <style type="text/css">
 div.correct {
@@ -259,9 +259,9 @@ a.chosen{
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script-->
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="/static/jquery.qtip-1.0.0-rc3.min.js"></script>
+<script type="text/javascript" src="static/jquery.qtip-1.0.0-rc3.min.js"></script>
 
-<script type="text/javascript" src="/static/ESLHIT.js"></script>
+<script type="text/javascript" src="static/ESLHIT.js"></script>
 
   
 </head>
@@ -273,14 +273,10 @@ a.chosen{
 	var pairs={};
 	var control = "{{params['control']}}";
 	var sentences = [
-	
-	
 	%for sentence in params['sentences']:
 	"{{sentence["sentence"]}}",
-	%end
-	
-			
-			];
+	%end ];
+
  $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
 	$("#debug").html($("#debug").html()+"city: "+data['cityName']+"<br/>");
