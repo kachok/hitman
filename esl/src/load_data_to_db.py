@@ -16,7 +16,8 @@ logging.basicConfig(
 
 logging.info("load data to db pipeline - START")
 
-DATA_PATH = "../data/best-by-doc-20120808.250"
+#DATA_PATH = "../data/best-by-doc-20120808.250"
+DATA_PATH = "../data/best-by-doc-20120808.50"
 CONTROL_PATH = "../data/ctrl-by-doc-20120808.test"
 
 # generate list of languages to process
@@ -107,6 +108,7 @@ for csvline in eslReader:
 	lines.append(line)
 lines = sorted(lines, key=itemgetter(0))
 for line in lines:
+	print line
 	if(not(line == "")):
 		count=count+1
 	#	print count, line[0], line[1]

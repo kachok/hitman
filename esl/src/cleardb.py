@@ -68,15 +68,15 @@ print(cur.rowcount)
 """
 sql="DELETE FROM esl_sentences"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "sentences deleted"
 
 sql="DELETE FROM esl_controls"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "controls deleted"
 
 sql="DELETE FROM esl_hits_data"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "esl hits deleted"
 
 #sql="DELETE FROM esl_languages"
 #cur.execute(sql, )
@@ -84,11 +84,11 @@ print(cur.rowcount)
 
 sql="DELETE FROM hittypes"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "hittypes deleted"
 
 sql="DELETE FROM dictionary"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "dictionary entries deleted"
 
 #sql="DELETE FROM esl_workers"
 #cur.execute(sql, )
@@ -96,15 +96,15 @@ print(cur.rowcount)
 
 sql="DELETE FROM esl_location"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "locations deleted"
 
 sql="DELETE FROM esl_assignments"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "assignments deleted"
 
 sql="DELETE FROM assignments"
 cur.execute(sql, )
-print(cur.rowcount)
+print cur.rowcount, "assignments deleted"
 
 #sql="DELETE FROM esl_edits"
 #cur.execute(sql, )

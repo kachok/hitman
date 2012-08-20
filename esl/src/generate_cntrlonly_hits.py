@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import mturk
 from settings import settings
 import wikilanguages
@@ -104,6 +105,8 @@ if(args.reload):
 	outfile = codecs.open('controls.log', encoding='utf-8', mode='w+')
 # iterate over each language individually
 for i, lang in enumerate(langs):
+
+	print "Langugage", lang
 	
 	logging.info("processing language: %s (#%s out of %s) " %(lang,i+1,len(langs)))
 	
@@ -126,26 +129,29 @@ for i, lang in enumerate(langs):
 	sql="SELECT * from esl_sentences order by doc_id" #sequence_num;" #random();"
 	cur.execute(sql)
 	rows = cur.fetchall()
-	print len(rows)
+	print len(rows), "sentences fetched"
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_esl_hit_path"]+"/"+lang
+
+	if(args.reload):
+		check = 0	
+		for batchiter in batch(rows, settings["num_unknowns"] + settings["num_knowns"]):
+			qcnum = random.randint(0, settings["num_unknowns"] + settings["num_knowns"] -1)	
 	
-	for batchiter in batch(rows, settings["num_unknowns"] + settings["num_knowns"]):
-
-		qcnum = random.randint(0, settings["num_unknowns"] + settings["num_knowns"] -1)	
+			guid=str(uuid.uuid4())
 	
-		guid=str(uuid.uuid4())
+			sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
+			cur2.execute(sql,("", guid, hittype_id, lang_id, 0, 0, 0))
+		#	sql="INSERT INTO hits(mturk_hit_id, uuid, hittype_id, language_id) VALUES (%s,%s,%s,%s) RETURNING uuid;"
+		#	cur2.execute(sql,("", guid, hittype_id, lang_id))
+			hit_id = cur2.fetchone()[0]
+			if(not(hit_id in sentcounts)):
+				sentcounts.append(hit_id)
 
-		sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
-		cur2.execute(sql,("", guid, hittype_id, lang_id, 0, 0, 0))
-		hit_id = cur2.fetchone()[0]
-		if(not(hit_id in sentcounts)):
-			sentcounts.append(hit_id)
-
-		logging.info("Batch added")
-		sents = []
-		sentids = []
-		if(args.reload):
+			logging.info("Batch "+str(check)+" added")
+			check+=1
+			sents = []
+			sentids = []
 			for item in batchiter:
 				doc_id = item[4]
 				candidates = controls.pull_candidates(doc_id.split('_')[0])			
@@ -157,29 +163,47 @@ for i, lang in enumerate(langs):
         			b = controls.best_control(sents, candidates, dfs, nbest=5)
 				for bb in b:
 					bbuni = controls.touni(bb[0])
-					#print "bb", bb[0]
 					newb = generrors.randerr(bb[0])
-					#print "newb", newb
 					cid = controls.insert_into_db(hit_id, newb, cur2)
-					outfile.write(bbuni+'\t')
-					sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-					cur2.execute(sql,(hit_id, cid, lang_id, i))
+					if(not(cid == -1)):
+						outfile.write(bbuni+'\t')
+						sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+						cur2.execute(sql,(hit_id, cid, lang_id, i))
 				outfile.write('\n')
 			conn.commit()
-		else:
-			cachedsents = open('controls.log')
-			for hit in cachedsents.readlines():
-				print hit
-				b = hit.split('\t')
+	else:
+		check = 0
+
+		cachedsents = codecs.open('controls.log.bk', encoding='utf-8', mode='r')
+		for hit in cachedsents.readlines():
+			guid=str(uuid.uuid4())
+                       	try:
+                        	sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
+				cur2.execute(sql,("", guid, hittype_id, lang_id, 0, 0, 0))
+                       	except Exception, e:
+				print sys.exc_info()[0]
+				print e.pgerror
+			if(cur2.rowcount > 0):
+				hit_id = cur2.fetchone()[0]
+        	               	if(not(hit_id in sentcounts)):
+                	               	sentcounts.append(hit_id)
+                	       	logging.info("Batch "+str(check)+" added")
+				check += 1
+				b = hit.strip().split('\t')
+				n = 0
 				for bb in b:
-					print bb
-				#	bbuni = controls.touni(bb[0])
-				#	newb = generrors.randerr(bb[0])
-				#	cid = controls.insert_into_db(hit_id, newb, cur2)
-				#	sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-				#	cur2.execute(sql,(hit_id, cid, lang_id, i))
-#			conn.commit()
-					
+			#		bbuni = controls.touni(bb)	
+					newb = generrors.randerr(bb)
+					cid = controls.insert_into_db(hit_id, newb, cur2, i)
+					if(cid == -1):
+						print "Error inserting control sentence to DB"
+						break;
+					else:
+						n += 1
+						sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+						cur2.execute(sql,(hit_id, cid, lang_id, n))
+		conn.commit()
+		cachedsents.close()
 	#purge HITs with missing sentences or missing controls
 	for hit in sentcounts:
 		delsql = "select id from esl_hits_data where hit_id=%s;"

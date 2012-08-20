@@ -104,8 +104,17 @@ def do_work(conn, item):
 			rejection_time=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
 		except:
 			pass
-		
-		
+	
+		sql = "SELECT * FROM esl_workers WHERE worker_id=%s;"
+		cur.execute(sql, (mturk_worker_id, ))
+		if(cur.rowcount == 0):	
+			sql="INSERT INTO esl_workers(worker_id,num_hits,num_correct_controls,num_controls,average,status,statusdesc) VALUES (%s,%s,%s,%s,%s,%s,%s);"
+			cur.execute(sql,(mturk_worker_id, 1, 0, 0, 0, "PENDING","PENDING"))
+		else:
+			numhits = int(cur.fetchone()[2])+1
+			sql = "UPDATE esl_workers SET num_hits=%s WHERE worker_id=%s;"
+			cur.execute(sql, (numhits, mturk_worker_id))
+	
 		#print assgnmnt.answers[0]
 		results={}
 		for i in assgnmnt.answers[0]:

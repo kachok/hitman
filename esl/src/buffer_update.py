@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2
-
 import json
-
 import logging
 import argparse
-
 import datetime
-
+import qc
 
 # command line parameters parsing
 # loading proper settings file
@@ -56,7 +53,7 @@ sql="SELECT * from buffer_assignments;"
 cur.execute(sql)
 rows=cur.fetchall()
 
-#print len(rows)
+print len(rows)
 
 total=0
 
@@ -90,37 +87,23 @@ for row in rows:
 		
 	results=json.loads(results_json)
 
-	#print results
-
 	cp2=datetime.datetime.now()
-
-# 	TODO ---------- ADD BACK IN LATER--------------
-		
+	
 	cur2=conn.cursor()
-#	sql2="SELECT add_worker(%s, %s);"
-#	cur2.execute(sql2,(mturk_worker_id, "unknown"))
-#	db_worker_id = cur2.fetchone()[0]
-#	conn.commit()
 
 	cp3=datetime.datetime.now()
 
-	print "hit_id: ",hit_id
-
 	sql2="SELECT add_assignment(%s, %s, %s, %s, %s, %s, %s);" #, %s, %s, %s);"
 
-#	print "aid %s, hid %s, wid %s, accept %s, submit %s, auto %s, app %s, rej %s, stat %s" % (mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, autoapproval_time, approval_time, rejection_time, mturk_status)
-
-	cur2.execute(sql2,(mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, results_json, mturk_status)); #autoapproval_time, approval_time, rejection_time, results_json, mturk_status))
-	#print cur.rowcount
+	cur2.execute(sql2,(mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, results_json, mturk_status)); 
 	assignment_id = cur2.fetchone()[0]	
 	conn.commit()
+	
 
 	cp4=datetime.datetime.now()
 
 	sql2="SELECT typename from assignments a, hits h, hittypes ht where a.hit_id=h.id and h.hittype_id=ht.id and a.id=%s;"
-#	print assignment_id
 #	cur2.execute(sql2,(assignment_id, ))
-#	print cur2.rowcount
 	typename = 'esl' #cur2.fetchone()[0]	
 
 #  id | assignment_id | edit_num | esl_sentence_id | span_start | span_end | old_word | new_word | edit_type | annotation
@@ -132,8 +115,7 @@ for row in rows:
 				#TODO get the sentence for that correction
 				#get the span endpoints, old word, new word, edit type, and annotation
 				edit_num = results[key]
-				#print "KEY IS "+key
-				snt = results["corr."+edit_num+".snt"]
+				snt = int(results["corr."+edit_num+".snt"]) + 1
 				span_start = results["corr."+edit_num+".sst"]
 				span_end = results["corr."+edit_num+".snd"]
 				old_word = results["corr."+edit_num+".old"]
@@ -146,8 +128,7 @@ for row in rows:
 				cur2.execute(sql2,(assignment_id, 000))	
 				sql2="SELECT * from esl_hits_data where hit_id=%s and sentence_num=%s"
 				cur2.execute(sql2, (hit_id, snt))
-				esl_snt = cur2.fetchone()[2]
-				print esl_snt
+				esl_snt = cur2.fetchone()[6]
 				sql2="SELECT add_esl_edit(%s, %s, %s, %s, %s, %s, %s, %s, %s);"
 				cur2.execute(sql2,(assignment_id, edit_num, esl_snt, span_start, span_end, old_word, new_word, edit_type, annotation))	
 				#result_id = cur2.fetchone()[0]
@@ -163,6 +144,9 @@ for row in rows:
 	lat=results.get("lat","")
 	lng=results.get("lng","")
 	timestamp=submit_time
+	
+	qc.grade_controls(hit_id, assignment_id, mturk_worker_id)
+	qc.apprej(assignment_id, mturk_worker_id)
 
 	##--- TODO ADD BACK IN BEFORE UPLOADING TO NON-SANDBOX SITE --
 

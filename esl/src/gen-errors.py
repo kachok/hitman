@@ -9,22 +9,17 @@ def deterr(words, idx):
 		if(random.getrandbits(1)):
 			return changedet(words, idx - 1)
 		else:
-			#words[idx - 1] = '[]'
-			error = {'idx' : idx, 'old' : words[idx - 1], 'new' : "", 'mode' : "delete"}
-			words[idx - 1] = ''
-			return (words, error)
+			words[idx - 1] = '[]'
+			return words
 	else:
 		return adddet(words, idx)
 
 def adddet(words, idx):
 	dets = ['a', 'an', 'the']
 	newwds = words[:idx]
-	newd = dets[random.randint(0, len(dets) -1)]
-	#newwds.append('['+newd+']')
-	newwds.append(newd)
+	newwds.append('['+dets[random.randint(0, len(dets) -1)]+']')
 	newwds += words[idx:]
-	error = {'idx' : idx, 'old' : "", 'new' : newd, 'mode' : "insert"}
-	return (newwds, error)
+	return newwds	
 
 def changedet(words, idx):
 	dets = ['a', 'an', 'the']
@@ -32,10 +27,8 @@ def changedet(words, idx):
 	newd = random.randint(0, len(dets) - 1)
 	while(dets[newd] == word):
 		newd = random.randint(0, len(dets) - 1)
-	#words[idx] = '['+dets[newd]+']'
-	words[idx] = dets[newd]
-	error = {'idx' : idx, 'old' : word, 'new' : newd, 'mode' : "change"}
-	return (words, error)
+	words[idx] = '['+dets[newd]+']'
+	return words
 
 def preperr(words, idx):
 	preps = ['in', 'on', 'at', 'of', 'for', 'with', 'by']
@@ -43,52 +36,43 @@ def preperr(words, idx):
 	newp = random.randint(0, len(preps) - 1)
 	while(preps[newp] == word):
 		newp = random.randint(0, len(preps) - 1)
-	#words[idx] = '['+preps[newp]+']'a
-	words[idx] = preps[newp]
-	error = {'idx' : idx, 'old' : word, 'new' : preps[newp], 'mode' : "change"}
-	return (words, error)
+	words[idx] = '['+preps[newp]+']'
+	return words
 
 def spellerr(words, idx):
 	word = words[idx]
-	w = ""
 	chars = list(word)
 	if(len(chars) > 4):
 		swapidx = random.randint(1, len(chars)-1)	
 		tmp = chars[swapidx]
 		chars[swapidx] = chars[swapidx - 1]
 		chars[swapidx - 1] = tmp
+		w = ""
 		for c in chars:
 			w += c
-		#words[idx] = '['+w+']'
-		words[idx] = w
-	error = {'idx' : idx, 'old' : word, 'new' : w, 'mode' : "change"}
-	return (words, error)
+		words[idx] = '['+w+']'
+	return words
 
 def verberr(words, idx):
 	beverbs = ['be', 'is', 'am', 'are', 'was', 'were', 'being']
-	#print words, idx
 	if words[idx] in beverbs:
 		return beverberr(words, idx)
 	else:
 		return otherverberr(words, idx)
 
 def otherverberr(words, idx):
-	w = words[idx]
 	endings = {'ing' : r'(.*)ing\Z', 'ed' : r'(.*)ed\Z', 'es' : r'(.*)es\Z', 's' : r'(.*)s\Z'}
 	for end in endings:
-		m = re.match(endings[end], w)
+		m = re.match(endings[end], words[idx])
 		if(m): 
 			nend = endings.keys()[random.randint(0, len(endings.keys()) - 1)]
 			while(end == nend):
 				nend = endings.keys()[random.randint(0, len(endings.keys()) - 1)]
-			words[idx] = m.group(1) + nend
-			error = {'idx' : idx, 'old' : w, 'new' : words[idx], 'mode' : "change"}
-			return (words, error)
+			words[idx] = '['+m.group(1) + nend+']'
+			return words
 	nend = endings.keys()[random.randint(0, len(endings.keys()) - 1)]
-	#words[idx] = '['+words[idx] + nend+']'
-	words[idx] = words[idx] + nend
-	error = {'idx' : idx, 'old' : w, 'new' : words[idx], 'mode' : "change"}
-	return (words, error)
+	words[idx] = '['+words[idx] + nend+']'
+	return words
 
 def beverberr(words, idx):
 	beverbs = ['be', 'is', 'am', 'are', 'was', 'were', 'being']	
@@ -96,10 +80,8 @@ def beverberr(words, idx):
 	nbe = beverbs[random.randint(0, len(beverbs) - 1)]
 	while(w == nbe):
 		nbe = beverbs[random.randint(0, len(beverbs) - 1)]
-	#words[idx] = '['+nbe+']'
-	words[idx] = nbe
-	error = {'idx' : idx, 'old' : w, 'new' : words[idx], 'mode' : "change"}
-	return (words, error)
+	words[idx] = '['+nbe+']'
+	return words
 
 def getpos(sent):
 	verb = []
@@ -117,14 +99,7 @@ def getpos(sent):
 			prep.append(p[0])
 	return {"verb" : verb, "prep" : prep, "noun" : noun}
 
-def list2str(words):
-	s = ""
-	for w in words:
-		s += w + " "
-	return s
-
 def randerr(sent):
-	errors = []
 	alteredidx = []
 	words = sent.split()
 	if(len(words) > 0):
@@ -134,59 +109,48 @@ def randerr(sent):
 		noun = pos['noun']
 		#introduce preposition errors
 		timeout = 0
-		#print words
 		if(len(prep) > 0):
 			pidx = random.randint(0, len(prep) -1)
 			while(timeout < 50 and pidx in alteredidx):
 				timeout += 1
 				pidx = random.randint(0, len(prep) -1)
-			r = preperr(words, prep[pidx])
-			print "prep returned" , r
-			errors.append(r)
-			words = r[0]
+			words = preperr(words, prep[pidx])
 			alteredidx.append(pidx)
 		#introduce determiner errors
 		timeout = 0
-		#print words
 		if(len(noun) > 0):
 			nidx = random.randint(0, len(noun) -1)
-			while((timeout < 50 and nidx in alteredidx) or (nidx >= len(words))):
+			while(timeout < 50 and nidx in alteredidx):
 				timeout += 1
 				nidx = random.randint(0, len(noun) -1)
-			r = deterr(words, noun[nidx])
-			print "det returned" , r
-			errors.append(r)
-			words = r[0]
+			words = deterr(words, noun[nidx])
 			alteredidx.append(nidx)
 		#introduce verb errors
 		timeout = 0
-		#print words
 		if(len(verb) > 0):
 			vidx = random.randint(0, len(verb) -1)
-			while((timeout < 50 and vidx in alteredidx) or (vidx >= len(words))):
+			while(timeout < 50 and vidx in alteredidx):
 				timeout += 1
-				vidx = random.randint(0, len(verb) - 1)
-			r = verberr(words, verb[vidx])
-			print "verb returned" , r
-			errors.append(r)
-			words = r[0]
+				vidx = random.randint(0, len(verb) -1)
+			words = verberr(words, verb[vidx])
 		#introduce spelling errors
 		timeout = 0
-		#print words
 		sidx = random.randint(0, len(words) - 1)
-		while((timeout < 50 and sidx in alteredidx) or (sidx >= len(words))):
+		while(timeout < 50 and sidx in alteredidx):
 				timeout += 1
 				sidx = random.randint(0, len(words) -1)
-		r = spellerr(words, sidx)
-		print "spelling returned" , r
-		errors.append(r)
-		words = r[0]
+		words = spellerr(words, sidx)
+	
+	s = ""
+	for w in words:
+		s += w + " "
+	return s
 
-#	print errors
-	retval = []
-	for e in errors:
-		retval.append(e[1])
-	return (list2str(words), retval)
+ifile = open(sys.argv[1])
+for s in ifile.readlines():
+	print s.strip('\n')
+	print randerr(s.strip('\n'))
+	print
 
 
 

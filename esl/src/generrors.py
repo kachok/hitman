@@ -1,41 +1,56 @@
+import itertools
 import nltk
 import random
 import sys
 import re
+import codecs
 
 def deterr(words, idx):
 	pos = nltk.pos_tag(words)
-	if(idx > 0 and pos[idx - 1][1] == 'DT'):
-		if(random.getrandbits(1)):
-			return changedet(words, idx - 1)
-		else:
-			#words[idx - 1] = '[]'
-			error = {'idx' : idx, 'old' : words[idx - 1], 'new' : "", 'mode' : "delete"}
-			words[idx - 1] = ''
-			return (words, error)
+	if(random.getrandbits(1)):
+		return changedet(words, idx)
 	else:
-		return adddet(words, idx)
+		error = {'idx' : idx, 'old' : words[idx], 'new' : "", 'mode' : "delete"}
+		words[idx] = ''
+		return (words, error)
 
-def adddet(words, idx):
+def adddet(chunks, idx):
 	dets = ['a', 'an', 'the']
-	newwds = words[:idx]
 	newd = dets[random.randint(0, len(dets) -1)]
-	#newwds.append('['+newd+']')
-	newwds.append(newd)
-	newwds += words[idx:]
-	error = {'idx' : idx, 'old' : "", 'new' : newd, 'mode' : "insert"}
-	return (newwds, error)
+	chunks.insert(idx, (newd, 'ADDED'))
+	leaves = chunks.leaves()
+	realidx = -1
+	for i, leaf in enumerate(leaves):
+		if(leaf[1] == 'ADDED'):
+			realidx = i
+	#TODO THIS IDX IS NOT CORRECT##########
+	error = {'idx' : realidx, 'old' : "", 'new' : newd, 'mode' : "insert"}
+	return (tree2words(chunks.root), error)
 
 def changedet(words, idx):
-	dets = ['a', 'an', 'the']
-	word = words[idx]
-	newd = random.randint(0, len(dets) - 1)
-	while(dets[newd] == word):
-		newd = random.randint(0, len(dets) - 1)
-	#words[idx] = '['+dets[newd]+']'
-	words[idx] = dets[newd]
-	error = {'idx' : idx, 'old' : word, 'new' : newd, 'mode' : "change"}
-	return (words, error)
+        dets = ['a', 'an', 'the']
+        word = words[idx]
+        newd = random.randint(0, len(dets) - 1)
+        while(dets[newd] == word):
+                newd = random.randint(0, len(dets) - 1)
+        words[idx] = dets[newd]
+        error = {'idx' : idx, 'old' : word, 'new' : newd, 'mode' : "change"}
+        return (words, error)
+
+def tree2sent(tree):
+	leaves = tree.leaves()
+	s = ""
+	for l in leaves:
+		s += l[0] + " "
+	return s
+
+def tree2words(tree):
+	leaves = tree.leaves()
+	s = []
+	for l in leaves:
+		s.append(l[0])
+	return s
+
 
 def preperr(words, idx):
 	preps = ['in', 'on', 'at', 'of', 'for', 'with', 'by']
@@ -53,7 +68,7 @@ def spellerr(words, idx):
 	w = ""
 	chars = list(word)
 	if(len(chars) > 4):
-		swapidx = random.randint(1, len(chars)-1)	
+		swapidx = random.randint(2, len(chars)-1)	
 		tmp = chars[swapidx]
 		chars[swapidx] = chars[swapidx - 1]
 		chars[swapidx - 1] = tmp
@@ -66,7 +81,6 @@ def spellerr(words, idx):
 
 def verberr(words, idx):
 	beverbs = ['be', 'is', 'am', 'are', 'was', 'were', 'being']
-	#print words, idx
 	if words[idx] in beverbs:
 		return beverberr(words, idx)
 	else:
@@ -101,21 +115,37 @@ def beverberr(words, idx):
 	error = {'idx' : idx, 'old' : w, 'new' : words[idx], 'mode' : "change"}
 	return (words, error)
 
-def getpos(sent):
+def nounphrase(tree):
+	flat = tree.flatten()
+	if(flat[0][1] == 'NNP'):
+		return True
+	return False
+
+def getpos(sent, logfile):
 	verb = []
 	prep = []
 	noun = []
-	words = sent.split()
+	det = []
+	words = nltk.word_tokenize(sent) #sent.split()
 	pos = nltk.pos_tag(words)
-	for p in enumerate(pos):
-		ptag = p[1][1]
+	logfile.write(str(pos)+'\n')
+	chunker = TagChunker(treebank_chunker())
+	chunks = chunker.parse(pos)
+	for i, p in enumerate(pos):
+		ptag = p[1]
 		if(ptag[0] == 'V'):
-			verb.append(p[0])
-		if(ptag[0] == 'N'):
-			noun.append(p[0])
+			verb.append(i) 
 		if(ptag == 'IN'):
-			prep.append(p[0])
-	return {"verb" : verb, "prep" : prep, "noun" : noun}
+			prep.append(i)
+		if(ptag == 'DT'):
+			det.append(i)
+	partree = nltk.tree.ParentedTree.convert(chunks)
+	for t in partree.subtrees():
+		if(nounphrase(t)):
+			noun.append(t.parent_index)
+	
+	return {"verb" : verb, "prep" : prep, "noun" : noun, "det" : det, "chunktree" : partree, "postags" : pos}
+	#return {"verb" : verb, "prep" : prep, "det" : det, "postags" : pos}
 
 def list2str(words):
 	s = ""
@@ -123,7 +153,8 @@ def list2str(words):
 		s += w + " "
 	return s
 
-def randerr(sent):
+#insert determiner errors for every noun phrase
+def randerralldet(sent):
 	errors = []
 	alteredidx = []
 	words = sent.split()
@@ -132,62 +163,97 @@ def randerr(sent):
 		verb = pos['verb']
 		prep = pos['prep']
 		noun = pos['noun']
-		#introduce preposition errors
-		timeout = 0
-		#print words
-		if(len(prep) > 0):
-			pidx = random.randint(0, len(prep) -1)
-			while(timeout < 50 and pidx in alteredidx):
-				timeout += 1
-				pidx = random.randint(0, len(prep) -1)
-			r = preperr(words, prep[pidx])
-			print "prep returned" , r
-			errors.append(r)
-			words = r[0]
-			alteredidx.append(pidx)
+		chunks = pos['chunktree']
 		#introduce determiner errors
 		timeout = 0
-		#print words
-		if(len(noun) > 0):
-			nidx = random.randint(0, len(noun) -1)
-			while((timeout < 50 and nidx in alteredidx) or (nidx >= len(words))):
-				timeout += 1
-				nidx = random.randint(0, len(noun) -1)
-			r = deterr(words, noun[nidx])
-			print "det returned" , r
-			errors.append(r)
-			words = r[0]
-			alteredidx.append(nidx)
-		#introduce verb errors
-		timeout = 0
-		#print words
-		if(len(verb) > 0):
-			vidx = random.randint(0, len(verb) -1)
-			while((timeout < 50 and vidx in alteredidx) or (vidx >= len(words))):
-				timeout += 1
-				vidx = random.randint(0, len(verb) - 1)
-			r = verberr(words, verb[vidx])
-			print "verb returned" , r
-			errors.append(r)
-			words = r[0]
-		#introduce spelling errors
-		timeout = 0
-		#print words
-		sidx = random.randint(0, len(words) - 1)
-		while((timeout < 50 and sidx in alteredidx) or (sidx >= len(words))):
-				timeout += 1
-				sidx = random.randint(0, len(words) -1)
-		r = spellerr(words, sidx)
-		print "spelling returned" , r
-		errors.append(r)
-		words = r[0]
+		for n in noun:
+			if(not(n == None)):
+				#r = deterr(words, noun[nidx])
+				r = deterr(chunks, n)
+				errors.append(r)
+				words = r[0]
+				alteredidx.append(n)
 
-#	print errors
+def updateidx(lst, threshold):
+	for pos in lst:
+		if(pos > threshold):
+			pos += 1
+	return		
+
+def randerr(sent):
+	logfile = codecs.open("error.log", encoding='utf-8', mode='a')
+	errors = []
+	alteredidx = []
+	words = nltk.word_tokenize(sent) #sent.split()
+	if(len(words) > 0):
+		pos = getpos(sent, logfile)
+		chunks = pos['chunktree']
+		coin = random.randint(1, len(words) / 4)
+		errlists = [pos['prep'], pos['det'], pos['noun'], range(0, len(words) - 1), pos['verb']]
+		errfuncs = [preperr, deterr, adddet, spellerr, verberr];
+		#errfuncs = [preperr, deterr, spellerr, verberr];
+		while(coin > 0):
+			logfile.write(str(words)+'\n')
+			timeout = 0
+			erridx = random.randint(0, len(errlists)-1)
+			idxlist = errlists[erridx]
+			funct = errfuncs[erridx]
+			param = words
+			if(funct == adddet):
+				param = chunks
+			if(len(idxlist) > 0):
+				logfile.write(str(funct)+" "+str(idxlist)+'\n')
+				idx = random.randint(0, len(idxlist) - 1)
+			 	while(timeout < 50 and (idxlist[idx] == None or idx >= len(words))):
+					timeout += 1
+					idx = random.randint(0, len(idxlist) -1)
+				if(idxlist[idx] == None):
+					continue
+				r = funct(param, idxlist[idx])
+				idxlist.pop(idx)
+				errors.append(r)
+				words = r[0]
+				if(r[1]['mode'] == 'insert'):
+					for lst in [0, 1, 2, 4]:
+						updateidx(errlists[lst], r[1]['idx'])
+				coin -= 1
+
 	retval = []
 	for e in errors:
 		retval.append(e[1])
+	logfile.write(list2str(words)+'\n')
+	logfile.write('\n')
 	return (list2str(words), retval)
 
 
+############################################################################
+# code from http://streamhacker.com/2009/02/23/chunk-extraction-with-nltk/ #
+############################################################################
+class TagChunker(nltk.chunk.ChunkParserI):
+    def __init__(self, chunk_tagger):
+        self._chunk_tagger = chunk_tagger
+        
+    def parse(self, tokens):
+        # split words and part of speech tags
+        (words, tags) = zip(*tokens)
+        # get IOB chunk tags
+        chunks = self._chunk_tagger.tag(tags)
+        # join words with chunk tags
+        wtc = itertools.izip(words, chunks)
+        # w = word, t = part-of-speech tag, c = chunk tag
+        lines = [' '.join([w, t, c]) for (w, (t, c)) in wtc if c]
+        # create tree from conll formatted chunk lines
+        return nltk.chunk.conllstr2tree('\n'.join(lines))
 
+#############################################################################
+# code from http://streamhacker.com/2008/12/29/how-to-train-a-nltk-chunker/ #
+#############################################################################
 
+def treebank_chunker():
+	# treebank chunking accuracy test
+	train_chunks = nltk.corpus.treebank_chunk.chunked_sents()
+	return nltk.tag.TrigramTagger(conll_tag_chunks(train_chunks))
+ 
+def conll_tag_chunks(chunk_sents):
+    tag_sents = [nltk.chunk.tree2conlltags(tree) for tree in chunk_sents]
+    return [[(t, c) for (w, t, c) in chunk_tags] for chunk_tags in tag_sents] 

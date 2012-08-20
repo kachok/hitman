@@ -1,7 +1,7 @@
 <html>
 <head>
  <title>Correct English grammar and language errors made by foreign speakers of English</title> 
-  <link rel="stylesheet" href="static/main.css" type="text/css" />
+  <link rel="stylesheet" href="/static/main.css" type="text/css" />
     
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 
@@ -16,7 +16,7 @@
 
 
   <!--script type="text/javascript" src="/static/mturk.js"></script-->
-  <script type="text/javascript" src="static/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/static/jquery.cookie.js"></script>
   
 <style type="text/css">
 div.correct {
@@ -259,9 +259,9 @@ a.chosen{
 	src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script-->
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="static/jquery.qtip-1.0.0-rc3.min.js"></script>
+<script type="text/javascript" src="/static/jquery.qtip-1.0.0-rc3.min.js"></script>
 
-<script type="text/javascript" src="static/ESLHIT.js"></script>
+<script type="text/javascript" src="/static/ESLHIT.js"></script>
 
   
 </head>
@@ -271,13 +271,16 @@ a.chosen{
 	var ip="{{params['ip']}}";
 	var total=0;
 	var pairs={};
-	var control = "{{params['control']}}";
-	var sentences = [
-	%for sentence in params['sentences']:
-	"{{sentence["sentence"]}}",
-	%end ];
+	var sentences = [ 
+		%for sentence in params['sentences']:
+			"{{sentence["sentence"]}}",
+		%end 
+		];
 
- $.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
+      console.log(sentences);
+
+
+ /*$.getJSON("http://api.ipinfodb.com/v3/ip-city/?key={{params["ipinfodb_key"]}}&ip="+ip+"&format=json&callback=?",function(data) {
     //alert("Location Data: " + data['cityName']+", "+data['regionName']);
 	$("#debug").html($("#debug").html()+"city: "+data['cityName']+"<br/>");
 	$("#debug").html($("#debug").html()+"region: "+data['regionName']+"<br/>");
@@ -304,8 +307,7 @@ a.chosen{
 		"longitude" : "-122.076",
 		"timeZone" : "-08:00"
 	}
-*/
-    }); 
+    }); */
 
 	//disable/enable form submit (when input is valid)
 	function form_valid(param)
@@ -324,7 +326,7 @@ a.chosen{
 	//function with form validation for translation of 10 words
 	function validate_form(){
 		
-		form_valid(false);
+		form_valid(true);
 /*
 				v=$('input[name=pair_0000009431]:checked').val();
 		alert(v);
@@ -682,8 +684,8 @@ a.chosen{
 
 				
 
-				<!--input id="submitbutton" type="submit" value="Done!" disabled="disabled"/-->
-				<input id="submitbutton" type="submit" disabled=True value="Done!"/>
+				<input id="submitbutton" type="submit" value="Done!" disabled="disabled"/>
+				<!-- input id="submitbutton" type="submit" value="Done!"/-->
 				<div id="validation_text">
 					All pairs should be completed before this HIT can be submitted.
 				</div>
