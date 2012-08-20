@@ -68,18 +68,27 @@ def best_control(origs, allsents, dfs, nbest=1):
 				best.sort(key=lambda s : s[1], reverse=True)
 	return best
 
-#insert control_sent into the database, with one entry per error introduced into the sent
-def insert_into_db(hit_id, control_sent, cur):
-	sql="INSERT INTO esl_sentences(sentence, language_id, doc_id, qc, doc )VALUES (%s,%s,%s,%s,%s) RETURNING id;"
-	try:
-		cur.execute(sql, (control_sent[0], 23, 'control', 1, 'control'))
-        	insid = cur.fetchone()[0]
-		for e in control_sent[1]:
-			sql="INSERT INTO esl_controls(hit_id, esl_sentence_id, err_idx, oldwd, newwd, mode)VALUES (%s,%s,%s,%s,%s,%s);"
-		        cur.execute(sql, (hit_id, insid, e['idx'], e['old'], e['new'], e['mode']))
-		return insid
-	except: 
+def insert_into_db(hitid, control, cur,n):
+        try:
+		sql="INSERT INTO esl_sentences(sentence,sequence_num,language_id,doc_id,qc,doc)VALUES(%s,%s,%s,%s,%s,%s) RETURNING id;"
+		cur.execute(sql,(control[0],n,23,"control",1,"control"))
+		cid = cur.fetchone()[0]
+	except Exception, e:
+		print control[0]
+		print sys.exc_info()[0] 
+		print "Sentence for HIT", hitid, "not entered to DB"
 		return -1
+	try:
+		for e in control[1]:
+			sql="INSERT INTO esl_controls(esl_sentence_id,sentence,err_idx,oldwd,newwd,mode,hit_id)VALUES(%s,%s,%s,%s,%s,%s,%s);"
+        		cur.execute(sql,(cid,control[0],e['idx'],e['old'],e['new'],e['mode'],hitid))
+		return cid
+	except Exception, e:
+		print sys.exc_info()[0] 
+		return -1
+	#sql="INSERT INTO esl_controls(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
+        #cur.execute(sql,(hit_id, cid, lang_id, i))
+
 
 #find best control for each set of sentences in allsents, where allsents in of the form {sent_id : [list of sentences]}	
 def all_best_control(origs, allsents):
@@ -198,7 +207,7 @@ def get_sentences(page_title):
 	txt = wikipydia.query_text_rendered(page_title)
 	parse = BeautifulSoup(txt['html'])
 	justtext = parse.get_text()
-	justtext = justtext.encode('utf-8')
+	#justtext = justtext.encode('utf-8')
 	tok = nltk.tokenize.PunktSentenceTokenizer()
 	sents0 = tok.tokenize(justtext)
 	chunker = TagChunker(treebank_chunker())
@@ -243,7 +252,6 @@ class TagChunker(nltk.chunk.ChunkParserI):
         lines = [' '.join([w, t, c]) for (w, (t, c)) in wtc if c]
         # create tree from conll formatted chunk lines
         return nltk.chunk.conllstr2tree('\n'.join(lines))
-
 
 ###################################################################
 # http://streamhacker.com/2008/12/29/how-to-train-a-nltk-chunker/ #
