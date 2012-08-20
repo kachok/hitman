@@ -160,6 +160,7 @@ for i, lang in enumerate(langs):
 				sents.append(cur2.fetchone()[0])	
 				sentids.append(doc_id)
 			if(len(candidates) > 0):
+				i = 0
         			b = controls.best_control(sents, candidates, dfs, nbest=5)
 				for bb in b:
 					bbuni = controls.touni(bb[0])

@@ -660,8 +660,8 @@ a.chosen{
 						name="ipAddress" /> <input type="hidden" name="country" /> <input
 						type="hidden" name="city" /> <input type="hidden" name="region" />
 				</p>
-			<!--	
-				<script type="text/javascript"
+				
+				<!---script type="text/javascript"
 					src="http://gd.geobytes.com/gd?after=-1&variables=GeobytesCountry,GeobytesCity,GeobytesRegion,GeobytesIpAddress"></script>
 				 <script type="text/javascript">function getUserInfo() {
 					var userDisplayLanguage = navigator.language ? navigator.language : navigator.userDisplayLanguage;
@@ -677,8 +677,7 @@ a.chosen{
 					document.mturk_form.region.value = region;
 				}
 
-				getUserInfo();
-				 -->
+				getUserInfo(); --->
 				</script>
 
 
@@ -687,7 +686,7 @@ a.chosen{
 				<input id="submitbutton" type="submit" value="Done!" disabled="disabled"/>
 				<!-- input id="submitbutton" type="submit" value="Done!"/-->
 				<div id="validation_text">
-					All pairs should be completed before this HIT can be submitted.
+					All sentences should be completed before this HIT can be submitted.
 				</div>
 				
   			</form>

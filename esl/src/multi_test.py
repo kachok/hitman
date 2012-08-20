@@ -1,26 +1,15 @@
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2
-
 from psycopg2.pool import PersistentConnectionPool
 #from psycopg2.pool import ThreadedConnectionPool
-
-
 import json
-
 import logging
 import argparse
-
 import mturk
-
 import threading
-
 import Queue
-
 import datetime
-
-
-
 
 # command line parameters parsing
 # loading proper settings file
@@ -56,24 +45,22 @@ except ImportError:
 	sys.stderr.write("Error: Can't find the file '%r.py' in the directory containing %r.\n" % (args.settings, args.settings))
 	sys.exit(1)
 
-
-
-
 def do_work(conn, item):
 	cur=conn.cursor()
 	mturk_conn=mturk.conn()
 	
 	#print item
-
 	try:
 		assignments=mturk_conn.get_assignments(hit_id=item["mturk_hit_id"])
 	except:
 		print "error in fetching assignments for: ", item["mturk_hit_id"]
-	
 	#print assignments
 	
 	for assgnmnt in assignments:
 		print "assignment: "+ str(assgnmnt)
+	
+		#VALIDATION CODE TO CHECK FOR COMPLETION OF CONTROLS
+	
 		mturk_worker_id=assgnmnt.WorkerId
 		mturk_assignment_id=assgnmnt.AssignmentId
 		submit_time=assgnmnt.SubmitTime
@@ -136,15 +123,10 @@ def do_work(conn, item):
 		
 		conn.commit()
 
-
-
 def worker():
-
 	while True:
 		item = q.get()
-		
 		#print "thread: ", threading.currentThread().name
-		
 		conn=conn_pool.getconn()
 		do_work(conn, item)
 		q.task_done()
@@ -152,7 +134,6 @@ def worker():
 
 
 logging.info("get assignments (multithreaded) from MTurk - START")
-
 num_worker_threads=10
 
 q = Queue.Queue()

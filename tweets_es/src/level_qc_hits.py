@@ -81,8 +81,8 @@ for row in rows:
 	
 	if count<3:
 		try:
-            #pass
-            print mturk_hit_id, count
+			#pass
+			print mturk_hit_id, count
 			mturk_conn.extend_hit(mturk_hit_id, assignments_increment=3-count)
 		except boto.mturk.connection.MTurkRequestError, err:
 				print "mturk api error while adjusting assignment"

@@ -59,7 +59,7 @@ cur.execute(sql, )
 print(cur.rowcount)
 rows = cur.fetchall()
 
-#rows = ["20AC0RYNJ92NJ7L9YGDJWUH718N49A", "22RVXX2Q45UUKDN79S9W4NS8O0R9R5", "2W151Y7QEOZFYDRA5XKMRFXRJVCGDQ"]; 
+#rows = ["29DGULF395SW6AFA8XUN1NJB4R3QC7"]
 
 conn=mturk.conn()
 
