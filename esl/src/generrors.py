@@ -11,6 +11,7 @@ def deterr(words, idx):
 		return changedet(words, idx)
 	else:
 		error = {'idx' : idx, 'old' : words[idx], 'new' : "", 'mode' : "delete"}
+		print idx, len(words)
 		words[idx] = ''
 		return (words, error)
 
@@ -29,6 +30,7 @@ def adddet(chunks, idx):
 
 def changedet(words, idx):
         dets = ['a', 'an', 'the']
+	print idx, len(words)
         word = words[idx]
         newd = random.randint(0, len(dets) - 1)
         while(dets[newd] == word):
@@ -53,7 +55,9 @@ def tree2words(tree):
 
 
 def preperr(words, idx):
+	#print "PREP INDX", idx
 	preps = ['in', 'on', 'at', 'of', 'for', 'with', 'by']
+	print idx, len(words)
 	word = words[idx]
 	newp = random.randint(0, len(preps) - 1)
 	while(preps[newp] == word):
@@ -64,6 +68,7 @@ def preperr(words, idx):
 	return (words, error)
 
 def spellerr(words, idx):
+	print idx, len(words)
 	word = words[idx]
 	w = ""
 	chars = list(word)
@@ -81,6 +86,7 @@ def spellerr(words, idx):
 
 def verberr(words, idx):
 	beverbs = ['be', 'is', 'am', 'are', 'was', 'were', 'being']
+	print idx, len(words)
 	if words[idx] in beverbs:
 		return beverberr(words, idx)
 	else:
@@ -175,10 +181,12 @@ def randerralldet(sent):
 				alteredidx.append(n)
 
 def updateidx(lst, threshold):
+	newlst = []
 	for pos in lst:
 		if(pos > threshold):
 			pos += 1
-	return		
+		newlst.append(pos)
+	return newlst		
 
 def randerr(sent):
 	logfile = codecs.open("error.log", encoding='utf-8', mode='a')
@@ -188,12 +196,19 @@ def randerr(sent):
 	if(len(words) > 0):
 		pos = getpos(sent, logfile)
 		chunks = pos['chunktree']
-		coin = random.randint(1, len(words) / 4)
+		if(len(words)/3 <= 3):
+			coin = random.randint(1, len(words) / 3)
+		else:
+			coin = random.randint(3, len(words) / 3)
 		errlists = [pos['prep'], pos['det'], pos['noun'], range(0, len(words) - 1), pos['verb']]
 		errfuncs = [preperr, deterr, adddet, spellerr, verberr];
 		#errfuncs = [preperr, deterr, spellerr, verberr];
+		print list2str(words)
+		print errlists			
 		while(coin > 0):
-			logfile.write(str(words)+'\n')
+			#print words
+			#logfile.write(str(words)+'\n')
+			logfile.write(list2str(words)+'\n')
 			timeout = 0
 			erridx = random.randint(0, len(errlists)-1)
 			idxlist = errlists[erridx]
@@ -215,7 +230,11 @@ def randerr(sent):
 				words = r[0]
 				if(r[1]['mode'] == 'insert'):
 					for lst in [0, 1, 2, 4]:
-						updateidx(errlists[lst], r[1]['idx'])
+						print lst, errlists[lst], r[1]['idx']
+						errlists[lst] = updateidx(errlists[lst], r[1]['idx'])
+						print lst, errlists[lst], r[1]['idx']
+					print list2str(words)
+					print words, len(words)
 				coin -= 1
 
 	retval = []
