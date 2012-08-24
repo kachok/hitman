@@ -328,8 +328,7 @@ def esl_hit(language):
 
 	cur = conn.cursor()
 
-	sql=""
-	sql=sql+" select es.* from esl_hits_data ehd, hits h, esl_sentences es where es.id=ehd.esl_sentence_id and h.id=ehd.hit_id and h.mturk_hit_id=%s"
+	sql="select es.* from esl_hits_data ehd, hits h, esl_sentences es where es.id=ehd.esl_sentence_id and h.id=ehd.hit_id and mturk_hit_id=%s"
 	cur.execute(sql, (hitid,))
 
 	rows=cur.fetchall()

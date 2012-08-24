@@ -23,6 +23,14 @@ def conn():
 	                      host=settings.settings["service_url"].replace("https://",""))
 
 
+def approve_rejected_assignment(conn, assignment_id, feedback):
+     """
+     """
+     params = {'AssignmentId' : assignment_id,}
+     if feedback:
+         params['RequesterFeedback'] = feedback
+     return conn._process_request('ApproveRejectedAssignment', params)
+
 # Define authentication routines
 def generate_timestamp(gmtime):
 	return time.strftime("%Y-%m-%dT%H:%M:%SZ", gmtime)

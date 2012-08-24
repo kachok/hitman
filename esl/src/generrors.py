@@ -55,7 +55,6 @@ def tree2words(tree):
 
 
 def preperr(words, idx):
-	#print "PREP INDX", idx
 	preps = ['in', 'on', 'at', 'of', 'for', 'with', 'by']
 	print idx, len(words)
 	word = words[idx]
@@ -128,12 +127,15 @@ def nounphrase(tree):
 	return False
 
 def getpos(sent, logfile):
+	print "GET POS", sent
 	verb = []
 	prep = []
 	noun = []
 	det = []
 	words = nltk.word_tokenize(sent) #sent.split()
+	print words
 	pos = nltk.pos_tag(words)
+	print pos
 	logfile.write(str(pos)+'\n')
 	chunker = TagChunker(treebank_chunker())
 	chunks = chunker.parse(pos)
@@ -195,6 +197,7 @@ def randerr(sent):
 	words = nltk.word_tokenize(sent) #sent.split()
 	if(len(words) > 0):
 		pos = getpos(sent, logfile)
+		print pos
 		chunks = pos['chunktree']
 		if(len(words)/3 <= 3):
 			coin = random.randint(1, len(words) / 3)
@@ -203,7 +206,7 @@ def randerr(sent):
 		errlists = [pos['prep'], pos['det'], pos['noun'], range(0, len(words) - 1), pos['verb']]
 		errfuncs = [preperr, deterr, adddet, spellerr, verberr];
 		#errfuncs = [preperr, deterr, spellerr, verberr];
-		print list2str(words)
+		#print list2str(words)
 		print errlists			
 		while(coin > 0):
 			#print words
@@ -230,11 +233,11 @@ def randerr(sent):
 				words = r[0]
 				if(r[1]['mode'] == 'insert'):
 					for lst in [0, 1, 2, 4]:
-						print lst, errlists[lst], r[1]['idx']
+						#print lst, errlists[lst], r[1]['idx']
 						errlists[lst] = updateidx(errlists[lst], r[1]['idx'])
-						print lst, errlists[lst], r[1]['idx']
-					print list2str(words)
-					print words, len(words)
+						#print lst, errlists[lst], r[1]['idx']
+	#				print list2str(words)
+	#				print words, len(words)
 				coin -= 1
 
 	retval = []

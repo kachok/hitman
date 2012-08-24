@@ -37,6 +37,11 @@ dirname = "data-dump-"+str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M"))
 os.mkdir(dirname)
 sent_file = open(dirname+"/sent_ids", "w")
 data_file = open(dirname+"/edit_data", "w")
+worker_file = open(dirname+"/worker_data", "w")
+ass_file = open(dirname+"/assign_data", "w") #haha. ass file.
+control_file = open(dirname+"/cntrl_data", "w")
+hit_file = open(dirname+"/hit_data", "w")
+hitdata_file = open(dirname+"/hitdata_data", "w")
 
 conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 
@@ -76,9 +81,90 @@ for row in rows:
 dt = datetime.datetime.now()
 #sent_file.write(str(dt))
 
+sql="SELECT * from esl_workers;"
+cur.execute(sql)
+rows = cur.fetchall()
+
+cols = cur.description
+print cols
+for col in cols:
+	worker_file.write(col[0]+", ")
+worker_file.write("\n")
+
+for row in rows:
+	for e in row:
+		worker_file.write(format_csv(str(e).strip())+", ")
+	worker_file.write("\n")
+dt = datetime.datetime.now()
+
+sql="SELECT * from assignments;"
+cur.execute(sql)
+rows = cur.fetchall()
+
+cols = cur.description
+print cols
+for col in cols:
+	ass_file.write(col[0]+", ")
+ass_file.write("\n")
+
+for row in rows:
+	for e in row:
+		ass_file.write(format_csv(str(e).strip())+", ")
+	ass_file.write("\n")
+dt = datetime.datetime.now()
+
+sql="SELECT * from hits;"
+cur.execute(sql)
+rows = cur.fetchall()
+
+cols = cur.description
+print cols
+for col in cols:
+	hit_file.write(col[0]+", ")
+hit_file.write("\n")
+
+for row in rows:
+	for e in row:
+		hit_file.write(format_csv(str(e).strip())+", ")
+	hit_file.write("\n")
+dt = datetime.datetime.now()
+
+sql="SELECT * from esl_hits_data;"
+cur.execute(sql)
+rows = cur.fetchall()
+
+cols = cur.description
+print cols
+for col in cols:
+	hitdata_file.write(col[0]+", ")
+hitdata_file.write("\n")
+
+for row in rows:
+	for e in row:
+		hitdata_file.write(format_csv(str(e).strip())+", ")
+	hitdata_file.write("\n")
+dt = datetime.datetime.now()
+
+sql="SELECT * from esl_controls;"
+cur.execute(sql)
+rows = cur.fetchall()
+
+cols = cur.description
+print cols
+for col in cols:
+	control_file.write(col[0]+", ")
+control_file.write("\n")
+
+for row in rows:
+	for e in row:
+		control_file.write(format_csv(str(e).strip())+", ")
+	control_file.write("\n")
+dt = datetime.datetime.now()
+
 data_file.close()
 sent_file.close()
-
-
-
-
+worker_file.close()
+ass_file.close()
+hit_file.close()
+hitdata_file.close()
+control_file.close()

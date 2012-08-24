@@ -1369,10 +1369,6 @@ function trackChanges(id, j) {
 	return false;
 }
 
-function gradeControl(){
-	alert(control)
-}
-
 /**
 * Insert a word into the sentence
 */ 
