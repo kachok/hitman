@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 import mturk
 from settings import settings
 import wikilanguages
@@ -8,6 +9,8 @@ import uuid
 import random
 import controls
 import codecs
+import generrors
+import argparse
 
 def batch(iterable, size):
 	sourceiter = iter(iterable)
@@ -41,6 +44,9 @@ if len(langs)<=5:
 langs_properties={} #list of languages' properties (e.g. LTR vs RTL script, non latin characters, etc) 
 langs_properties=wikilanguages.langs
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--reload', dest='reload',  help='requery wikipedia for all control sentences', action='store_true', default=False)
+args = parser.parse_args()
 
 logging.info("generating HITTypes for each language")
 # iterate over each language individually
@@ -95,7 +101,15 @@ cur0.execute(sentsql)
 allsents = [c[0] for c in cur0.fetchall()]
 dfs = controls.inv_doc_freq(allsents)
 
-#outfile = codecs.open('bestctrls.out', encoding='utf-8', mode='w+')
+if(args.reload):
+	logfile = codecs.open('controls.log', encoding='utf-8', mode='w+')
+else:
+	cachefile = codecs.open('controls.log.bk', encoding='utf-8', mode='r')
+	cachesents = []
+	for line in cachefile.readlines():
+		cachesents.append(line)
+	cachefile.close()
+	
 # iterate over each language individually
 for i, lang in enumerate(langs):
 	
@@ -116,55 +130,87 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-#	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num;" #random();"
-	sql="SELECT * from esl_sentences order by doc_id" #sequence_num;" #random();"
+	sql="SELECT * from esl_sentences order by doc_id" 
 	cur.execute(sql)
 	rows = cur.fetchall()
-	print len(rows)
+	print len(rows), "sentences fetched"
 
 	web_endpoint='http://'+settings["web_enpoint_domain"]+settings["web_endpoint_esl_hit_path"]+"/"+lang
-	
-	#print "rows "+ str(rows)
 
-	for batchiter in batch(rows, settings["num_unknowns"] + settings["num_knowns"]):
-
+	count = 0	
+	for batchiter in batch(rows, settings["num_unknowns"]): # + settings["num_knowns"]):
+		
+		#pick position in HIT to insert control		
 		qcnum = random.randint(0, settings["num_unknowns"] + settings["num_knowns"] -1)	
+		print qcnum
 	
 		guid=str(uuid.uuid4())
 
+		#create a new HIT (not yet with a HIT id)
 		sql="SELECT add_hit(%s, %s, %s, %s, %s, %s, %s);"
 		cur2.execute(sql,("", guid, hittype_id, lang_id, 0, 0, 0))
 		hit_id = cur2.fetchone()[0]
+		#will need to track HITs being added since controls will prevent some from having a full 5 sentences, and we want to throw those 
+		#ones out
 		if(not(hit_id in sentcounts)):
 			sentcounts.append(hit_id)
+		logging.info("Batch "+str(count)+" added")
+		count += 1
 
-		logging.info("Batch added")
+		#group senteces into groups of 5 for HITs
 		sents = []
 		sentids = []
+		docids = [] 
+		idsforhit = [0]*(settings["num_unknowns"] + settings["num_knowns"])	
 		for item in batchiter:
 			doc_id = item[4]
-			candidates = controls.pull_candidates(doc_id.split('_')[0])			
+			docids.append(doc_id.split('_')[0])
 			idsql = 'SELECT sentence from esl_sentences where doc_id=%s;'
 			cur2.execute(idsql, (doc_id,))
 			sents.append(cur2.fetchone()[0])	
 			sentids.append(doc_id)
-        	b = controls.best_control(sents, candidates, dfs)
-		print b
-		cid = controls.insert_into_db("CONTROL "+b, cur2)
+		if(args.reload):
+			doc = list(docids)[0]
+			print "Running control query for doc", doc_id
+			candidates = controls.pull_candidates(doc)
+			#choose the control sentence that fits best with the 5 real sentences
+	        	b = controls.best_control(sents, candidates, dfs)
+			bb = b[0][0]
+			print bb
+			logfile.write(bb+'\n')
+			newb = generrors.randerr(bb)
+			cid = controls.insert_into_db(hit_id, newb, bb, cur2, qcnum)
+		else:
+			bb = cachesents.pop()
+			newb = generrors.randerr(bb)
+			cid = controls.insert_into_db(hit_id, newb, bb, cur2, qcnum)
+	
+		if(cid == -1):
+             		print "Error inserting control sentence to DB"
+			break;
+		#else:
+		#	sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s)    ;"
+		#	cur2.execute(sql,(hit_id, cid, lang_id, qcnum))
+
 		conn.commit()
-        	#outfile.write(b+'\n')
-		for s in enumerate(sentids):
-			print s
-			i = s[0]	
-			if(i == qcnum):
-				sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-				cur2.execute(sql,(hit_id, cid, lang_id, i))
-			else:
-				idsql = 'SELECT id from esl_sentences where doc_id=%s;'
-				cur2.execute(idsql, (s[1],))
-				eslid = cur2.fetchone()[0]
-				sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
-				cur2.execute(sql,(hit_id, eslid, lang_id, i))
+	
+		if(len(sentids) == 4):	
+			for i in range(0, len(idsforhit)):
+				if(i == qcnum):
+					idsforhit[i] = cid
+				else:
+					idsforhit[i] = sentids.pop()
+			print idsforhit
+			for i, s in enumerate(idsforhit):
+				if(i == qcnum):
+					sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
+					cur2.execute(sql,(hit_id, cid, lang_id, i))
+				else:
+					idsql = 'SELECT id from esl_sentences where doc_id=%s;'
+					cur2.execute(idsql, (str(s),))
+					eslid = cur2.fetchone()[0]
+					sql="INSERT INTO esl_hits_data (hit_id, esl_sentence_id, language_id, sentence_num) VALUES (%s,%s,%s,%s);"
+					cur2.execute(sql,(hit_id, eslid, lang_id, i))
 
 	#purge HITs with missing sentences or missing controls
 	for hit in sentcounts:
@@ -181,6 +227,8 @@ for i, lang in enumerate(langs):
 
 conn.close()
 	
+if(args.reload):
+	logfile.close()
 
 logging.info("esl hit creation pipeline - FINISH")
 
