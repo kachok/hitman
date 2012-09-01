@@ -1,3 +1,7 @@
+"""
+Script for removing all entries from DB. Should only be run after running cleanup.py, or it becomes very difficult to remove the HITs from MTurk. Does not remove from esl_workers or esl_edits
+"""
+
 # -*- coding: utf-8 -*-
 
 

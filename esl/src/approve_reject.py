@@ -1,9 +1,12 @@
+"""
+Script for reading reviewed assignments from database (buffered in process_q.py), approving/rejecting each assignment on MTurk, and rolling buffered review data into the esl_workers database
+"""
+
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2
 import json
 import logging
-import codecs
 import argparse
 import datetime
 import qc
@@ -54,9 +57,8 @@ sql="SELECT * from esl_assignments where status='Open';"
 cur.execute(sql)
 rows=cur.fetchall()
 
-#gradelog = codecs.open("apprej.log", encoding='utf-8', mode='w+', errors='replace')
-appr = 0
-rej = 0
+print len(rows)
+
 for row in rows:
 		
 	assign_id = row[0]
@@ -64,29 +66,18 @@ for row in rows:
 	worker_id = row[3]
 
 	sql = "SELECT worker_id from esl_workers WHERE id=%s;"
+	print worker_id
 	cur.execute(sql, (worker_id, ))
 	worker = cur.fetchone()[0]
 	
-	logging.info("Grading assignment %s in hit %s by worker %s" % (assign_id, hit_id, worker))
+	print assign_id, hit_id, worker
 
-	result = qc.grade_controls(hit_id, assign_id, worker) #, log=gradelog)
-	if(result == 0):
-		rej += 1
-	else:
-		appr += 1
+	qc.apprej(assign_id, worker)
+
+	sql = "UPDATE esl_assignments SET status='Graded'where id=%s;"
 	cur.execute(sql, (assign_id, ))
 	
 conn.commit()
-#gradelog.close()
-
-#sql = "SELECT * from esl_appr_buffer WHERE status='APPROVE'"
-#cur.execute(sql)
-#appr = cur.rowcount
-#sql = "SELECT * from esl_appr_buffer WHERE status='REJECT'"
-#cur.execute(sql)
-#rej = cur.rowcount
-
-logging.info("Set to APPROVE %s assignments and REJECT %s assignments. See apprej.log to confirm approvals and rejects before running approverej.py" %(str(appr), str(rej)))
 
 # cleanup
 logging.info("FINISH")

@@ -10,7 +10,6 @@ import mturk
 import threading
 import Queue
 import datetime
-from time import sleep
 
 # command line parameters parsing
 # loading proper settings file
@@ -46,29 +45,25 @@ except ImportError:
 	sys.stderr.write("Error: Can't find the file '%r.py' in the directory containing %r.\n" % (args.settings, args.settings))
 	sys.exit(1)
 
+
+outfile = open("hit_data_dump", "w")
+outfile.write('assignment_id,hit_id,worker_id,accept_time,submit_time,autoapproval_time,+approval_time,rejection_time,status')
+outfile.write('\n')
 def do_work(conn, item):
 	cur=conn.cursor()
 	mturk_conn=mturk.conn()
-
-	timeout=5
-        passed=False
 	
-	while not passed:
-		#print item
-		try:
-			assignments=mturk_conn.get_assignments(hit_id=item["mturk_hit_id"])
-			passed=True
-		except:
-	 		passed=False
-	                timeout=timeout*2
-	                print "Sleep for %s seconds " % (timeout)
-	                sleep(timeout)
-
-	#print "error in fetching assignments for: ", item["mturk_hit_id"]
+	#print item
+	try:
+		assignments=mturk_conn.get_assignments(hit_id=item["mturk_hit_id"])
+	except:
+		print "error in fetching assignments for: ", item["mturk_hit_id"]
 	#print assignments
 	
 	for assgnmnt in assignments:
 		print "assignment: "+ str(assgnmnt)
+	
+		#VALIDATION CODE TO CHECK FOR COMPLETION OF CONTROLS
 	
 		mturk_worker_id=assgnmnt.WorkerId
 		mturk_assignment_id=assgnmnt.AssignmentId
@@ -101,19 +96,6 @@ def do_work(conn, item):
 		except:
 			pass
 	
-		sql = "SELECT * FROM esl_workers WHERE worker_id=%s;"
-		cur.execute(sql, (mturk_worker_id, ))
-		if(cur.rowcount == 0):	
-			sql="INSERT INTO esl_workers(worker_id,num_hits,num_correct_controls,num_controls,average,status,statusdesc,num_approved) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);"
-			cur.execute(sql,(mturk_worker_id, 0, 0, 0, 0, "PENDING","PENDING",0))
-#		else:
-#			sql = "SELECT * FROM esl_assignments WHERE worker_id=%s;"
-#			cur.execute(sql, (mturk_worker_id, ))
-#			if(cur.rowcount == 0):	
-#				numhits = int(cur.fetchone()[2])+1
-#				sql = "UPDATE esl_workers SET num_hits=%s WHERE worker_id=%s;"
-#				cur.execute(sql, (numhits, mturk_worker_id))
-	
 		#print assgnmnt.answers[0]
 		results={}
 		for i in assgnmnt.answers[0]:
@@ -121,17 +103,10 @@ def do_work(conn, item):
 			results[i.qid]=i.fields[0]
 			
 		result=json.dumps(results)
-
-#		print "assignment ", mturk_assignment_id, " mturk_status ", mturk_status
+	
 		
-		#import psycopg2
-		#import datetime
-		#dt=a[0].AutoApprovalTime
-		#utc = datetime.datetime.strptime(dt, '%Y-%m-%dT%H:%M:%SZ')
-		#ts=psycopg2.Timestamp(utc.year, utc.month, utc.day, utc.hour, utc.minute, utc.second)
-		
-		sql="INSERT INTO buffer_assignments (assignment_id, hit_id, worker_id, accept_time, submit_time, autoapproval_time, approval_time, rejection_time, result, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
-		cur.execute(sql,(mturk_assignment_id, item["hit_id"], mturk_worker_id, accept_time, submit_time, autoapproval_time, approval_time, rejection_time, result, mturk_status))
+		outfile.write(str(mturk_assignment_id)+','+str(item["hit_id"])+','+str(mturk_worker_id)+','+str(accept_time)+','+str(submit_time)+','+str(autoapproval_time)+','+str(approval_time)+','+str(rejection_time)+','+str(mturk_status)+'\n')
+	
 		
 		conn.commit()
 
@@ -195,6 +170,8 @@ for row in rows:
 conn.close()
 
 q.join()       # block until all tasks are done
+
+outfile.close()
 
 logging.info("get assignments from MTurk - FINISH")
 

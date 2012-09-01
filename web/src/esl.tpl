@@ -469,7 +469,7 @@ a.chosen{
      	<td width="*">
    <div id="instructions">
 	<p>This HIT is only for people who speak English.</p>
-	            <ul> Below are 5 English sentences which were written by foreign English speakers. Please correct grammar mistakes and stylistic errors to make the sentences sound fluent.  </ul>
+	            <ul> Below are 5 English sentences which were written by foreign English speakers. Please correct grammar mistakes and stylistic errors to make the sentences sound fluent.  NOTE : Punctuation is intentionally separated from the words; please do NOT rejoin punctuation marks to the words (i.e. Do NOT change "the end ." to "the end." or "Susie 's house" to "Susie's house").</ul>
     <!--a href="" id="hide_instructions">hide instructions</a-->
   </div>
   <!--div id="instructions2"  style="display:none;">
@@ -504,9 +504,9 @@ a.chosen{
 	              <input type="hidden" id="lng" name="lng" value=""/>
               
 
-			<div id="user_survey">
-		  			<!--%include templates/englishspeakersurvey.tpl-->
-				</div> 
+			<!--div id="user_survey">
+		  			%include templates/englishspeakersurveyesl.tpl
+				</div--> 
 
 				<div id="words_panel">
 					<h3>Correct ESL mistakes in these sentences</h3>

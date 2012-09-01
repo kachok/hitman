@@ -106,8 +106,6 @@ if(args.reload):
 # iterate over each language individually
 for i, lang in enumerate(langs):
 
-	print "Langugage", lang
-	
 	logging.info("processing language: %s (#%s out of %s) " %(lang,i+1,len(langs)))
 	
 	hittype_id= langs_properties[lang]["hittype_id"]
@@ -125,8 +123,7 @@ for i, lang in enumerate(langs):
 	for row in rows:
 		lang_id=row[0]
 
-#	sql="SELECT * from esl_sentences WHERE language_id=%s order by sequence_num;" #random();"
-	sql="SELECT * from esl_sentences order by doc_id" #sequence_num;" #random();"
+	sql="SELECT * from esl_sentences order by doc_id"
 	cur.execute(sql)
 	rows = cur.fetchall()
 	print len(rows), "sentences fetched"

@@ -87,66 +87,51 @@ for row in rows:
 		
 	results=json.loads(results_json)
 
-	print results
-
 	cp2=datetime.datetime.now()
 	
 	cur2=conn.cursor()
 
 	cp3=datetime.datetime.now()
 
-	sql2 = "SELECT *  from esl_assignments WHERE mturk_assignment_id=%s;"
-	cur2.execute(sql2,(mturk_assignment_id, ))
-	if(cur2.rowcount == 0):
-		sql2 = "SELECT * from esl_workers WHERE worker_id=%s;"
-		print mturk_worker_id
-		cur2.execute(sql2,(mturk_worker_id, ))
-		row = cur2.fetchone()
-		worker_id = row[0] 
-                numhits = int(row[2])
-		
-		sql2 = "INSERT into esl_assignments(mturk_assignment_id,hit_id,worker_id,submit_time,result,mturk_status,accept_time)VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id;"
-		cur2.execute(sql2,(mturk_assignment_id, hit_id, worker_id, submit_time, results_json, mturk_status, accept_time)) 
-		assignment_id = cur2.fetchone()[0]	
-                sql2 = "UPDATE esl_workers SET num_hits=%s WHERE id=%s;"
-                cur2.execute(sql2, (numhits+1, worker_id))
-		
-		conn.commit()
-		
-	else:
-		assignment_id = cur2.fetchone()[0]
+	sql2="SELECT add_assignment(%s, %s, %s, %s, %s, %s, %s);" #, %s, %s, %s);"
+
+	cur2.execute(sql2,(mturk_assignment_id, hit_id, mturk_worker_id, accept_time, submit_time, results_json, mturk_status)); 
+	assignment_id = cur2.fetchone()[0]	
+	conn.commit()
+	
 
 	cp4=datetime.datetime.now()
 
 	sql2="SELECT typename from assignments a, hits h, hittypes ht where a.hit_id=h.id and h.hittype_id=ht.id and a.id=%s;"
+#	cur2.execute(sql2,(assignment_id, ))
 	typename = 'esl' #cur2.fetchone()[0]	
 
+#  id | assignment_id | edit_num | esl_sentence_id | span_start | span_end | old_word | new_word | edit_type | annotation
 	if typename=="esl":
+		#for i in range(settings["num_knowns"]+settings["num_unknowns"]):
 		for key in results.keys():
 			#get each correction in the HIT	
 			if key.find("num") > 0:
 				#TODO get the sentence for that correction
 				#get the span endpoints, old word, new word, edit type, and annotation
 				edit_num = results[key]
-				snt = int(results["corr."+edit_num+".snt"]) 
+				snt = int(results["corr."+edit_num+".snt"]) + 1
 				span_start = results["corr."+edit_num+".sst"]
 				span_end = results["corr."+edit_num+".snd"]
 				old_word = results["corr."+edit_num+".old"]
 				new_word = results["corr."+edit_num+".new"]
 				edit_type = results["corr."+edit_num+".mod"]
 				annotation = results["corr."+edit_num+".atn"]
-	
-				sql2 = "SELECT *  from esl_edits WHERE assignment_id=%s AND edit_num=%s;"
-				cur2.execute(sql2,(assignment_id, edit_num))
-				if(cur2.rowcount == 0):
-					sql2="SELECT add_esl_hits_result(%s, %s);"
-					cur2.execute(sql2,(assignment_id, 000))	
-					sql2="SELECT * from esl_hits_data where hit_id=%s and sentence_num=%s"
-					cur2.execute(sql2, (hit_id, snt))
-					print hit_id, snt
-					esl_snt = cur2.fetchone()[6]
-					sql2="INSERT into esl_edits(assignment_id,edit_num,esl_sentence_id,span_start,span_end,old_word,new_word,edit_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
-					cur2.execute(sql2,(assignment_id, edit_num, esl_snt, span_start, span_end, old_word, new_word, edit_type))	
+
+				#print "sst %s snd %s old %s new %s mod %s atn %s" % (span_start, span_end, old_word, new_word, edit_type, annotation)
+				sql2="SELECT add_esl_hits_result(%s, %s);"
+				cur2.execute(sql2,(assignment_id, 000))	
+				sql2="SELECT * from esl_hits_data where hit_id=%s and sentence_num=%s"
+				cur2.execute(sql2, (hit_id, snt))
+				esl_snt = cur2.fetchone()[6]
+				sql2="SELECT add_esl_edit(%s, %s, %s, %s, %s, %s, %s, %s, %s);"
+				cur2.execute(sql2,(assignment_id, edit_num, esl_snt, span_start, span_end, old_word, new_word, edit_type, annotation))	
+				#result_id = cur2.fetchone()[0]
 		conn.commit()					
 	
 	cp5=datetime.datetime.now()
@@ -159,19 +144,29 @@ for row in rows:
 	lat=results.get("lat","")
 	lng=results.get("lng","")
 	timestamp=submit_time
-
-#	native = results['survey_is_native_english_speaker']
 	
-	
-#	sql2 = "INSERT INTO esl_location(assignment_id,worker_id,ip,city,region,country,zipcode,lat,lng,timestamp)VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,);"
-#	cur2.execute(sql2,(assignment_id, db_worker_id, ip, city, region, country, zipcode, lat, lng, timestamp))
+	qc.grade_controls(hit_id, assignment_id, mturk_worker_id)
+	qc.appall(assignment_id, mturk_worker_id)
 
-#	sql2 = "INSERT INTO esl_worker_survey(worker_id, native_speaker, years_eng, curr_country, born_country, education)VALUES(%s,%s,%s,%s,%s,%s);"
-#	cur2.execute(sql2, (db_worker_id, native, years, curr_cntry, born, edu))
-		
-#cur.execute(sql,(db_worker_id, timestamp, native_speaker, years_speaking_foreign, native_english_speaker, years_speaking_english, country, born_country, language, language_id))
+	##--- TODO ADD BACK IN BEFORE UPLOADING TO NON-SANDBOX SITE --
+
+
+	#sql2="SELECT add_esl_location(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+	#cur2.execute(sql2,(assignment_id, db_worker_id, ip, city, region, country, zipcode, lat, lng, timestamp))
+
+	#sql="SELECT add_foreignenglishspeakingsurvey(%s, %s, %s, %s, %s);"
+	#cur.execute(sql,(db_worker_id, timestamp, native_speaker, years_speaking_foreign, native_english_speaker, years_speaking_english, country, born_country, language, language_id))
 
 	conn.commit()
+	cp6=datetime.datetime.now()
+	
+	#disabled performance stats
+	#print cp6-cp1, " start to finish"
+	#print cp3-cp2, " add assignment"
+	#print cp4-cp3, " add assignment"
+	#print cp5-cp4, " add results"
+	#print cp6-cp5, " add location"
+	#print "---"
 
 conn.commit()
 
@@ -181,4 +176,14 @@ cur.execute(sql)
 conn.commit()
 
 logging.info("FINISH")
+
+
+
+
+
+
+
+
+
+
 

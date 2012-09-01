@@ -1,3 +1,7 @@
+"""
+Script for removing all hits from mturk (expiring them early)
+"""
+
 # -*- coding: utf-8 -*-
 
 
