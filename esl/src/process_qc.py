@@ -67,7 +67,7 @@ for row in rows:
 	cur.execute(sql, (worker_id, ))
 	worker = cur.fetchone()[0]
 	
-	logging.info("Grading assignment %s in hit %s by worker %s" % (assign_id, hit_id, worker))
+#	logging.info("Grading assignment %s in hit %s by worker %s" % (assign_id, hit_id, worker))
 
 	result = qc.grade_controls(hit_id, assign_id, worker) #, log=gradelog)
 	if(result == 0):

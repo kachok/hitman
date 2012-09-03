@@ -16,7 +16,7 @@ logging.basicConfig(
 
 logging.info("load data to db pipeline - START")
 
-DATA_PATH = "../data/best_sents0829.400"
+DATA_PATH = "../data/best_sents0829.4000"
 #DATA_PATH = "../data/best-by-doc-20120808.50"
 CONTROL_PATH = "../data/ctrl-by-doc-20120808.test"
 

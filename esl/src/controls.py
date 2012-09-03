@@ -1,3 +1,6 @@
+"""
+Library of functions for querying wikipedia and determining best controls sentences based on translation sentences
+"""
 import psycopg2
 from settings import settings
 import wikipydia
@@ -68,7 +71,8 @@ def best_control(origs, allsents, dfs, nbest=1):
 				best.sort(key=lambda s : s[1], reverse=True)
 	return best
 
-def insert_into_db(hitid, control, cur,n):
+#add control sentence into esl_sentences table and add each error in the sentence into esl_controls table. return the id of the sentence in the esl_sentences table
+def insert_into_db(hitid, control, orig, cur,n):
         try:
 		sql="INSERT INTO esl_sentences(sentence,sequence_num,language_id,doc_id,qc,doc)VALUES(%s,%s,%s,%s,%s,%s) RETURNING id;"
 		cur.execute(sql,(control[0],n,23,"control",1,"control"))
@@ -80,15 +84,12 @@ def insert_into_db(hitid, control, cur,n):
 		return -1
 	try:
 		for e in control[1]:
-			sql="INSERT INTO esl_controls(esl_sentence_id,sentence,err_idx,oldwd,newwd,mode,hit_id)VALUES(%s,%s,%s,%s,%s,%s,%s);"
-        		cur.execute(sql,(cid,control[0],e['idx'],e['old'],e['new'],e['mode'],hitid))
+			sql="INSERT INTO esl_controls(esl_sentence_id,sentence,err_idx,oldwd,newwd,mode,hit_id,seq_num)VALUES(%s,%s,%s,%s,%s,%s,%s,%s);"
+        		cur.execute(sql,(cid,orig,e['idx'],e['old'],e['new'],e['mode'],hitid,e['seq']))
 		return cid
 	except Exception, e:
 		print sys.exc_info()[0] 
 		return -1
-	#sql="INSERT INTO esl_controls(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-        #cur.execute(sql,(hit_id, cid, lang_id, i))
-
 
 #find best control for each set of sentences in allsents, where allsents in of the form {sent_id : [list of sentences]}	
 def all_best_control(origs, allsents):
@@ -176,6 +177,7 @@ def get_query_terms(path):
 	for doc in open(path).readlines():
 		toks = doc.split('\t')
 		query_terms[toks[0]] = (toks[1])
+	print "Fetched query terms"
 	return query_terms
 
 #get a list of all the translated sentences taken from each wikipedia document, returned in the form {doc_id: [list of sentences]}

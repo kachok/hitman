@@ -11,8 +11,8 @@ import extract_data
 import edit_graph
 import datetime
 
-FREEBIES = 5 
-GOODSCORE = 0.99 #75
+FREEBIES = 10 
+GOODSCORE = 0.80
 BADSCORE = 0.4
 
 
@@ -28,8 +28,6 @@ def grade_sent1(assignment):
 			total += 1
                 	#edits[edit['idx']] = edit
                 	edits[edit.sp_start] = edit
-	print edits
-	print candidate
         for sent in candidate:
              	for cedit in candidate[sent]:
 			#idx = cedit['idx']
@@ -41,7 +39,9 @@ def grade_sent1(assignment):
         return totalpts, total
 
 #compare control sentence changes against workers corrections assign a score as % of errors that were fixed
-def grade_sent(assignment): # log=None):
+def grade_sent(assignment):
+	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+	cur = conn.cursor()
 	log = codecs.open("apprej.log", mode='a', encoding='utf-8', errors='ignore')
         total = errcount(assignment)
 	ref = getoracle(assignment)
@@ -49,24 +49,40 @@ def grade_sent(assignment): # log=None):
 	if(candidate == {}):
 		sent = get_raw_sents(assignment)
 		s = sent[sent.keys()[0]]
+		try:
+			log.write(s+"\n")
+		except:
+			pass
 		add_sent_to_db(s, assignment)
 		return 0, total
         totalpts = 0
 	rawsents = get_raw_sents(assignment)
 	#build sentence data structure to track edits
+#	print candidate, rawsents
         for sent in rawsents:
 		sentence = rawsents[sent]
 		log.write(str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M"))+" "+str(assignment)+" "+sentence.decode('utf-8')+'\n')
 		s = edit_graph.initialize_sentence(sentence)
+		if(not(sent in candidate)):
+			sent = get_raw_sents(assignment)
+			s = sent[sent.keys()[0]]
+			try:
+				log.write(s+"\n")
+			except:
+				pass
+			add_sent_to_db(s, assignment)
+			return 0, total
 		errors = sorted(candidate[sent], key = lambda e : e.seq_id)
 		for e in errors:
 			s.revise(e)
 		add_sent_to_db(s.plain_str(), assignment)
+		try:
+			log.write(s.plain_str().decode('utf-8')+"\n")
+		except:
+			pass
 		#s.print_ultimate()
 		for e in ref[sent]:
 			pts = correctionpoints(e, s, log=log) 
-	#		if(pts == 0 and (e.mode == "insert" or e.mode == "delete")):
-	#			ref[sent] = update_indicies(ref[sent], e.sp_start, e.mode)
 			totalpts += pts 
 	return totalpts, total
 
@@ -91,7 +107,7 @@ def update_indicies(errs, idx, mode):
 #compare control sentence changes against workers corrections assign a score as % of errors that were fixed
 def grade_controls(hit, assignment, worker): #, log=None):
 	points, total = grade_sent(assignment) #, log)
-	ret = bufferupdatedb(worker, points, total)
+	ret = bufferupdatedb(assignment, worker, points, total)
 	return ret
 
 def errcount(assignid):
@@ -171,7 +187,10 @@ def correctionpoints(error, s, log=None):
 #	print [str(f)+": "+finals[f].text for f in finals]
 	if(error.mode == "change"):
 		if(log):
-			log.write("CHANGED"+" "+str(error)+" ")
+			try:
+				log.write("CHANGED"+" "+str(error)+" ")
+			except:
+				log.write("CHANGED")
 		#check if word was eventually changed to original word
 		#original word positions map to odds only, since spaces are added between all words in data structure
         	if(finals[(2*error.sp_start)+1].text == error.old_wd):
@@ -180,7 +199,11 @@ def correctionpoints(error, s, log=None):
 			return 1
 		else:
 			if(log):
-				log.write("FALSE "+str(finals[(2*error.sp_start)+1].text)+" "+str(error.old_wd)+" "+str((2*error.sp_start)+1)+'\n')
+				try:
+					log.write("FALSE "+str("found: "+finals[(2*error.sp_start)+1].text)+" expected: "+str(error.old_wd)+" "+str((2*error.sp_start)+1)+'\n')
+				except:
+					log.write("FALSE "+str((2*error.sp_start)+1)+'\n')
+					
 			return 0
 	else:
 		if(error.mode == "delete"):
@@ -193,7 +216,7 @@ def correctionpoints(error, s, log=None):
 				return 1
 			else:
 				if(log):
-					log.write("FALSE "+str((2*error.sp_start)+1)+" "+str(s.deleted_nodes())+'\n')
+					log.write("FALSE expected deleted location: "+str((2*error.sp_start)+1)+" nodes deleted: "+str(s.deleted_nodes())+'\n')
 				return 0
 		else:
 			if(error.mode == "insert"):
@@ -205,7 +228,7 @@ def correctionpoints(error, s, log=None):
 					return 1
 				else:
 					if(log):
-						log.write("FALSE "+str(finals[(2*error.sp_start)].text)+" "+str(error.old_wd)+" "+str((2*error.sp_start))+'\n')
+						log.write("FALSE found: "+str(finals[(2*error.sp_start)].text)+" expected: "+str(error.old_wd)+" "+str((2*error.sp_start))+'\n')
 					return 0
 	if(log):
 		log.write("FALSE"+'\n')
@@ -235,7 +258,8 @@ def correctionpoints1(mistake, fix):
 			points += 0.5
 	return points
 
-def bufferupdatedb(worker, correct, total):
+def bufferupdatedb_preapproveonly(worker, correct, total):
+	ret = 0
 	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
 	cur = conn.cursor()
 	sql = "SELECT * from esl_appr_buffer where worker_id=%s;"
@@ -268,40 +292,109 @@ def bufferupdatedb(worker, correct, total):
 		currapp = result[8]
 	newcorrect = currcorrect + correct
 	newtotal = currtotal + total
-	newavg = float(newcorrect)/newtotal
+	if(newtotal == 0):
+		newavg = 0
+	else:
+		newavg = float(newcorrect)/newtotal
 	sql = "UPDATE esl_appr_buffer SET num_correct_controls=%s, num_controls=%s, average=%s WHERE  worker_id=%s;"
 	cur.execute(sql, (newcorrect, newtotal, newavg, worker))
-	if(currapp <= FREEBIES):
+	if(currapp < FREEBIES):
 		print "Free"
 		sql = "UPDATE esl_appr_buffer SET status='APPROVE',statusdesc='PREAPPROVAL', num_approved=%s where worker_id=%s" 	
 		cur.execute(sql, (currapp + 1, worker, ))
 		ret=1
+	conn.commit()
+	return ret
+
+def bufferupdatedb(assignment, worker, correct, total):
+	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+	cur = conn.cursor()
+	sql = "SELECT * from esl_appr_buffer where worker_id=%s;"
+	cur.execute(sql, (worker,))
+	if(cur.rowcount == 0): #copy row from esl_workers into esl_appr_buffer	
+		sql = "select * from esl_workers where worker_id=%s;"
+		cur.execute(sql, (worker, ))
+		result = cur.fetchone()
+		worker = result[1]
+		numhits = result[2]
+		currcorrect = result[3]
+		currstatus = result[4]
+		currstatusdesc = result[5]
+		curravg = result[6]
+		currtotal = result[7]	
+		currapp = result[8]
+		sql = "INSERT INTO esl_appr_buffer(worker_id,num_hits,num_correct_controls,status,statusdesc,average,num_controls,num_approved) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);" 	
+		cur.execute(sql, (worker, numhits, currcorrect, currstatus, currstatusdesc, curravg, currtotal, currapp))
+	else:	
+		sql = "select * from esl_appr_buffer where worker_id=%s;"
+		cur.execute(sql, (worker, ))
+		result = cur.fetchone()
+		worker = result[1]
+		numhits = result[2]
+		currcorrect = result[3]
+		currstatus = result[4]
+		currstatusdesc = result[5]
+		curravg = result[6]
+		currtotal = result[7]	
+		currapp = result[8]
+	newcorrect = currcorrect + correct
+	newtotal = currtotal + total
+	if(newtotal == 0):
+		newavg = 0
 	else:
-		print currstatusdesc
+		newavg = float(newcorrect)/newtotal
+	sql = "UPDATE esl_appr_buffer SET num_correct_controls=%s, num_controls=%s, average=%s WHERE  worker_id=%s;"
+	cur.execute(sql, (newcorrect, newtotal, newavg, worker))
+	if(currapp < FREEBIES):
+#		print "Free"
+		sql="UPDATE esl_appr_buffer SET status='APPROVE',statusdesc='PREAPPROVAL', num_approved=%s where worker_id=%s" 	
+		cur.execute(sql, (currapp + 1, worker, ))
+		sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+		cur.execute(sql, (assignment, worker, "APPROVE"))
+		ret=1
+	else:
+#		print currstatusdesc
 		if(currstatusdesc == "PENDING" or currstatusdesc == "PREAPPROVAL"):
 			if(newavg > GOODSCORE):
 				sql = "UPDATE esl_appr_buffer SET status='APPROVE',statusdesc='APPROVED', num_approved=%s where worker_id=%s" 	
 				cur.execute(sql, (currapp+1, worker, ))
+				sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+				cur.execute(sql, (assignment, worker, "APPROVE"))
 				ret=1
 			if(newavg < BADSCORE):
+				print "BLOCKED WORKER %s at %s HITs with AVERAGE %s" % (worker, newtotal, newavg)
 				sql = "UPDATE esl_appr_buffer SET status='REJECT',statusdesc='BLOCKED' where worker_id=%s" 	
 				cur.execute(sql, (worker, ))
-				ret=1
+				sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+				cur.execute(sql, (assignment, worker, "REJECT"))
+				ret=0
 			if(newavg >= BADSCORE and newavg <= GOODSCORE):
-				tempavg = float(correct) / total
+				if(total == 0):
+					tempavg = 0
+				else:
+					tempavg = float(correct) / total
 				if(tempavg >= 0.4):
 					sql = "UPDATE esl_appr_buffer SET status='APPROVE',statusdesc='PENDING',num_approved=%s where worker_id=%s"
 					cur.execute(sql, (currapp+1, worker, ))
+					sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+					cur.execute(sql, (assignment, worker, "APPROVE"))
 					ret=1
 				else:
 					sql = "UPDATE esl_appr_buffer SET status='REJECT',statusdesc='PENDING' where worker_id=%s" 	
+					cur.execute(sql, (worker, ))
+					sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+					cur.execute(sql, (assignment, worker, "REJECT"))
 					ret=0
 		else:
 			if(currstatusdesc =="APPROVE"):
 				sql = "UPDATE esl_appr_buffer SET num_approved=%s where worker_id=%s"		
     			        cur.execute(sql, (currapp+1, worker, ))
+				sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+				cur.execute(sql, (assignment, worker, "APPROVE"))
 				ret = 1
 			else:
+				sql="INSERT INTO esl_grades (assignment_id, worker_id, status) VALUES (%s,%s,%s);" 	
+				cur.execute(sql, (assignment, worker, "REJECT"))
 				ret = 0	
 	conn.commit()
 	return ret
@@ -373,8 +466,7 @@ def appall(assignment, worker):
 	paystatus = row[8]
 	sql = "select * from esl_workers where worker_id=%s;"
 	cur.execute(sql, (worker, ))
-	status = cur.fetchone()[4]
-	print paystatus
+	status = cur.fetchone()[4]	
 	if(paystatus == "Rejected"):
 		if(status == "REJECT"):
                         try:
@@ -398,7 +490,40 @@ def apprej(assignment, worker):
 	cur.execute(sql, (worker, ))
 	status = cur.fetchone()[4]
 	if(paystatus == "Submitted"):
-		print status
+		if(status == "APPROVE"):
+			print "approving assignment", assignment
+                        try:
+                           	approve_feedback=get_feedback(worker, assignment)
+                                mturk_conn.approve_assignment(mturk_id, feedback=approve_feedback)
+				sql = "update esl_assignments set mturk_status='Approved' where id=%s;"
+        			cur.execute(sql, (assignment, ))
+                        except boto.mturk.connection.MTurkRequestError, err:
+                                print "mturk api error while approving assignment"
+		if(status == "REJECT"):
+			print "rejecting assignment", assignment
+                        try:
+                           	reject_feedback=get_feedback(worker, assignment)
+				mturk_conn.reject_assignment(mturk_id, feedback=reject_feedback)
+				sql = "update esl_assignments set mturk_status='Rejected' where id=%s;"
+        			cur.execute(sql, (assignment, ))
+				repost_hit(assignment)
+                        except boto.mturk.connection.MTurkRequestError, err:
+                                print "mturk api error while rejecting assignment"
+
+def apprej1(assignment, worker):
+	updatedb(worker)
+	mturk_conn=mturk.conn()
+	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
+	cur = conn.cursor()
+        sql="select * from esl_assignments where id=%s;"
+        cur.execute(sql, (assignment, ))
+	row = cur.fetchone()
+	mturk_id = row[1]
+	paystatus = row[8]
+	sql = "select * from esl_workers where worker_id=%s;"
+	cur.execute(sql, (worker, ))
+	status = cur.fetchone()[4]
+	if(paystatus == "Submitted"):
 		if(status == "APPROVE"):
 			print "approving assignment", assignment
                         try:
@@ -419,6 +544,7 @@ def apprej(assignment, worker):
                         except boto.mturk.connection.MTurkRequestError, err:
                                 print "mturk api error while rejecting assignment"
 	conn.commit()		
+
 
 def repost_hit(assignment):
 	conn = psycopg2.connect("dbname='"+settings["esl_dbname"]+"' user='"+settings["user"]+"' host='"+settings["host"]+"'")
@@ -441,7 +567,7 @@ def get_feedback(worker, assignment):
 	if(status == "REJECT" and desc == "PENDING"):
 		return reject_pending_feedback(assignment, worker)
 	if(status == "APPROVE" and desc == "PENDING"):
-		return approve_feedback()
+		return accept_feedback()
 	if(status == "APPROVE" and desc == "PREAPPROVAL"):
 		return preapprove_feedback(assignment, worker)
 	if(status == "REJECT" and desc == "BLOCKED"):
@@ -464,7 +590,6 @@ def reject_pending_feedback(assignment, worker):
 	sql = "SELECT average from esl_workers where worker_id=%s;"
         cur.execute(sql, (str(worker), ))
 	avg = int(100*cur.fetchone()[0])
-	print avg
 	reject_feedback="We are sorry, but your responses did not meet our quality control requirement. Our control sentence was: %s Your correction was: %s We were looking for: %s Currently, your average accuracy on our controls is %s%%. If it falls below 40%% we will stop accepting your hits. Next time, be sure to read all the sentences carefully before submitting. We appreciate your effort." % (our_sent,their_sent,orig_sent,str(avg))
 	return reject_feedback
 
@@ -477,7 +602,6 @@ def preapprove_feedback(assignment, worker):
 	sql = "SELECT average from esl_workers where worker_id=%s;"
         cur.execute(sql, (str(worker), ))
 	avg = int(100*cur.fetchone()[0])
-	print avg
 	reject_feedback="Thank you! Currently, over the past HITs you have submitted to us, your average accuracy on our controls has been %s%%. We will accept your first 10 HITs for free; after that, we cannot accept HITs from workers with averages below 40%%." % (str(avg))
 	return reject_feedback
 
@@ -487,7 +611,6 @@ def reject_blocked_feedback(assignment, worker):
 	sql = "SELECT average from esl_workers where worker_id=%s;"
         cur.execute(sql, (str(worker), ))
 	avg = int(100*cur.fetchone()[0])
-	print avg
 	reject_feedback="We are sorry, but your responses did not meet our quality control requirement. Over the past HITs you have submitted to us, your average accuracy on our controls has been %s%%. We cannot accepted averages below 40%%." % (str(avg))
 	return reject_feedback
 
