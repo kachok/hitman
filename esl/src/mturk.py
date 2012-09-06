@@ -1,3 +1,7 @@
+"""
+Methods for interfacing with mturk, using boto api
+"""
+
 #!/usr/bin/env python
 
 # Import libraries

@@ -1,3 +1,7 @@
+"""
+Library of functions for producing graphs and figures for analysis. Included here only for compatibility (to make edit_graph, edit_anal, extract_data compile) and soon to be removed. Ingore this file for now.
+"""
+
 #from pyx import *
 #import numpy as np
 #import matplotlib.pyplot as plt

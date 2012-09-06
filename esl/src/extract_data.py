@@ -1,3 +1,7 @@
+"""
+Library of functions for taking data out of csv files and putting it into Sentence/Edit/Revision and graph data structures
+"""
+
 import csv
 import sys
 import rebuild_sents

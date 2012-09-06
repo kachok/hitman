@@ -1,5 +1,5 @@
 """
-Script for reading reviewed assignments from database (buffered in process_q.py), approving/rejecting each assignment on MTurk, and rolling buffered review data into the esl_workers database
+Script for reading reviewed assignments from database (buffered in process_qc.py), approving/rejecting each assignment on MTurk, and rolling buffered review data into the esl_workers database
 """
 
 # -*- coding: utf-8 -*-

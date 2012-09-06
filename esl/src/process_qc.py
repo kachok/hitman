@@ -1,3 +1,7 @@
+"""
+Review control sentence for each submitted assignment, compute accuracy on that sentence, read and update worker-level statistics into esl_appr_buffer, determine whether assignment should be accepted or rejected, and enter accept/reject into esl_grades (does not do any actual accepting/rejected yet)
+"""
+
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2

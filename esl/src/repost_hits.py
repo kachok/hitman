@@ -1,3 +1,7 @@
+"""
+add assignments to hits to replace rejected assignments
+"""
+
 # -*- coding: utf-8 -*-
 import sys
 import mturk

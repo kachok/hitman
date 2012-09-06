@@ -1,3 +1,5 @@
+--build all sql tables needed to support esl hit generation, data collection, and grading
+
 -- Table: vocabulary
 
 -- DROP TABLE esl_sentences;

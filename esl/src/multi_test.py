@@ -1,3 +1,7 @@
+"""
+Pulls all assignments from Turk and reads the raw data into buffer_assignments table
+"""
+
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2

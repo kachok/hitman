@@ -1,3 +1,7 @@
+"""
+Script for taking results out of buffer_assignments table and reading the data into relevant esl2 tables (requires full buffer_assignments, so needs to be run after multitest.py)
+"""
+
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2

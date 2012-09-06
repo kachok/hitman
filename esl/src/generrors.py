@@ -1,3 +1,7 @@
+"""
+Library of functions for introducing errors into English sentences
+"""
+
 import itertools
 import nltk
 import random

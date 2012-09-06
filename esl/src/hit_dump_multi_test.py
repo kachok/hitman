@@ -1,3 +1,7 @@
+"""
+Pull all assignments from Turk and dump into csv file (hit_data_dump), for backup purposes
+"""
+
 # -*- coding: utf-8 -*-
 from settings import settings
 import psycopg2
