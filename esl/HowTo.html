@@ -251,8 +251,161 @@ See Data Representation and Storage for information about the data structures us
 
 
 <h2>Data Representation and Storage<h2>
-<h3>Database schema</h3>
-Information about the DB.
+<h3>Database tables</h3>
+The ESL database contains 14 tables, 11 of which are currently being used in the creation, maintanence, and grading of the HIT. Their descriptions follow.
+<img src="db-fig.png">
+<ul>
+
+<li>esl_appr_buffer: keeps same information as esl_workers, but used to hold updated approve/reject data based on new HIT results before approvals and rejections are carried out, allowing manual inspection of worker-level data before changes are made permanent in esl_workers table. 
+<br>The table contains the following columns:<ul>
+<li> id: unique identifier</li>
+<li>worker_id: unique alphanumeric worker ID provided from Mturk.</li>
+<li>num_hits: total number of HITs the worker has submitted</li>
+<li>num_correct_controls: total number of control errors that this worker has correctly edited.      </li>  
+<li>status: current approve/reject status. See section on QC Grading for more detail.</li>
+<li>statusdesc: description of the workers current approve/reject status; one of either 'Preapproval', 'Pending', 'Approved', or 'Blocked'. See section on QC Grading for more detail. </li>
+<li>average: the average accuracy of the worker, calculated as num_correct_controls / num_controls</li>
+<li>num_controls: total number of control edits that this worker has been presented. One control is one atomic edit appearing in the sentence, not once sentence. So if a worker submitted a HIT containing a control sentence with three errors, their num_controls would be incremented by three.</li>
+<li>num_approved: total number of HITs that have been approved for this worker</li>
+</ul>
+
+<li>esl_assignments: data on all assignments retrieved from Mturk.
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>mturk_assignment_id : unique alphanumeric assignment ID provided from Mturk.</li>
+<li>hit_id: the integer identifier in the hits table of the HIT in which the control appears</li>
+<li>worker_id: the integer identifier in the esl_workers table of the worker who submitted this assignment</li>
+<li>status: unused, always set to "Open"</li> 
+<li>submit_time: the timestamp when the assignment was submitted</li> 
+<li>result: the full results submitted by the worker, as a JSON</li> 
+<li>data_status: unused/li> 
+<li>mturk_status: unused/li> 
+<li>accept_time: unused, the timestamp when the assignment was accepted</li> 
+</ul>
+
+<li>esl_controls: keeps record of all errors introduced into sentences when generating control sentence, to be used for grading HITs. 
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>esl_sentence_id: the integer identifier in the esl_sentences table of the sentence</li> 
+<li>sentence: the text of the original sentence, into which the errors were added</li> 
+<li>err_idx: the index in the sentence where the edit was added</li>
+<li>oldwd: the word as it appeared in the sentence before the edit was made</li>
+<li>newwd: the word as it appears in the sentence after the edit is made</li>
+<li>mode: the mode (change/insert/delete) by which the edit was made.</li>
+<li>hit_id: the integer identifier in the hits table of the HIT in which the control appears</li>
+<li>seq_num: number representing when this edit was made, relative to other edits on this sentence</li>
+</ul>
+
+
+
+<li>esl_corrected_sents: keeps final, corrected versions of sentences, after all Turker edits have been applied. Currently used for controls, but to be used in future for easy access to final corpus or edited sentences. 
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>assign_id: the integer identifier in the esl_assignments table of the assignment</li> 
+<li>sentence: the text of the sentence</li> 
+</ul>
+
+<li>esl_edits: keeps list of all edits made to sentences by Turkers                  
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>assignment_id: the integer identifier in the esl_assignments table of the assignment</li> 
+<li>edit_num: number representing when this edit was made, relative to other edits on this sentence</li>
+<li>esl_sentence_id: the integer identifier in the esl_sentences table of the sentence</li> 
+<li>span_start: the index in the sentence where the edit begins</li>
+<li>span_end: the index in the sentence where the edit ends</li>
+<li>old_word: the word as it appeared in the sentence before the edit was made</li>
+<li>new_word: the word as it appears in the sentence after the edit is made</li>
+<li>edit_type: the mode (change/insert/delete/reorder) by which the edit was made.</li>
+<li>annotation: unused</li></ul> 
+
+<li>esl_grades: keeps a list of graded assignments, and whether they are to be approved or rejected        
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>assignment_id: the integer identifier in the esl_assignments table of the assignment</li> 
+<li>worker_id: the Mturk alphanumeric identifier in the esl_workers table of the worker</li> 
+<li>status: whether the assignment is to be approved or rejected</li>
+</ul>
+
+<li>hits: Mturk-specific information for all HITs; HITs not yet posted have an empty 'mturk_hit_id' column.
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>mturk_hit_id: the unique alphanumeric identifier of this HIT, provided by Mturk 
+<li>uuid: a unique key given to MTurk, require to create the HIT         
+<li>hittype_id: integer identifying the HIT type 
+<li>language_id: integer identifying the language
+<li>assignments: number of assignments per HIT
+<li>rejected: number of assignments rejected from this HIT
+<li>approved: number of assignments approved from this HIT
+<li>status: whether the HIT is Open or Submitted (unused)
+</ul>
+
+<li>esl_hits_data: holds information for populating a HIT with the correct sentences; contains 5 entries per HIT, one for each sentence
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>hit_id: the integer identifier in the hits table of the HIT
+<li>output: unused        
+<li>data_quality: unused
+<li>language_id: integer identifying the language
+<li>sentence_num: order number (0 - 4) of this sentence in the HIT (i.e. where it appeared in the list of 5 sentences)
+<li>esl_sentence_id: number identifying this sentence in the esl_sentences table
+</ul>
+
+<li>esl_hits_results: unused, results stored in esl_edits instead.           
+
+<li>esl_location:  currently unused; will be used in future to hold information about workers location, collected through javascript. <br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>assignment_id: the integer identifier in the esl_assignments table of the assignment</li> 
+<li>worker_id: the integer identifier in the esl_workers table of the worker</li> 
+<li>ip: the IP address</li>
+<li> city: the worker's city</li>         
+<li> region: the worker's region </li>      
+<li> country: the worker's country </li>    
+<li> zipcode: the worker's zipcode </li>   
+<li> lat: the worker's latitude </li>     
+<li> lng: the worker's longitude </li>     
+<li> timestamp: time when information recorded </li></ul>
+<li>esl_rejected_hits: list of hits for which assignments were rejected, so that additional assignments can be added to the necessary hit.
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>hit_id: the integer identifier in the hits table of the HIT that had an assignment rejected
+<li>status: 'Waiting' if assignment has not been added to HIT, 'Extended' if assignment has been added.
+</ul>
+
+<li>esl_sentences: The raw input sentences used to populate the HITs. 
+<br>The table contains the following columns:<ul>
+<li>id: unique identifier</li> 
+<li>sentence: the text of the sentence
+<li>sequence_num: number representing where sentence was relative do other sentences when read into table (no longer used for sorting, function was replaced by doc_id)
+<li> language_id - identifies language in which sentence appears (always English for this HIT)
+<li> doc_id:in the format xxxx_yyyy, where xxxx is the document number which uniquely identifies the original wikipedia page from which the sentence was taken and yyyy is the sentence number which indentifies the specific sentence in that document.    
+<li> qc - 1 if the sentence is a control sentence      
+<li> doc - redundantly provides just the document id for the sentence, the same as is stored in doc_id. 
+</ul>
+  
+<li>esl_worker_survey: currently unused; will be used in future to hold responses to survey regarding workers' language and education background. <br>The table contains the following columns:<ul>
+ <li>id: unique identifier</li>
+ <li>worker_id: unique alphanumeric worker ID provided from Mturk.</li>
+ <li>native_speaker: whether the worker is a native English speaker</li>
+ <li>years_eng: number of years the worker has been speaking English</li>
+ <li>curr_country: worker's current country of residence</li>
+ <li>born_country: worker's country of birth</li>
+ <li>education: worker's highest completed level of education</li>
+ </ul></li>
+    
+<li>esl_workers: keeps a cumulative record of workers' performance across all the HITs they submit to us. 
+<br>The table contains the following columns:<ul>
+<li> id: unique identifier</li>
+<li>worker_id: unique alphanumeric worker ID provided from Mturk.</li>
+<li>num_hits: total number of HITs the worker has submitted</li>
+<li>num_correct_controls: total number of control errors that this worker has correctly edited.      </li>  
+<li>status: current approve/reject status. See section on QC Grading for more detail.</li>
+<li>statusdesc: description of the workers current approve/reject status; one of either 'Preapproval', 'Pending', 'Approved', or 'Blocked'. See section on QC Grading for more detail. </li>
+<li>average: the average accuracy of the worker, calculated as num_correct_controls / num_controls</li>
+<li>num_controls: total number of control edits that this worker has been presented. One control is one atomic edit appearing in the sentence, not once sentence. So if a worker submitted a HIT containing a control sentence with three errors, their num_controls would be incremented by three.</li>
+<li>num_approved: total number of HITs that have been approved for this worker</li>
+</ul>         
+</li></ul>
+
 <h3>Error Representation</h3>
 Both introduced errors (made while creating controls) and edits (submitted by the Turkers) are represented by the same pieces of information, to allow for reuse of data structures and simplified grading of controls. Both with be referred to as an 'edit' for convenience. An edit within a sentence is defined by the following:
 span_start - the index at which the edit begins (inclusive)
