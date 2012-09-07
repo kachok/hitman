@@ -1,0 +1,17 @@
+turker edits 
+71254 |         30284 |        5 |          361762 |          7 |        8 |           | 29th      | insert    | x
+ 71255 |         30284 |        4 |          361762 |          6 |        7 |           | the       | insert    | x
+ 71256 |         30284 |        1 |          361762 |          7 |        8 | April     | 6         | reorder   | x
+ 71258 |         30284 |        8 |          361762 |         10 |       11 | 29        |           | delete    | 
+ 71262 |         30284 |        2 |          361762 |          7 |        8 | 29        | 29 th     | change    | x
+ 71263 |         30284 |        6 |          361762 |          8 |        9 |           | of        | insert    | x
+ 71265 |         30284 |        3 |          361762 |          8 |        9 | th        |           | delete    | x
+ 71267 |         30284 |        0 |          361762 |          4 |        5 | an        |           | delete    | x
+
+esl2=# select * from esl_controls where esl_sentence_id='361762';
+ esl_sentence_id |                    sentence                     | err_idx | oldwd  | newwd  |  mode  | hit_id | seq_num 
+-----------------+-------------------------------------------------+---------+--------+--------+--------+--------+---------
+ 361762          | German forces surrendered in Italy on 29 April. |       4 |        | an     | delete | 16466  |       3
+ 361762          | German forces surrendered in Italy on 29 April. |       1 | forces | forecs | change | 16466  |       4
+(2 rows)
+
