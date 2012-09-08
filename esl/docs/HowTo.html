@@ -75,6 +75,29 @@ table.script th {
   text-align: left;
 }
 
+table.image{
+  border: 0px;
+}
+
+table.image td{
+  font-size: 10px;
+  font-family: verdana, arial, helvetica, sans-serif;
+  vertical-align:top;
+  border: 0px;
+  width: 50px;
+}
+
+table.image th {
+  font-size: 12px;
+  vertical-align:top;
+  background-color: #eeeeee;
+  color: #333333;
+  font-size: 12px;
+  font-weight: bold;
+  border: 0px;	
+  text-align: left;
+}
+
 
 /*table ID selector styles*/
 table {
@@ -204,67 +227,73 @@ Run the following periodically while HITs are still outstanding:
 <h2>Pipeline design and implementation decisions</h2>
 <h3>Source sentences for HIT</h3>
 	<h4>Overview</h4>
-<p>Our ESL correction HITs were conceived as part of a translation pipeline, so that the HITs take as input data the output data of a previously completed translation task. The output data from this translation HIT is available as a set of <a href="http://joshua-decoder.org/indian-parallel-corpora/">Indian Parallel Corpora</a>. The translation task asked Turkers to translate into English sentences taken from a variety of wikipedia pages written in one of several Indian languages (citation here). The translated sentences, which contain grammatical and stylistic errors, are the input sentences to the ESL HIT. Since the translated sentences were pulled from wikipedia, the sentences are easily grouped into sets based on their source documents, so that translated sentences from the same source document are logically connected to one another. Documents were assigned a unique document id number, and each sentence in the database is stored with its document id, which is used during the HIT generation.</p>
+<p>Our ESL correction HITs were conceived as part of a translation pipeline, so that the HITs take as input data the output data of a previously completed translation task. The output data from this translation HIT is available as a set of <a href="http://joshua-decoder.org/indian-parallel-corpora/">Indian Parallel Corpora</a>. The translation task asked Turkers to translate into English sentences taken from a variety of wikipedia pages written in one of several Indian languages (citation here). The translated sentences, which contain grammatical and stylistic errors, are the input sentences to the ESL HIT. Since the translated sentences were pulled from Wikipedia, the sentences are easily grouped into sets based on their source documents, so that translated sentences from the same source refer to the same general topic. Documents were assigned a unique document id number, and each sentence in the database is stored with its document id, which is used during the <a href="#hitgeneration">HIT generation</a>.</p>
  
 	<h4>Technical details</h4>
-<p>Input sentences to our HIT are stored in the esl_sentences data table; see Data Structures and Storage for information on database tables and data formatting conventions. So far, our HIT has taken sentences only from the Urdu-English dataset of the Indian languages corpus. The corpus provides 4 English translations of each original Urdu sentence. Because of the poor quality  and significant ambiguity of many of the translations, we proprocessed sentences and included only the 'best' sentence from each group of four, as determined by a translation-rating HIT (citation). In the translation-rating HIT, turkers were presented with 4 parallel translations of the same urdu sentence and asked to choose the best one (cast a 'vote' for the best translation). We take the 'best' translation to be the translation that receives the highest number of votes, with ties going to whichever sentences was listed first. After reducing our data set to only the best translations, we process the sentences to eliminate sentences with too few (&lt; 5) or too many (&gt; 15) words. This leaves us with approximately 5400 error-ful English senteces.</p>
+<p>Input sentences to our HIT are stored in the esl_sentences data table (see <a href="#data">Data Representation and Storage</a> for information on database tables and data formatting conventions). So far, our HIT has taken sentences only from the Urdu-English dataset of the Indian languages corpus. The corpus provides 4 English translations of each original Urdu sentence. Because of the poor quality  and significant ambiguity of many of the translations, we proprocessed sentences and included only the 'best' sentence from each group of four, as determined by a translation-rating HIT (citation). In the translation-rating HIT, Turkers were presented with 4 parallel translations of the same Urdu sentence and asked to choose the best one (cast a 'vote' for the best translation). We take the 'best' translation to be the translation that receives the highest number of votes, with ties going to whichever sentences was listed first. After reducing our data set to only the best translations, we process the sentences to eliminate sentences with too few (&lt; 5) or too many (&gt; 15) words. This leaves us with approximately 5400 error-ful English senteces.</p>
 
+<a name="hitgeneration"></a>
 <h3>HIT Generation</h3>
 	<h4>Overview</h4>
-<p>We present workers with 5 sentences per HIT, 4 of which are translations with unknown errors and one of which is a control with known errors. The choice of 5 sentences was partially due to the difficulty of the task (10 sentences could become lengthy and tedious based on the quality of the translations) and partially due to server restrictions (sending data for larger numbers of sentences sometimes caused a URI overflow error). Turkers were paid 5 cents per sentence, or 25 cents per HIT.</p>
+<p>We present workers with 5 sentences per HIT, 4 of which are translations with unknown errors and one of which is a <a href="#qc">control</a> with known errors. The choice of 5 sentences was partially due to the difficulty of the task (10 sentences could become lengthy and tedious based on the quality of the translations) and partially due to server restrictions (sending data for larger numbers of sentences sometimes caused a URI overflow error). Turkers were paid 5 cents per sentence, or 25 cents per HIT.</p>
 <p>Because of the frequency of ambiguous translations, we chose to group sentences by document within each HIT, so that all the sentences presented to the Turker within a HIT come from the same document and relate to the same topic, rather than choose sentences for each HIT at random. Our hope was that seeing a group of related sentences together would help Turkers understand translations that were more ambiguous or had more serious errors.</p>		
 	<h4>Technical details</h4>
-<p>Generating HITs involves 3 tables in the database: hits, esl_sentences, esl_hits_data; see Data Structures and Storage for information on database tables</p>
-<p>Each HIT consists of 5 sentences: 4 translations and one control. To generate the HITs, we pull all the sentences from the esl_sentences table, sort by document id, and batch them into groups of four sentences. For each group, we generate a control based on the four sentences (see Quality control section), which provides the fifth sentence. One entry, corresponding to the specific HIT, is added to the hits table; at this point, the mturk_hit_id column is left blank, do be filled later when the HIT is actually posted to MTurk. The set of five sentences is added to the esl_hits_data table, with one entry corresponding to each sentence that will exist in this HIT.</p>
+<p>Generating HITs involves 3 tables in the database: hits, esl_sentences, esl_hits_data; see <a href="#data">Data Representation and Storage</a>for information on database tables</p>
+<p>Each HIT consists of 5 sentences: 4 translations and one control. To generate the HITs, we pull all the sentences from the esl_sentences table, sort by document id, and batch them into groups of four sentences. For each group, we generate a control based on the four sentences (see <a href="#qc">Quality control</a> section), which provides the fifth sentence. One entry, corresponding to the specific HIT, is added to the hits table; at this point, the mturk_hit_id column is left blank, do be filled later when the HIT is actually posted to MTurk. The set of five sentences is added to the esl_hits_data table, with one entry corresponding to each sentence that will exist in this HIT.</p>
 
+<a name="qc"></a>
 <h3>Quality control</h3>
 Our current approach to quality control attempts to automatically grade HITs. This is a work in progress, and may be replaced by human-grading, acheived through a second HIT. 	
 <h4>Choosing English sentences</h4>
 <h5>Overview</h5>
-Since the sentences in our HITs are grouped by document, the controls need to be chosen to match the context of the other sentence, so as not to be easily identifiable. We choose our controls by finding the English wikipedia page which discusses the same topic as the Urdu page from which we pulled our sentence. We then use the tf*idf score to find the sentence from the English page which best matches the four translation sentences with which it will appear in the HIT.
+Since the sentences in our HITs are grouped by document, the controls need to be chosen to match the context of the other sentences in the HIT, so as not to be easily identifiable. We choose our controls by finding the English Wikipedia page which discusses the same topic as the Urdu page from which we pulled our sentence (E.x. The <a href="http://en.wikipedia.org/wiki/Japan">English</a> page about "Japan" and the <a href = "http://ur.wikipedia.org/wiki/%D8%AC%D8%A7%D9%BE%D8%A7%D9%86">Urdu</a> page, also about "Japan"). We then use the tf*idf score to find the sentence from the English page which best matches the four translation sentences with which it will appear in the HIT.
 <h5>Technical details</h5>
-We use the wikipydia library to interface with the Wikipedia API using Python. We choose an English sentence to match the translated sentences as follows:
-<p>Given a set of four translations, we take the document ID of those translations. In the case that the sentences come from more than one document (when the block of four sentences drawn from the database bridged a gap between two documents) we take the document ID of the first sentence. We query wikipedia for the interlanguage links that exist for that document ID. (The interlanguage links are the pages which contain the same title (same topic) but are in a different language; they are not translations of the original page.) If the page contains an English language link, we pull the text of the English page.</p>
-<p>To ensure that only true sentences are selected as control sentences, we iterate through each sentence in the English text and eliminate sentences that do not contain both a noun and a verb. We attempted to do a more robust syntax parsing, but all phrases were given "Sentence" as their root by default, which made differentiation between complete sentences and fragments impossible. Using a simpler check for nouns and verbs was sufficient for our purposes, and successfully elminated most citations and titles that appear on Wikipedia pages.</p>
-<p>For each sentence in remaing English text, we calculate a tf*idf score, using term frequencies calculated from the 4 provided translations with which we are trying to match context and document frequencies calculated across all translations over all HITs. We choose the sentence with the highest score, eliminating sentences that are not to long (&gt; 30 words) or too short (&lt; 5 words).</p>
-	<h4>Introducing errors</h4>
+We use the <a href="https://github.com/j2labs/wikipydia">wikipydia</a> library to interface with the Wikipedia API using Python. We choose an English sentence to match the translated sentences as follows:
+<p>Given a set of four translations, we take the document ID of those translations. In the case that the sentences come from more than one document (when the block of four sentences drawn from the database bridged a gap between two documents) we take the document ID of the first sentence. We query Wikipedia for the interlanguage links that exist for that document ID. (The interlanguage links are the pages which contain the same title (same topic) but are in a different language; they are not translations of the original page.) If the page contains an English language link, we pull the text of the English page.</p>
+<p>To ensure that only true sentences are selected as control sentences, we iterate through each sentence in the English text and eliminate sentences that do not contain both a noun and a verb (using the Python NLTK's <a href="http://nltk.googlecode.com/svn/trunk/doc/api/nltk.chunk.api.ChunkParserI-class.html">ChunkParser</a> for syntactic analysis). We attempted to do a more robust syntax parsing, but all phrases were given "Sentence" as their root by default, which made differentiation between complete sentences and fragments impossible. Using a simpler check for nouns and verbs was sufficient for our purposes, and successfully elminated most citations and titles that appear on Wikipedia pages.</p>
+<p>For each sentence in the remaining English text, we calculate a tf*idf score, using term frequencies calculated from the 4 provided translations with which we are trying to match context and document frequencies calculated across all translations over all HITs. We choose the sentence with the highest score, eliminating sentences that are not to long (&gt; 30 words) or too short (&lt; 5 words).</p>
+	
+<a name="generrors"></a>
+<h4>Introducing errors</h4>
 <h5>Overview</h5>
- We randomly introduce errors into the choosen control sentence, confining the errors to those involving spelling, prepositions, determiners, and verbs. We experimented with two hueristics: 1) A random number of errors chosen based on the length of the sentence and 2) a fixed three errors per sentence. The former is the implementation currently in use, which can produce complicated sentences with too many errors. We have not yet implemented or collected results for the latter, so only the former will be discussed below. We store a record of the introduced errors to be used during the grading of the HIT (see Grading section below). 
+ We randomly introduce errors into the choosen control sentence, confining the errors to those involving spelling, prepositions, determiners, and verbs. We experimented with two approaches for choosing the number of errors: 1) a random number of errors chosen based on the length of the sentence and 2) a fixed three errors per sentence. The former is the implementation currently in use, which can produce complicated sentences with too many errors. We have not yet implemented or collected results for the latter, so only the former will be discussed below. We store a record of the introduced errors to be used during the grading of the HIT (see <a href="#grading">Grading section</a> below). 
 <h5>Technical details</h5>
-<p>We choose the number of errors to be introduced into the sentence as a random number, no greater than one third of the number of words in the sentence, and with a hard maximum at 5 errors. The maximums are enforced to ensure that the sentence is still comprehendable to the reader. We parse and POS-tag the sentence. We then introduce at random errors of the following types:
+<p>We choose the number of errors to be introduced into the sentence as a random number, no greater than one third of the number of words in the sentence, and with a hard maximum at 5 errors. The maximums are enforced to ensure that the sentence is still comprehendable to the reader. We parse and <a href="http://nltk.googlecode.com/svn/trunk/doc/api/nltk.tag-module.html">POS-tag</a> the sentence. We then introduce at random errors of the following types:
 <ul>
 
-<li>Spelling: A word (with length &gt; 4 characters) is chosen at random. One letter from the word is chosen at random (excluding the first letter). The chosen letter is swapped with the letter immediately following. Ex. German <b>forces</b> surrendered in Italy on 29 April.-> German <b>forecs</b> surrendered in an Italy on 29 April .</li>
+<li>Spelling: A word (with length &gt; 4 characters) is chosen at random. One letter from the word is chosen at random (excluding the first letter). The chosen letter is swapped with the letter immediately following. 
+<p>Ex. German <FONT COLOR="FF0000">forces</FONT> surrendered in Italy on 29 April. &rarr; German <FONT COLOR="FF0000">forecs</FONT> surrendered in an Italy on 29 April .</li>
 
-<li>Prepositions: A preposition is chosen at random. In is randomly exchanged with one of the following prepositions: {in, on, at, of, for, with, by}. Note that some prepositions not included in the list may still be chosen and switched. E.x. 'before' -> 'on'.Ex. German forces surrendered in Italy <b>on</b> 29 April.-> German forces surrenders in Italy <b>of</b> 29 Apirl .</li>
+<li>Prepositions: A preposition is chosen at random. It is randomly exchanged with one of the following prepositions: {in, on, at, of, for, with, by}. Note that some prepositions not included in the list may still be chosen and switched. (E.x. 'before' &rarr; 'on'.)<p>Ex. German forces surrendered in Italy <FONT COLOR="FF0000">on</FONT> 29 April.&rarr;  German forces surrenders in Italy <FONT COLOR="FF0000">of</FONT> 29 Apirl .</li>
 
-<li>Verbs: Our current implementation does not handle irregular uniquely, except in the case of "to be". This is going to change for our next batch of HITs, and this file will be updated accordingly. Currently, our procedure is as follows:
-<br>A verb is chosen at random. If the verb is a form of "to be" (in the set {'be', 'is', 'am', 'are', 'was', 'were', 'being'}) it is randomly exchanged with another verb in this set. If the verb is not a form of "to be", it's ending is identified as one of the following forms: {'ing', 'ed', 'es', 's', none}. The ending is randomly exchanged with another ending. <br>E.x. German forces <b>surrendered</b> in Italy on 29 April.-> German forces <b>surrenders</b> in Italy of 29 Apirl .</li>
+<li>Verbs: Our current implementation does not handle irregular verbs uniquely, except in the case of "to be". This is going to change for our next batch of HITs, and this file will be updated accordingly. Currently, we choose a verb at random; if the verb is a form of "to be" (in the set {'be', 'is', 'am', 'are', 'was', 'were', 'being'}) it is randomly exchanged with another verb in this set. If the verb is not a form of "to be", it's ending is identified as one of the following forms: {'ing', 'ed', 'es', 's', none}. The ending is randomly exchanged with another ending. 
+<p>E.x. German forces <FONT COLOR="FF0000">surrendered</FONT> in Italy on 29 April. &rarr; German forces <FONT COLOR="FF0000">surrenders</FONT> in Italy of 29 Apirl .</li>
 
-<li>Determiners: Determiner errors involve random insertion, deletion, or substitution of determiners. <br>Insertions only happen in front of noun phrases, do avoid unatural errors such as "United the Nations." For insertions, a noun phrase (which is not currently preceded by a determiner) is chosen at random. A determiner is randomly chosen from the set {a, the, an}, and inserted directly before the chosen noun phrase.
-<br>For deletions, a determiner is deleted at random.
-<br>For substitutions, a determiner is chosen at random, and exchanged with one of the determiners in the set mentioned above. Note that some determiners not included in the list may still be chosen and switched. E.x. 'those' -> 'an'. E.x. German forces surrendered in Italy on 29 April.-> German forecs surrendered in <b>an</b> Italy on 29 April .  </li>
+<li>Determiners: Determiner errors involve random insertion, deletion, or substitution of determiners. Insertions only happen in front of noun phrases, to avoid unatural errors such as "United the Nations." For insertions, a noun phrase (as determined by the NLTK <a href="http://nltk.googlecode.com/svn/trunk/doc/api/nltk.chunk.api.ChunkParserI-class.html">ChunkParser</a>) which is not currently preceded by a determiner is chosen at random. A determiner is randomly chosen from the set {a, the, an}, and inserted directly before the chosen noun phrase. For deletions, a determiner is deleted at random. For substitutions, a determiner is chosen at random, and exchanged with one of the determiners in the set mentioned above. Note that some determiners not included in the list may still be chosen and switched. (E.x. 'those' &rarr; 'an'). 
+<p>E.x. German forces surrendered in Italy on 29 April. &rarr; German forecs surrendered in <FONT COLOR="FF0000">an</FONT> Italy on 29 April .  </li>
 </li></ul>
 
+<a name="grading"></a>
 <h4>Grading</h4>
 <h5>Overview</h5>
-Our current implementation attempts to grade control sentences automatically. We look at the Turker's submitted, corrected version of our control sentence, compare the indicies of the known errors with the corresponding indicies in our original sentence, and compute an average number of errors corrected. The details of this algorith are given below. This method has not provided the reliability we had hoped it would, due to wider than expected variability in Turkers' corrections. We are beginning word on a Turker-graded quality control method, in which the quality of work in this HIT is graded by workers in another HIT. Documentation will be updated to included information about the Quality Control HIT after it has been implemented.
+Our current implementation attempts to grade control sentences automatically. We look at the Turker's submitted, corrected version of our control sentence, compare the words at indicies of known errors with the corresponding indicies in our gold standard sentence, and compute an average number of errors corrected. The details of this algorithm are given below. This method has not provided the reliability we had hoped it would, due to wider than expected variability in Turkers' corrections. We are beginning work on a Turker-graded quality control method, in which the quality of work in this HIT is graded by workers in another HIT. Documentation will be updated to included information about the Quality Control HIT after it has been implemented.
 <h5>Technical details</h5>
-See Data Representation and Storage for information about the data structures used for the below algorithms. To grade a HIT, we apply the following algorithm:
+See <a href="#datastructures">Sentence and Edit Data Structures</a> for information about the data structures used for the below algorithms. To grade a HIT, we apply the following algorithm:
 <ul>
 <li>Build a Sentence structure tracing all edits made by the Turker, beginning with the control sentence presented to the Turker and ending with the Turker's final submitted version.
-<li>For each word in the original control sentence (presented to the Turker), get its fate.
-<li>From the data table, pull the list of errors that were introduced into the original, gold standard sentence (See Error Representation)
+<li>For each word in the original control sentence (presented to the Turker), get its <a href="#fate">fate</a>.
+<li>From the data table, pull the list of errors that were introduced into the original, gold standard sentence (See <a href="#errrep">Error Representation</a>.)
 <li>For each error, compare the fate of the word, per the Turker's edits, to the original version of the word, as it was in the gold standard.
 <li>If the original word matches the turker's correction, the Turker get's one point. The grade is calculated as the proportion of "correct" errors in the sentence out of the total number of errors in the sentence.
 <img src="grade-fig3.png" width=600 height=300>
 </ul>
-We keep cumulative averages of Turkers across all the HITs that they submit to us. The first 10 HITs submitted are accepted free, regardless of their accuracy on the controls. Afterwards, we compute an accuracy for each submitted HIT, and accept only HITs that fall above our acceptance threshold. If a Turker's cumulative average falls below our accuracy threshold, we stop accepting any submissions from that Turker. If a Turker's accuracy rises above our "high-quality" threshold, we accept all HITs from that Turker, regardless of their performance on the controls. This allows us to keep good relations with Turkers who work with us consistantly and provide good work.
+We keep cumulative averages of Turkers across all the HITs that they submit to us. The first 10 HITs submitted are accepted free, regardless of their accuracy on the controls. Afterwards, we compute an accuracy for each submitted HIT, and accept only HITs that fall above our acceptance threshold. If a Turker's cumulative average falls below our acceptance threshold, we stop accepting any submissions from that Turker. If a Turker's accuracy rises above our "high-quality" threshold, we accept all HITs from that Turker, regardless of their performance on the controls. This allows us to keep good relations with Turkers who work with us consistantly and provide good work.
 <p><img src="apprej-fig.png" width=650 height=450></p>
-Our accept and high-quality thresholds have not yet been chosen. The grading algorithm is not robust to variations in the corrections that Turkers make, and results in low averages. Currently, our acceptance threshold is set at 0.2, and our high-quality at 0.6. <br>
+Our accept and high-quality thresholds are still being chosen, as they will likely change if we abandon the automatic grading method. The current grading algorithm is not robust to variations in the corrections that Turkers make, and results in low averages. Currently, our acceptance threshold is set at 0.2, and our high-quality at 0.6. <br>
 <img src="workeracchisto.png" width=500 height=300>
 <img src="workeraccscatter.png" width=500 height=300>
 
+<a name="data"></a>
 <h2>Data Representation and Storage<h2>
 <a name="datatables"></a>
 <h3>Database tables</h3>
@@ -310,6 +339,7 @@ The ESL database contains 14 tables, 11 of which are currently being used in the
 <td>unused</td>
 <td>	unused, the timestamp when the assignment was accepted</td> </tr></table>
 
+<a name="eslcontrols"></a>
 <br>esl_controls: keeps record of all errors introduced into sentences when generating control sentence, to be used for grading HITs. 
 <table class=script><tr>
 <td>id</td> 
@@ -347,6 +377,7 @@ The ESL database contains 14 tables, 11 of which are currently being used in the
 <td>the text of the sentence</td> 
 </tr></table>
 
+<a name="esledits"></a>
 <br>esl_edits: keeps list of all edits made to sentences by Turkers                  
 <table class=script>
 <td>id</td> 
@@ -530,10 +561,9 @@ The ESL database contains 14 tables, 11 of which are currently being used in the
 <td>total number of HITs that have been approved for this worker</td>
 </tr></table>
 
-
-
+<a name="errrep"></a>
 <h3>Error Representation</h3>
-Both introduced errors (made while creating controls) and edits (submitted by the Turkers) are represented by the same pieces of information, to allow for reuse of data structures and simplified grading of controls. Both with be referred to as an 'edit' for convenience. An edit within a sentence is defined by the following:
+Both introduced errors (made while <a href="#generrors">creating controls</a>) and edits (submitted by the Turkers) are represented by the same pieces of information, to allow for reuse of <a href="#datastructures">data structures</a> and simplified <a href="#grading">grading</a> of controls. Both with be referred to as an 'edit' for convenience. An edit within a sentence is defined by the following:
 <ul>
 <li>span_start - the index at which the edit begins (inclusive)
 <li>span_end - the index at which the edit ends (not inclusive)
@@ -541,15 +571,15 @@ Both introduced errors (made while creating controls) and edits (submitted by th
 <li>old_word - the text of the word before the edit (for convenience and debugging)
 <li>edit_type - either change, delete, insert, or move, based on how the edit was made
 <li>seq_num - the sequence number representing when the edit was made, relative to other edits on the same sentence, so that edits sorted by increasing seq_num will be in the same order as that in which they were made. </ul>
-Indicies in the sentence refer to tokens as returned by the Python NLTK's word_tokenize() method, begin at 0, and do not include spaces. 
-<br>For example: The following edited sentence is represented in the esl_edits database as shown.
-<br>Original: Treaty of Versailles <b>signing</b> 28 June 1919 
-<br>Edited: Treaty of Versailles <b>was signed on</b> 28 June 1919
+Indicies in the sentence refer to tokens as returned by the Python NLTK's <a href="http://nltk.googlecode.com/svn/trunk/doc/api/nltk.tokenize-module.html">word_tokenize()</a> method, begin at 0, and do not include spaces. For example, the following edited sentence is represented in the esl_edits database as shown:
+
+<p>Original: Treaty of Versailles <FONT COLOR="FF0000">signing</FONT> 28 June 1919 
+<br>Edited: Treaty of Versailles <FONT COLOR="FF0000">was signed on</FONT> 28 June 1919
 <table>
 <tr><td>id</td><td>assignment_id</td><td>edit_num</td><td>esl_sentence_id</td><td>span_start</td><td>span_end</td><td>old_word</td><td>new_word</td><td>edit_type</td></tr>
 <tr><td>70617</td><td>30226</td><td>3</td><td>361766</td><td>3</td><td>4</td><td>signing</td><td>was signed on</td><td>change</td></tr>
 </table>
-<br>This representation is used in both the esl_edits and the esl_controls data tables (although their names differ slightly between the tables). The esl_controls table lacks the span_end column, since no edits introduced as part of the control generation span more than one word. By convention, edit_type in the esl_controls table refers to the edit type that would be used to fix the error, rather than the type that was used to generate it. This is done allow comparable data structures to be built for both the expected response to the control and the Turker's response to the control (see Sentence and Edit Data Structures for details). More specifically, we generate the control by taking a clean sentence (S) and introducing errors to produce a control sentence (C). The turker views C, and produces a (possibly noisy) clean sentence, S'. We want to build two parallel data structures, one relating C -> S and one relating C -> S'; we use these two structures so that, given a word in C, we can determine whether that word is eventually edited into the same form in S' as it is in S. See figures below.
+<br>This representation is used in both the <a href="#esledits">esl_edits</a> and the <a href="#eslcontrols">esl_controls</a> data tables (although their names differ slightly between the tables). The esl_controls table lacks the span_end column, since no edits introduced as part of the <a href="#generrors">control generation</a> span more than one word. By convention, edit_type in the esl_controls table refers to the edit type that would be used to fix the error, rather than the type that was used to generate it. This is done to allow comparable data structures to be built for both the expected response to the control and the Turker's response to the control (see <a href="#datastructures">Sentence and Edit Data Structures</a> for details). More specifically, we generate the control by taking a clean sentence (S) and introducing errors to produce a control sentence (C). The Turker views C, and produces a (possibly noisy) clean sentence, S'. We want to build two parallel data structures, one relating C &rarr; S and one relating C &rarr; S'; we use these two structures so that, given a word in C, we can determine whether the <a href="#fate">fate</a> of that word is the same in the Turker data structure (C &rarr; S') as it is in the gold standard data structure (C &rarr; S). See figures below.
 <p>Generation of control sentence produces C from S. Turker produces S' from C.<br>
 <img src=grade-fig.png width=400 height=250 />  
 <p>Both S and S' are viewed in terms of transformations on C.<br>
@@ -563,48 +593,38 @@ Indicies in the sentence refer to tokens as returned by the Python NLTK's word_t
 <tr><td><img src="grade-fig2.png" width=550 height=400></td></tr>
 </table-->
 
+<a name="datastructures"></a>
 <h3>Sentence and Edit Data Structures</h3>
 <h4>Structures</h4>
-There are three key data structures used in the representation of sentences and revisions on those sentences. They are as follows:
-<br>Edit: An atomic edit is represented as described above, using the following six fields: sequence id, span start, span end, old word, new word, and mode.
-<br>Node: A node represents a token within a sentence, including spaces (i.e. the sentence "I am tired." would be represented by 9 nodes: [][I][][am][][tired][][.][]). This is to allow for insertions and deletions, discussed later. Each node tracks its parent and its children, as well as metadata such as its position in the sentence, alterations made to it, and its part of speech (see following Methods section for more detail). Nodes can have multiple parents.
-<br>Revision: A revision represents on version of a sentence; each time an edit is made, a new revision is created. A revision consists of a list of nodes and a number representing its order in the sequence of all revisions made to a sentence.	
-<br>Sentence: A sentence consists of a list of Revisions for a given sentence. 
+There are four key data structures used in the representation of sentences and revisions on those sentences. They are as follows:
+<ul>
+<li>Edit: An atomic Edit is represented as described <a href="#errrep">above</a>, using the following six fields: sequence id, span start, span end, old word, new word, and mode.
+<li>Node: A Node represents a token within a Sentence, including spaces (i.e. the sentence "I am tired." would be represented by 9 Nodes: <a class=script>[][I][][am][][tired][][.][]</a>). This is to allow for insertions and deletions, discussed <a href="#revmodes">later</a>. Each Node tracks its parent and its children, as well as metadata such as its position in the sentence, alterations made to it, and its part of speech (see following <a href="#methods">Methods section</a> for more detail). Nodes can have multiple parents.
+<li>Revision: A Revision represents on version of a sentence; each time an edit is made, a new Revision is created. A Revision consists of a list of Nodes and a number representing its order in the sequence of all Revisions made to a Sentence.	
+<li>Sentence: A Sentence consists of a list of Revisions for a given sentence. 
+</ul>
 
+<a name="methods"></a>
 <h4>Methods</h4>
 <h5>Revisions</h5>
-A sentence is revised by passing an Edit object to a Sentence object. An index i in an Edit object maps to index 2i+1 in a given Revision, since spaces are treated as tokens. See figure below: <img src=rev-fig.png width=400 height=200 />
+A sentence is revised by passing an Edit object to a Sentence object. An index <a class=script>i</a> in an Edit object maps to index <a class=script>2i+1</a> in a given Revision, since spaces are treated as tokens in the Revision. See figure below: <img src=rev-fig.png width=400 height=200 />
+<a name="revmodes"></a>
 			<br>Each edit mode is handled as follows:
 <ul>
-<li>Changes: For an edit requiring a change (substitution) at index i with a new word w, the node at index 2i+1 is replaced with a new node containing w. For an edit requiring a change at index i with multiple new words, u v w, the node at index 2i+1 is replaced with several new nodes, padded by spaces. For an edit requiring a change at multiple indicies, i j k, with a new word w, the nodes at indicies 2i+1 through 2k+1 are collectively replaced with a new node containing w. The new node is "parented" by all nodes that it replaced. See figures below.
-<li>Inserts: For an edit requiring an insert of word w at index i, the node (which is a space) at index 2i is replaced with three new nodes, one containing w and two containing spaces, one either side of w. For an edit requiring an insert multiple words, u v w, at index i, the node (which is a space) at index 2i is replaced with nodes for each new word as well as for padding spaces: i.e. [][u][][v][][w][].
-<li>Deletes: For an edit requiring a deletion of word w at index i, the node at index 2i is replaced with a new nodes containing a space. For an edit requiring the deletion of multiple words, each word is replaced by a space. Padding spaces are not removed. 
-<li>Reorders: For an edit requiring the movement of word w at index i to index j, both the node at index 2i+1 and the node at index 2i+2 are moved to position 2j (word w and its trailing space are moved). See figures below.
+<li>Changes: For an Edit requiring a change (substitution) at index <a class=script>i</a> with a new word <a class=script>w</a>, the Node at index <a class=script>2i+1</a> is replaced with a new Node containing <a class=script>w</a>. For an Edit requiring a change at index <a class=script>i</a> with multiple new words, <a class=script>u v w</a>, the Node at index <a class=script>2i+1</a> is replaced with several new Nodes, padded by spaces. For an Edit requiring a change at multiple indicies, <a class=script>i j k</a>, with a new word <a class=script>w</a>, the Nodes at indicies <a class=script>2i+1</a> through <a class=script>2k+1</a> are collectively replaced with a new Node containing <a class=script>w</a>. The new Node is "parented" by all Nodes that it replaced. See figures (a), (b), (c), and (d) below.
+<li>Inserts: For an Edit requiring an insert of word <a class=script>w</a> at index <a class=script>i</a>, the Node (which is a space) at index <a class=script>2i</a> is replaced with three new Nodes, one containing <a class=script>w</a> and two containing spaces on either side of <a class=script>w</a>. For an edit requiring an insert multiple words, <a class=script>u v w</a>, at index <a class=script>i</a>, the Node (which is a space) at index <a class=script>2i</a> is replaced with Nodes for each new word as well as for padding spaces: i.e. <a class=script>[][u][][v][][w][]</a>. See figure (e) below.
+<li>Deletes: For an Edit requiring a deletion of word <a class=script>w</a> at index <a class=script>i</a>, the Node at index <a class=script>2i+1</a> is replaced with a new nodes containing a space. For an Edit requiring the deletion of multiple words, each word is replaced by a space. Padding spaces are not removed. See figure (f) below.
+<li>Reorders: For an Edit requiring the movement of word <a class=script>w</a> at index <a class=script>i</a> to index <a class=script>j</a>, both the Node at index <a class=script>2i+1</a> and the node at index <a class=script>2i+2</a> are moved to position <a class=script>2j</a> (word <a class=script>w</a> and its trailing space are moved). See figure (g) below.
 </ul>
-<p>Change of one word to one word<br><br>
-<img src="change-one-one.png" width=250 height=100>
-<p>Change of one word to many words<br><br>
-<img src="change-one-many.png" width=250 height=100>
-<p>Change of many words to one word<br><br>
-<img src="change-many-one.png" width=250 height=100>
-<p>Change of many words to many words<br><br>
-<img src="change-many-many.png" width=250 height=100>
-<p>Insertion of a word<br><br>
-<img src="insert.png" width=250 height=100>
-<p>Deletion of a word<br><br>
-<img src="delete.png" width=250 height=100>
-<p>Reordering of a word<br><br>
-<img src="reorder.png" width=250 height=100>
-<!--table class="image">
-<tr><td><img src="change-one-one.png" width=250 height=100></td><td>Change of one word to one word</td></tr>
-<tr><td><img src="change-one-many.png" width=250 height=100></td><td>Change of one word to many words</td></tr>
-<tr><td><img src="change-many-one.png" width=250 height=100></td><td>Change of many words to one word</td></tr>
-<tr><td><img src="change-many-many.png" width=250 height=100></td><td>Change of many words to many words</td></tr>
-<tr><td><img src="insert.png" width=250 height=100></td><td>Insertion of a word</td></tr>
-<tr><td><img src="delete.png" width=250 height=100></td><td>Deletion of a word</td></tr>
-<tr><td><img src="reorder.png" width=250 height=100></td><td>Reordering of a word</td></tr>
-</table-->
 
+<table class="image">
+<tr><td>(a) Change of one word to one word</td><td>(b) Change of one word to many words</td><td>(c) Change of many words to one word</td><td>(d) Change of many words to many words</td></tr>
+<tr><td><img src="change-one-one.png" border="1px" width=250 height=100></td><td><img src="change-one-many.png" border="1px" width=250 height=100></td><td><img src="change-many-one.png" border="1px" width=250 height=100></td><td><img src="change-many-many.png" border="1px" width=250 height=100></td></tr>
+<tr><td>(e) Insertion of a word</td><td>(f) Deletion of a word</td><td>(g) Reordering of a word</td></tr>
+<tr><td><img src="delete.png" border="1px" width=250 height=100></td><td><img src="insert.png" border="1px" width=250 height=100></td><td><img src="reorder.png" border="1px" width=250 height=100></td></tr>
+</table>
+
+<a name="fate"></a>
 <h5>Getting a Node's &quot;Fate&quot;</h5>
 Given a Node, we use "fate" to refer to the final version of the node, after all edits have been made. A node's fate ignores intermediate changes that do not appear in the final version of the sentence. We call for fates when we are looking at the initial version of the sentence and want to know the resulting form. We obtain a node's fate by recursively querying for its children. E.x. in the below figure, if two words "very" and "tired" are combined and replaced by one word, "exhausted", querying for the fate of the word "very" or of the word "tired" will return "exhausted" in either case. 
 <p>
