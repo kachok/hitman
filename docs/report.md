@@ -100,6 +100,7 @@ Run the following periodically while HITs are still outstanding:
 * python approve_reject.py
 * python repost_hits.py
 
+See esl/docs/HowTo.html for more detailed information
 
 ###Running HITs
 ####Overview
