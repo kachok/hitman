@@ -90,7 +90,9 @@ Run the following once per HIT batch:
 * sh reload_all.sh
 * python generate_esl_hits.py (--reload if want to re-query for all control sentences, otherwise controls from last run will be used. must be run with --reload on first run, since --reload will build the controls.log file which will be used in future runs.)
 * python add_esl_hits_to_mturk.py
+
 Run the following periodically while HITs are still outstanding:
+
 * python multitest.py
 * python buffer_update.py
 * python process_qc.py
