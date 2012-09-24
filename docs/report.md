@@ -84,6 +84,21 @@ Due to some issues with parsing and processing some of the languages (codepages/
 (select prefix, count(*) as dict from languages l, dictionary d where l.id=d.language_id group by prefix) b
 where a.prefix=b.prefix order by a.prefix asc;
 
+####ESL HIT
+The ESL HIT takes the translation that are retrieved from the translation HIT and posts them to MTurk to be edited for grammatical and stylistic errors. The HIT consists of 5 sentences, four of which are translations that need editing and one of which is a control sentence. The four translations are English translations of consecutive sentences from the original foriegn language document. The control sentence is taken from the English language page that obtained by following the English language link on the original foreign language page, using Wikipydia. The controls are currently graded using a model which attempts to trace corrected words to their source words; this method could potentially be improved by using a second pass HIT to grade the control sentences. The ESL HIT pipeline is run as follows:
+Run the following once per HIT batch:
+*sh reload_all.sh
+*python generate_esl_hits.py (--reload if want to re-query for all control sentences, otherwise controls from last run will be used. must be run with --reload on first run, since --reload will build the controls.log file which will be used in future runs.)
+*python add_esl_hits_to_mturk.py
+Run the following periodically while HITs are still outstanding:
+*python multitest.py
+*python buffer_update.py
+*python process_qc.py
+*confirm approvals/rejections using apprej.log and DB tables
+*python approve_reject.py
+*python repost_hits.py
+
+
 ###Running HITs
 ####Overview
 ####HITs design and process
