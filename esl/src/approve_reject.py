@@ -66,7 +66,6 @@ for row in rows:
 	worker_id = row[3]
 
 	sql = "SELECT worker_id from esl_workers WHERE id=%s;"
-	print worker_id,
 	cur.execute(sql, (worker_id, ))
 	worker = cur.fetchone()[0]
 	

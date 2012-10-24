@@ -1,0 +1,578 @@
+""targeting","germany","they","are","	"{
+ "kind": "customsearch#search",
+ "url": {
+  "type": "application/json",
+  "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&cref={cref?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
+ },
+ "queries": {
+  "nextPage": [
+   {
+    "title": "Google Custom Search - \"targeting\",\"germany\",\"they\",\"are\",",
+    "totalResults": "2290",
+    "searchTerms": "\"targeting\",\"germany\",\"they\",\"are\",",
+    "count": 10,
+    "startIndex": 11,
+    "inputEncoding": "utf8",
+    "outputEncoding": "utf8",
+    "safe": "off",
+    "cx": "012125053300755942247:x6qo-ukt8lc"
+   }
+  ],
+  "request": [
+   {
+    "title": "Google Custom Search - \"targeting\",\"germany\",\"they\",\"are\",",
+    "totalResults": "2290",
+    "searchTerms": "\"targeting\",\"germany\",\"they\",\"are\",",
+    "count": 10,
+    "startIndex": 1,
+    "inputEncoding": "utf8",
+    "outputEncoding": "utf8",
+    "safe": "off",
+    "cx": "012125053300755942247:x6qo-ukt8lc"
+   }
+  ]
+ },
+ "context": {
+  "title": "ESL Sentences"
+ },
+ "searchInformation": {
+  "searchTime": 0.220638,
+  "formattedSearchTime": "0.22",
+  "totalResults": "2290",
+  "formattedTotalResults": "2,290"
+ },
+ "items": [
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - British men forced into 'modern slavery' abroad",
+   "htmlTitle": "BBC News - British men forced into &#39;modern slavery&#39; abroad",
+   "link": "http://www.bbc.co.uk/news/uk-16836065",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Feb 1, 2012 ... \"[They are] targeting the most vulnerable in society and forcing them to ... which   suggest that traveller gangs are also operating in Germany, ...",
+   "htmlSnippet": "Feb 1, 2012 \u003cb\u003e...\u003c/b\u003e &quot;[\u003cb\u003eThey are\u003c/b\u003e] \u003cb\u003etargeting\u003c/b\u003e the most vulnerable in society and forcing them to \u003cb\u003e...\u003c/b\u003e which \u003cbr\u003e  suggest that traveller gangs \u003cb\u003eare\u003c/b\u003e also operating in \u003cb\u003eGermany\u003c/b\u003e, \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "6_7ZCeIwDkUJ",
+   "formattedUrl": "www.bbc.co.uk/news/uk-16836065",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/uk-16836065",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/58239000/jpg/_58239273_jex_1307898_de27-1.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "300",
+      "height": "168",
+      "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRziPya00bZRlEvK_c7Zl1I3wi4siTGB-4gdeJEQUQZYeIITPLp6hPWilur"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2012/02/01 22:23:34",
+      "ukfs_url": "/news/uk-16836065",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/58249000/jpg/_58249247_oliverhayre.jpg",
+      "headline": "UK men in 'modern slavery' abroad",
+      "ifs_url": "/news/uk-16836065",
+      "section": "UK",
+      "contentflavor": "STORY",
+      "cps_id": "16836065",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "UK",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "UK men in 'modern slavery' abroad",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/uk-16836065",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/58249000/jpg/_58249245_oliverhayre.jpg",
+      "bbcsearch_noindex": "atom",
+      "application-name": "BBC News",
+      "msapplication-tileimage": "/img/1_0_1/cream/hi/news/bbc-news-pin.png",
+      "msapplication-tilecolor": "#CC0101",
+      "viewport": "width = 996",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - End of empire for Western universities?",
+   "htmlTitle": "BBC News - End of empire for Western universities?",
+   "link": "http://www.bbc.co.uk/news/business-18646423",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Jul 10, 2012 ... Instead of offering low-cost manufacture, they are targeting the hi-tech ... a bigger   share of graduates than Germany, Turkey more than Spain, ...",
+   "htmlSnippet": "Jul 10, 2012 \u003cb\u003e...\u003c/b\u003e Instead of offering low-cost manufacture, \u003cb\u003ethey are targeting\u003c/b\u003e the hi-tech \u003cb\u003e...\u003c/b\u003e a bigger \u003cbr\u003e  share of graduates than \u003cb\u003eGermany\u003c/b\u003e, Turkey more than Spain, \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "-4d8U5uX-7wJ",
+   "formattedUrl": "www.bbc.co.uk/news/business-18646423",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/business-18646423",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/61464000/jpg/_61464891_chinagradsgetty624.jpg"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2012/07/10 23:01:14",
+      "ukfs_url": "/news/business-18646423",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/61464000/jpg/_61464890_chinagradsgetty624.jpg",
+      "headline": "End of empire for Western universities?",
+      "ifs_url": "/news/business-18646423",
+      "section": "Business",
+      "contentflavor": "STORY",
+      "ad_keyword": "knowledgeeconomy",
+      "cps_id": "18646423",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "Business",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "End of empire for Western universities?",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/business-18646423",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/61464000/jpg/_61464891_chinagradsgetty624.jpg",
+      "bbcsearch_noindex": "atom",
+      "application-name": "BBC News",
+      "msapplication-tileimage": "/img/1_0_1/cream/hi/news/bbc-news-pin.png",
+      "msapplication-tilecolor": "#CC0101",
+      "viewport": "width = 996",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - Germany seeks public help in neo-Nazi murder hunt",
+   "htmlTitle": "BBC News - \u003cb\u003eGermany\u003c/b\u003e seeks public help in neo-Nazi murder hunt",
+   "link": "http://www.bbc.co.uk/news/world-europe-15982826",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Dec 1, 2011 ... They are also thought to be responsible for two bomb attacks in Cologne. ... a   series of murders throughout Germany, targeting shopkeepers.",
+   "htmlSnippet": "Dec 1, 2011 \u003cb\u003e...\u003c/b\u003e \u003cb\u003eThey are\u003c/b\u003e also thought to be responsible for two bomb attacks in Cologne. \u003cb\u003e...\u003c/b\u003e a \u003cbr\u003e  series of murders throughout \u003cb\u003eGermany\u003c/b\u003e, \u003cb\u003etargeting\u003c/b\u003e shopkeepers.",
+   "cacheId": "tW-PJdFNfuIJ",
+   "formattedUrl": "www.bbc.co.uk/news/world-europe-15982826",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/world-europe-15982826",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/57062000/jpg/_57062629_013428631-1.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTrGYJcH6LJzsxCl-wRtm_x5en-6mC8eQZ0024nz2PxrM974xRUCOHN"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2011/12/01 19:03:17",
+      "ukfs_url": "/news/world-europe-15982826",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/57063000/jpg/_57063790_013428631-1.jpg",
+      "headline": "German help plea in neo-Nazi hunt",
+      "ifs_url": "/news/world-europe-15982826",
+      "section": "Europe",
+      "contentflavor": "STORY",
+      "cps_id": "15982826",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "World/Europe",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "German help plea in neo-Nazi hunt",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/world-europe-15982826",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/57062000/jpg/_57062629_013428631-1.jpg",
+      "bbcsearch_noindex": "atom",
+      "viewport": "width = 974",
+      "application-name": "BBC",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9-news",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-news-pinned-ie9-homepage;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - 'Save the planet', science leaders urge G8 governments",
+   "htmlTitle": "BBC News - &#39;Save the planet&#39;, science leaders urge G8 governments",
+   "link": "http://www.bbc.co.uk/news/science-environment-18026572",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "May 11, 2012 ... This year, they are targeting leaders attending not just the G8 summit but ...   France, Germany, India, Indonesia, Italy, Japan, Mexico, Morocco, ...",
+   "htmlSnippet": "May 11, 2012 \u003cb\u003e...\u003c/b\u003e This year, \u003cb\u003ethey are targeting\u003c/b\u003e leaders attending not just the G8 summit but \u003cb\u003e...\u003c/b\u003e \u003cbr\u003e  France, \u003cb\u003eGermany\u003c/b\u003e, India, Indonesia, Italy, Japan, Mexico, Morocco, \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "7c018Qvmd-IJ",
+   "formattedUrl": "www.bbc.co.uk/news/science-environment-18026572",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/science-environment-18026572",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/60160000/jpg/_60160258_iss013e77965-1.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRW68A8-TYCWw0eSIh2_q2aN4UUFdUahf2kZYB5AOlPUAyCcpKcJqNI"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2012/05/11 04:24:08",
+      "ukfs_url": "/news/science-environment-18026572",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/60160000/jpg/_60160259_iss013e77965-1.jpg",
+      "headline": "Science bodies lobby G8 on planet",
+      "ifs_url": "/news/science-environment-18026572",
+      "section": "Science & Environment",
+      "contentflavor": "STORY",
+      "cps_id": "18026572",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "Science and Environment",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "Science bodies lobby G8 on planet",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/science-environment-18026572",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/60160000/jpg/_60160258_iss013e77965-1.jpg",
+      "bbcsearch_noindex": "atom",
+      "application-name": "BBC News",
+      "msapplication-tileimage": "/img/1_0_1/cream/hi/news/bbc-news-pin.png",
+      "msapplication-tilecolor": "#CC0101",
+      "viewport": "width = 996",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - Al-Qaeda terror plot targeting Europe uncovered",
+   "htmlTitle": "BBC News - Al-Qaeda terror plot \u003cb\u003etargeting\u003c/b\u003e Europe uncovered",
+   "link": "http://www.bbc.co.uk/news/world-europe-11432849",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Sep 29, 2010 ... They don't understand why they are under attack and they intend to ... France and   Germany are both on a heightened state of security alert.",
+   "htmlSnippet": "Sep 29, 2010 \u003cb\u003e...\u003c/b\u003e \u003cb\u003eThey\u003c/b\u003e don&#39;t understand why \u003cb\u003ethey are\u003c/b\u003e under attack and \u003cb\u003ethey\u003c/b\u003e intend to \u003cb\u003e...\u003c/b\u003e France and \u003cbr\u003e  \u003cb\u003eGermany are\u003c/b\u003e both on a heightened state of security alert.",
+   "cacheId": "TFCXCJtUiG8J",
+   "formattedUrl": "www.bbc.co.uk/news/world-europe-11432849",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/world-europe-11432849",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/49183000/jpg/_49183904_010232939-1.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQ_BoJSJT0ge0fSAEY2W9bc0ruDIHkZMujuiEQ1zHnDzTmi6kVcEG4FSg"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2010/09/29 16:05:55",
+      "ukfs_url": "/news/world-europe-11432849",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/49183000/jpg/_49183902_010232939-1.jpg",
+      "headline": "Al-Qaeda terrorism plot uncovered",
+      "ifs_url": "/news/world-europe-11432849",
+      "section": "Europe",
+      "contentflavor": "STORY",
+      "cps_id": "11432849",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "World/Europe",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "Al-Qaeda terrorism plot uncovered",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/world-europe-11432849",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/49183000/jpg/_49183904_010232939-1.jpg",
+      "bbcsearch_noindex": "atom",
+      "viewport": "width = 974",
+      "application-name": "BBC",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC Sport - London 2012 Olympics: Day 11 afternoon session",
+   "htmlTitle": "BBC Sport - London 2012 Olympics: Day 11 afternoon session",
+   "link": "http://www.bbc.co.uk/sport/0/olympics/19084043",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Aug 7, 2012 ... Team GB are also represented in the women's 100m hurdles semis, men's ...   Maximilian Levy of Germany gets his silver medal before Sir Chris .... they are on   the ropes they find that knockout punch and Hoy found his knockout punch.\" ......   years (Barcelona '92) and are targeting a top-five finish in London.",
+   "htmlSnippet": "Aug 7, 2012 \u003cb\u003e...\u003c/b\u003e Team GB \u003cb\u003eare\u003c/b\u003e also represented in the women&#39;s 100m hurdles semis, men&#39;s \u003cb\u003e...\u003c/b\u003e \u003cbr\u003e  Maximilian Levy of \u003cb\u003eGermany\u003c/b\u003e gets his silver medal before Sir Chris \u003cb\u003e....\u003c/b\u003e \u003cb\u003ethey are\u003c/b\u003e on \u003cbr\u003e  the ropes \u003cb\u003ethey\u003c/b\u003e find that knockout punch and Hoy found his knockout punch.&quot; \u003cb\u003e......\u003c/b\u003e \u003cbr\u003e  years (Barcelona &#39;92) and \u003cb\u003eare targeting\u003c/b\u003e a top-five finish in London.",
+   "cacheId": "-9nNv9tcamAJ",
+   "formattedUrl": "www.bbc.co.uk/sport/0/olympics/19084043",
+   "htmlFormattedUrl": "www.bbc.co.uk/sport/0/olympics/19084043",
+   "pagemap": {
+    "sportsevent": [
+     {
+      "name": "London 2012 Olympics: Day 11 afternoon session",
+      "members": "Laura Asadauskaite"
+     }
+    ],
+    "metatags": [
+     {
+      "dcterms.created": "2012/08/07T13:04:44+00:00",
+      "dcterms.modified": "2012/08/07T18:07:31+00:00",
+      "ukfs_url": "/sport/0/olympics/19084043",
+      "headline": "London 2012 Olympics: Day 11 afternoon session",
+      "ifs_url": "/sport/0/olympics/19084043",
+      "section": "Olympics",
+      "og:title": "London 2012 Olympics: Day 11 afternoon session",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/sport/0/olympics/19084043",
+      "og:site_name": "BBC Sport",
+      "bbcsearch_noindex": "atom",
+      "viewport": "width = 996",
+      "application-name": "BBC",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/sport/0/?ocid=global-sport-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - Outbreak is new form of E. coli",
+   "htmlTitle": "BBC News - Outbreak is new form of E. coli",
+   "link": "http://www.bbc.co.uk/news/health-13626499",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Jun 2, 2011 ... They are all thought to have contracted it in Germany. ... said: \"This outbreak is   unusual in that it doesn't seem to be targeting young children.",
+   "htmlSnippet": "Jun 2, 2011 \u003cb\u003e...\u003c/b\u003e \u003cb\u003eThey are\u003c/b\u003e all thought to have contracted it in \u003cb\u003eGermany\u003c/b\u003e. \u003cb\u003e...\u003c/b\u003e said: &quot;This outbreak is \u003cbr\u003e  unusual in that it doesn&#39;t seem to be \u003cb\u003etargeting\u003c/b\u003e young children.",
+   "cacheId": "m1CE54DsYD4J",
+   "formattedUrl": "www.bbc.co.uk/news/health-13626499",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/health-13626499",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/53120000/jpg/_53120905_012112497-1.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ0SGAfD5HSi7XfmAw-C1YqH_QJsIa77v8Y-OmAvgnyQVOJEcfpDBro"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2011/06/02 16:13:58",
+      "ukfs_url": "/news/health-13626499",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/53120000/jpg/_53120906_012112497-1.jpg",
+      "headline": "Outbreak is new form of E. coli",
+      "ifs_url": "/news/health-13626499",
+      "section": "Health",
+      "contentflavor": "STORY",
+      "cps_id": "13626499",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "Health",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "Outbreak is new form of E. coli",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/health-13626499",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/53120000/jpg/_53120905_012112497-1.jpg",
+      "bbcsearch_noindex": "atom",
+      "viewport": "width = 996",
+      "application-name": "BBC",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC Sport - Anne Panter targeting gold with hockey team in Rio 2016",
+   "htmlTitle": "BBC Sport - Anne Panter \u003cb\u003etargeting\u003c/b\u003e gold with hockey team in Rio 2016",
+   "link": "http://www.bbc.co.uk/sport/0/mobile/hockey/19353985",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Aug 23, 2012 ... Anne Panter says that her Team GB hockey team-mates are aiming to return ...   They had bounced back from a 2-1 defeat by Argentina in the semi-finals. ... in   Germany, having spent two and a half years sidelined with injury.",
+   "htmlSnippet": "Aug 23, 2012 \u003cb\u003e...\u003c/b\u003e Anne Panter says that her Team GB hockey team-mates \u003cb\u003eare\u003c/b\u003e aiming to return \u003cb\u003e...\u003c/b\u003e \u003cbr\u003e  \u003cb\u003eThey\u003c/b\u003e had bounced back from a 2-1 defeat by Argentina in the semi-finals. \u003cb\u003e...\u003c/b\u003e in \u003cbr\u003e  \u003cb\u003eGermany\u003c/b\u003e, having spent two and a half years sidelined with injury.",
+   "cacheId": "HSzc5jWuHnsJ",
+   "formattedUrl": "www.bbc.co.uk/sport/0/mobile/hockey/19353985",
+   "htmlFormattedUrl": "www.bbc.co.uk/sport/0/mobile/hockey/19353985",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/62449000/jpg/_62449100_148153898.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTzFIhsHgs5eT7ZK9XcJJsf5pgiLi9mgJym4O1podA8KzC1bq8CVog"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2012/08/23 12:11:47",
+      "ukfs_url": "/sport/0/mobile/hockey/19353985",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/62449000/jpg/_62449098_148153898.jpg",
+      "headline": "Panter targeting gold at Rio 2016",
+      "ifs_url": "/sport/0/mobile/hockey/19353985",
+      "contentflavor": "STORY",
+      "section": "Hockey",
+      "viewport": "width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;",
+      "handheldfriendly": "true",
+      "cps_id": "19353985",
+      "cps_site_name": "BBC Sport",
+      "cps_section_path": "Hockey",
+      "cps_asset_type": "STY",
+      "cps_platform": "EnhancedMobile",
+      "cps_audience": "International",
+      "rendered_by": "5756001"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - EU fishing reforms face weakening",
+   "htmlTitle": "BBC News - EU fishing reforms face weakening",
+   "link": "http://www.bbc.co.uk/news/science-environment-18208279",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "May 28, 2012 ... European governments are backsliding on commitments to make fishing ...   northern countries such as Germany and Sweden against southern states ... and   boats cannot altogether avoid catching ones they are not targeting.",
+   "htmlSnippet": "May 28, 2012 \u003cb\u003e...\u003c/b\u003e European governments \u003cb\u003eare\u003c/b\u003e backsliding on commitments to make fishing \u003cb\u003e...\u003c/b\u003e \u003cbr\u003e  northern countries such as \u003cb\u003eGermany\u003c/b\u003e and Sweden against southern states \u003cb\u003e...\u003c/b\u003e and \u003cbr\u003e  boats cannot altogether avoid catching ones \u003cb\u003ethey are\u003c/b\u003e not \u003cb\u003etargeting\u003c/b\u003e.",
+   "cacheId": "kwDL-S8pOFgJ",
+   "formattedUrl": "www.bbc.co.uk/news/science-environment-18208279",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/science-environment-18208279",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/60489000/jpg/_60489325_h1104280-whole_fresh_herrings-spl-2.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcT1unM1EXdsEuZ7jV90f0XbS0amT332SmhEcX61f1P-Q1b5zCxTPNjLDA"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2012/05/28 11:40:16",
+      "ukfs_url": "/news/science-environment-18208279",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/60489000/jpg/_60489324_h1104280-whole_fresh_herrings-spl-2.jpg",
+      "headline": "EU fishing reforms face weakening",
+      "ifs_url": "/news/science-environment-18208279",
+      "section": "Science & Environment",
+      "contentflavor": "STORY",
+      "cps_id": "18208279",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "Science and Environment",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "EU fishing reforms face weakening",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/science-environment-18208279",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/60489000/jpg/_60489325_h1104280-whole_fresh_herrings-spl-2.jpg",
+      "bbcsearch_noindex": "atom",
+      "application-name": "BBC News",
+      "msapplication-tileimage": "/img/1_0_1/cream/hi/news/bbc-news-pin.png",
+      "msapplication-tilecolor": "#CC0101",
+      "viewport": "width = 996",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  },
+  {
+   "kind": "customsearch#result",
+   "title": "BBC News - Bali police warn of terror threat on bomb anniversary",
+   "htmlTitle": "BBC News - Bali police warn of terror threat on bomb anniversary",
+   "link": "http://www.bbc.co.uk/news/world-asia-19893605",
+   "displayLink": "www.bbc.co.uk",
+   "snippet": "Oct 10, 2012 ... Indonesian police warn of possible attacks targeting Friday's ceremony ... A top   Bali police official said security was being tightened after they received ... \"From   the information that we have gathered, there are indications of ... Fresh sign of US   housing recovery · Germany pushes EU economic union · Czech ...",
+   "htmlSnippet": "Oct 10, 2012 \u003cb\u003e...\u003c/b\u003e Indonesian police warn of possible attacks \u003cb\u003etargeting\u003c/b\u003e Friday&#39;s ceremony \u003cb\u003e...\u003c/b\u003e A top \u003cbr\u003e  Bali police official said security was being tightened after \u003cb\u003ethey\u003c/b\u003e received \u003cb\u003e...\u003c/b\u003e &quot;From \u003cbr\u003e  the information that we have gathered, there \u003cb\u003eare\u003c/b\u003e indications of \u003cb\u003e...\u003c/b\u003e Fresh sign of US \u003cbr\u003e  housing recovery &middot; \u003cb\u003eGermany\u003c/b\u003e pushes EU economic union &middot; Czech \u003cb\u003e...\u003c/b\u003e",
+   "cacheId": "6_BnIt3a4bMJ",
+   "formattedUrl": "www.bbc.co.uk/news/world-asia-19893605",
+   "htmlFormattedUrl": "www.bbc.co.uk/news/world-asia-19893605",
+   "pagemap": {
+    "cse_image": [
+     {
+      "src": "http://news.bbcimg.co.uk/media/images/63400000/jpg/_63400067_016179419-1.jpg"
+     }
+    ],
+    "cse_thumbnail": [
+     {
+      "width": "115",
+      "height": "64",
+      "src": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEFPrC6KgKwpK1WddHTDoHNLFrJsemtyfuoE98K20t0icXMDRyt0dW0w"
+     }
+    ],
+    "metatags": [
+     {
+      "originalpublicationdate": "2012/10/10 09:08:38",
+      "ukfs_url": "/news/world-asia-19893605",
+      "thumbnail_url": "http://news.bbcimg.co.uk/media/images/63400000/jpg/_63400066_016179419-1.jpg",
+      "headline": "Bali police issue threat warning",
+      "ifs_url": "/news/world-asia-19893605",
+      "section": "Asia",
+      "contentflavor": "STORY",
+      "cps_id": "19893605",
+      "cps_site_name": "BBC News",
+      "cps_section_path": "World/Asia",
+      "cps_asset_type": "STY",
+      "cps_platform": "HighWeb",
+      "cps_audience": "US",
+      "og:title": "Bali police issue threat warning",
+      "og:type": "article",
+      "og:url": "http://www.bbc.co.uk/news/world-asia-19893605",
+      "og:site_name": "BBC News",
+      "og:image": "http://news.bbcimg.co.uk/media/images/63400000/jpg/_63400067_016179419-1.jpg",
+      "bbcsearch_noindex": "atom",
+      "application-name": "BBC News",
+      "msapplication-tileimage": "/img/1_0_1/cream/hi/news/bbc-news-pin.png",
+      "msapplication-tilecolor": "#CC0101",
+      "viewport": "width = 996",
+      "msapplication-tooltip": "Explore the BBC, for latest news, sport and weather, TV & radio schedules and highlights, with nature, food, comedy, children's programmes and much more",
+      "msapplication-starturl": "http://www.bbc.com/news/?ocid=global-news-pinned-ie9",
+      "msapplication-window": "width=1024;height=768",
+      "msapplication-task": "name=BBC Home;action-uri=http://www.bbc.com/?ocid=global-homepage-pinned-ie9;icon-uri=http://news.bbcimg.co.uk/shared/img/bbccom/favicon_16.ico"
+     }
+    ]
+   }
+  }
+ ]
+}
+"

@@ -1,0 +1,26 @@
+------ SCRIPTS -------
+
+buffer_update.py - take results out of buffer and read into relevant esl2 tables (should be run after running multi_test, since requires full buffer)
+
+reloadall.sh - runs cleanup.py, cleardb.py, load_data_to_db.py in that order. recommended using instead of running individually, since it will avoid accidentally clearing DB before removing hits from mturk.
+
+cleanup.py - expire all hits currently on mturk, make no longer available to workers
+
+cleardb.py - clear all entries out of DB. clears all sentences, hits, assignments, hits_results, location data. does not clear esl_workers data or esl_edits data
+
+controls.py - methods for pulling control sentences off of wikipedia, using the titles of the foreign language wikipedia pages (right now, only in urdu). 
+ 
+data_dump.py - pull all of turkers corrections out of the DB and dumps into csv files. creates two files, one of turker corrections and one of sentences' original text
+
+generate_cntrlonly_hits.py - generate mturk hits consisting only of artifically-generated error sentences, does not post hits to mturk
+
+generage_esl_hits.py -  generate ESL mturk hits, does not post hits to mturk
+
+generrors.py - methods to introduce random errors into English sentences
+
+mturk.py - methods for calling mturk api, using boto libraries
+
+multi_test.py - pull all hits off of mturk and read into buffer to be reviewed
+
+qc.py - methods for grading control sentences and paying workers based on performance
+
