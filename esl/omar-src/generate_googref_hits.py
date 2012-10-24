@@ -175,64 +175,6 @@ for i, lang in enumerate(langs):
 					sentfile.write(str(b[0][0])+'\n\n')
 					print b[0]
 				
-				#candidates = controls.pull_all_candidates_from_cache('caches')
-	"""			if(len(candidates) > 0):
-					b = controls.best_control(justsents, candidates, dfs)
-					for j in justsents:
-						print j
-		#				sentfile.write(j+'\n')
-		#			sentfile.write(str(b[0][0])+'\n\n')
-					print b[0]
-
-				ctrlsql = 'SELECT sentence, doc_id from esl_sentences where qc = 1 and doc=%s'
-				cur2.execute(ctrlsql, (doc,))
-        	        	refs = cur2.fetchall()
-				controlnum = random.randint(0, len(refs)-1)
-        		        b = list(refs)[controlnum][0]
-        		        sentnum = list(refs)[controlnum][1]
-				timeout = 0
-				while(timeout < 20 and (sentnum in sentnums)):
-					controlnum = random.randint(0, len(refs)-1)
-        		        	b = list(refs)[controlnum][0]
-        		        	sentnum = list(refs)[controlnum][1]
-					timeout += 1
-				newb = generrors.randerr(b)
-				cid = controls.insert_into_db(hit_id, newb, b, cur2, qcnum)
-				if(cid == -1):
-					print "Error inserting control sentence to DB"
-					break;
-				else:
-					for i in range(0, settings['num_unknowns']+settings['num_knowns']):
-						if(i == qcnum):
-							sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-							cur2.execute(sql,(hit_id, cid, lang_id, n))
-							n += 1
-						else:
-							if(len(sents) > 0):
-								sent = sents[0]
-								sid = sent[0]
-								print sent
-								sql="INSERT INTO esl_hits_data(hit_id,esl_sentence_id,language_id,sentence_num)VALUES(%s,%s,%s,%s);"
-								cur2.execute(sql,(hit_id, sid, lang_id, n))
-								n += 1
-								sents.pop(0)
-				conn.commit()
-                	logging.info("Batch "+str(check)+" added")
-			check += 1
-			conn.commit()
-ADD HERE AGAIN
-	#purge HITs with missing sentences or missing controls
-	for hit in sentcounts:
-		delsql = "select id from esl_hits_data where hit_id=%s;"
-		cur2.execute(delsql, (hit,))
-		if(cur2.rowcount < 5):
-			delsql = "delete from esl_hits_data where hit_id=%s;"
-			cur2.execute(delsql, (hit,))
-			delsql = "delete from hits where id=%s;"
-			cur2.execute(delsql, (hit,))
-			if(cur2.rowcount > 0):
-				print "purged", hit
-"""
 conn.commit()
 
 conn.close()

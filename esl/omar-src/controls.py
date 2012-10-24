@@ -28,8 +28,8 @@ import parsegoogle
 
 PATH_TO_DATA = "/home/ellie/Documents/Research/ESL/javascript/working/web/src/input-data/data-20120718"
 METADATA = "/Users/epavlick/hitman/esl/data/ur-en/ur-en.metadata"
-MAXLEN = 10000000# 30
-MINLEN = 0 # 5
+MAXLEN = 30
+MINLEN = 5
 
 reg = re.compile('(.)*(\[((.)*)\])(\((.)*\))(.)*')
 
